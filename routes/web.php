@@ -226,11 +226,13 @@ Route::prefix('news')->name('news.')->group(function () {
 // Media & Gallery Routes
 Route::prefix('media')->name('media.')->group(function () {
     Route::get('/', [MediaController::class, 'index'])->name('index');
-    Route::get('/{id}', [MediaController::class, 'show'])->name('show');
+    Route::get('/{gallery}', [MediaController::class, 'show'])->name('show');
     Route::get('/download/{mediaId}', [MediaController::class, 'download'])->name('download');
     
     Route::middleware('auth')->group(function () {
         Route::get('/create/upload', [MediaController::class, 'create'])->name('create');
         Route::post('/store', [MediaController::class, 'store'])->name('store');
+        Route::delete('/{gallery}', [MediaController::class, 'destroy'])->name('destroy');
+        Route::post('/{gallery}/comment', [MediaController::class, 'storeComment'])->name('comment.store');
     });
 });

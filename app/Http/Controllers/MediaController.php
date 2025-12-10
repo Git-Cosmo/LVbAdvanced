@@ -117,4 +117,35 @@ class MediaController extends Controller
         
         return Storage::disk('public')->download($media->path, $media->name);
     }
+
+    /**
+     * Delete gallery
+     */
+    public function destroy(Gallery $gallery)
+    {
+        if (auth()->id() !== $gallery->user_id && !auth()->user()->can('delete any media')) {
+            abort(403);
+        }
+
+        $gallery->delete();
+
+        return redirect()->route('media.index')->with('success', 'Gallery deleted successfully');
+    }
+
+    /**
+     * Store comment on gallery
+     */
+    public function storeComment(Request $request, Gallery $gallery)
+    {
+        $validated = $request->validate([
+            'content' => 'required|max:1000',
+        ]);
+
+        $gallery->comments()->create([
+            'user_id' => auth()->id(),
+            'content' => $validated['content'],
+        ]);
+
+        return redirect()->route('media.show', $gallery)->with('success', 'Comment posted successfully');
+    }
 }

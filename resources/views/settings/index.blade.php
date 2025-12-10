@@ -102,7 +102,7 @@
         </div>
 
         <!-- Password Settings -->
-        <div x-show="activeTab === 'password'" class="mt-6" style="display: none;">
+        <div x-show="activeTab === 'password'" class="mt-6">
             <form action="{{ route('settings.update.password') }}" method="POST" class="dark:bg-dark-bg-secondary bg-light-bg-secondary rounded-lg shadow-md p-6">
                 @csrf
                 @method('PATCH')
@@ -161,7 +161,7 @@
         </div>
 
         <!-- Privacy Settings -->
-        <div x-show="activeTab === 'privacy'" class="mt-6" style="display: none;">
+        <div x-show="activeTab === 'privacy'" class="mt-6">
             <form action="{{ route('settings.update.privacy') }}" method="POST" class="dark:bg-dark-bg-secondary bg-light-bg-secondary rounded-lg shadow-md p-6">
                 @csrf
                 @method('PATCH')
@@ -252,7 +252,7 @@
         </div>
 
         <!-- Notification Settings -->
-        <div x-show="activeTab === 'notifications'" class="mt-6" style="display: none;">
+        <div x-show="activeTab === 'notifications'" class="mt-6">
             <form action="{{ route('settings.update.notifications') }}" method="POST" class="dark:bg-dark-bg-secondary bg-light-bg-secondary rounded-lg shadow-md p-6">
                 @csrf
                 @method('PATCH')
