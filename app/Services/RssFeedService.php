@@ -106,8 +106,12 @@ class RssFeedService
             $excerpt .= '...';
         }
 
+        // Get first admin user or fallback to user ID 1
+        $adminUser = \App\Models\User::role('Administrator')->first();
+        $userId = $adminUser ? $adminUser->id : 1;
+        
         $news = News::create([
-            'user_id' => 1, // Use admin user
+            'user_id' => $userId, // Use admin user
             'title' => $title,
             'slug' => null, // Will be auto-generated
             'excerpt' => $excerpt,
