@@ -27,7 +27,7 @@ class RecentActivityBlock extends AbstractBlock
         $limit = $this->getSetting($block, 'limit', 10);
         $showCauser = $this->getSetting($block, 'show_causer', true);
         $showTime = $this->getSetting($block, 'show_time', true);
-        
+
         // Fetch recent activities
         $activities = Activity::query()
             ->with('causer')

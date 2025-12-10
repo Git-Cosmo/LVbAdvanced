@@ -31,7 +31,7 @@ class AdvertisementBlock extends AbstractBlock
         $ctaText = $this->getSetting($block, 'cta_text', 'Learn More');
         $adCode = $this->getSetting($block, 'ad_code', '');
         $openInNewTab = $this->getSetting($block, 'open_in_new_tab', true);
-        
+
         return [
             'adType' => $adType,
             'imageUrl' => $imageUrl,

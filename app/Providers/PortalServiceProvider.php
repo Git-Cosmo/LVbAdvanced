@@ -21,7 +21,7 @@ class PortalServiceProvider extends ServiceProvider
     {
         // Register BlockRegistry as singleton
         $this->app->singleton(BlockRegistry::class);
-        
+
         // Register BlockRenderer
         $this->app->singleton(BlockRenderer::class, function ($app) {
             return new BlockRenderer($app->make(BlockRegistry::class));
@@ -34,13 +34,13 @@ class PortalServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $registry = $this->app->make(BlockRegistry::class);
-        
+
         // Register all available blocks
-        $registry->register('custom_html', new CustomHtmlBlock());
-        $registry->register('latest_news', new LatestNewsBlock());
-        $registry->register('link_list', new LinkListBlock());
-        $registry->register('stats', new StatsBlock());
-        $registry->register('recent_activity', new RecentActivityBlock());
-        $registry->register('advertisement', new AdvertisementBlock());
+        $registry->register('custom_html', new CustomHtmlBlock);
+        $registry->register('latest_news', new LatestNewsBlock);
+        $registry->register('link_list', new LinkListBlock);
+        $registry->register('stats', new StatsBlock);
+        $registry->register('recent_activity', new RecentActivityBlock);
+        $registry->register('advertisement', new AdvertisementBlock);
     }
 }
