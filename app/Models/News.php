@@ -4,13 +4,15 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Spatie\MediaLibrary\HasMedia as HasMediaInterface;
+use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
 use Spatie\Tags\HasTags;
 
-class News extends Model
+class News extends Model implements HasMediaInterface
 {
-    use HasSlug, HasTags;
+    use HasSlug, HasTags, InteractsWithMedia;
 
     protected $fillable = [
         'user_id',
@@ -74,5 +76,29 @@ class News extends Model
     public function scopeFeatured($query)
     {
         return $query->where('is_featured', true);
+    }
+
+    /**
+     * Register media collections for this model.
+     */
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('featured-image')
+            ->useDisk('public')
+            ->singleFile()
+            ->acceptsMimeTypes(['image/jpeg', 'image/png', 'image/gif', 'image/webp'])
+            ->registerMediaConversions(function () {
+                $this->addMediaConversion('thumb')
+                    ->width(400)
+                    ->height(300)
+                    ->optimize()
+                    ->nonQueued();
+
+                $this->addMediaConversion('large')
+                    ->width(1200)
+                    ->height(630)
+                    ->optimize()
+                    ->nonQueued();
+            });
     }
 }

@@ -6,13 +6,15 @@ use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Spatie\MediaLibrary\HasMedia as HasMediaInterface;
+use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
 use Spatie\Tags\HasTags;
 
-class Gallery extends Model
+class Gallery extends Model implements HasMediaInterface
 {
-    use HasTags, HasSlug;
+    use HasTags, HasSlug, InteractsWithMedia;
 
     protected $fillable = [
         'user_id',
@@ -61,5 +63,31 @@ class Gallery extends Model
     public function getRouteKeyName(): string
     {
         return 'slug';
+    }
+
+    /**
+     * Register media collections for this model.
+     */
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('gallery-images')
+            ->useDisk('public')
+            ->acceptsMimeTypes(['image/jpeg', 'image/png', 'image/gif', 'image/webp'])
+            ->registerMediaConversions(function () {
+                $this->addMediaConversion('thumb')
+                    ->width(300)
+                    ->height(300)
+                    ->optimize()
+                    ->nonQueued();
+
+                $this->addMediaConversion('preview')
+                    ->width(800)
+                    ->height(600)
+                    ->optimize()
+                    ->nonQueued();
+            });
+
+        $this->addMediaCollection('downloads')
+            ->useDisk('public');
     }
 }
