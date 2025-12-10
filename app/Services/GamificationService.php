@@ -81,12 +81,17 @@ class GamificationService
         ];
 
         if (isset($milestones[$streak])) {
-            $user->badges()->firstOrCreate([
+            // Find or create the badge
+            $badge = \App\Models\User\UserBadge::firstOrCreate([
                 'badge' => $milestones[$streak]['name'],
             ], [
                 'description' => $milestones[$streak]['description'],
-                'awarded_at' => now(),
             ]);
+            
+            // Attach badge to user if not already attached
+            if (!$user->badges()->where('badge_id', $badge->id)->exists()) {
+                $user->badges()->attach($badge->id, ['awarded_at' => now()]);
+            }
             
             // Bonus XP for milestone
             $this->reputationService->awardXP($user, $streak, 'streak_milestone');
@@ -155,15 +160,22 @@ class GamificationService
      */
     public function awardAchievement(User $user, string $key, string $name, string $description): void
     {
-        $achievement = $user->achievements()->firstOrCreate([
+        // Find or create the achievement
+        $achievement = \App\Models\User\UserAchievement::firstOrCreate([
             'achievement_key' => $key,
         ], [
             'achievement_name' => $name,
             'achievement_description' => $description,
-            'unlocked_at' => now(),
         ]);
 
-        if ($achievement->wasRecentlyCreated) {
+        // Check if user already has this achievement
+        if (!$user->achievements()->where('achievement_id', $achievement->id)->exists()) {
+            $user->achievements()->attach($achievement->id, [
+                'progress' => 100,
+                'is_unlocked' => true,
+                'unlocked_at' => now(),
+            ]);
+            
             // Award XP for achievement
             $this->reputationService->awardXP($user, 50, 'achievement_' . $key);
         }

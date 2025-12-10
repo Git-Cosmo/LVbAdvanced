@@ -70,12 +70,18 @@ class ReputationService
     }
 
     /**
-     * Award karma based on reactions
+     * Award karma based on reactions received on user's posts
      */
     public function updateKarma(User $user): void
     {
-        $karma = ForumReaction::where('user_id', $user->id)
+        // Count likes received on posts by this user
+        $karma = ForumReaction::where('reactable_type', \App\Models\Forum\ForumPost::class)
             ->where('type', 'like')
+            ->whereIn('reactable_id', function($query) use ($user) {
+                $query->select('id')
+                      ->from('forum_posts')
+                      ->where('user_id', $user->id);
+            })
             ->count();
         
         $user->profile->update(['karma' => $karma]);
@@ -95,12 +101,17 @@ class ReputationService
         ];
         
         if (isset($badges[$level])) {
-            $user->badges()->firstOrCreate([
+            // Find or create the badge
+            $badge = \App\Models\User\UserBadge::firstOrCreate([
                 'badge' => $badges[$level]['name'],
             ], [
                 'description' => $badges[$level]['description'],
-                'awarded_at' => now(),
             ]);
+            
+            // Attach badge to user if not already attached
+            if (!$user->badges()->where('badge_id', $badge->id)->exists()) {
+                $user->badges()->attach($badge->id, ['awarded_at' => now()]);
+            }
         }
     }
 

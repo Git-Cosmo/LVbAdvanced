@@ -6,12 +6,15 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     @php
-        $seoService = app(\App\Services\SeoService::class);
-        $seoData = isset($seoMeta) ? $seoMeta : $seoService->generateMetaTags([
-            'title' => $page->meta_title ?? $page->title ?? 'FPSociety - Ultimate Gaming Community',
-            'description' => $page->meta_description ?? 'Join FPSociety, the premier gaming community for Counter Strike 2, GTA V, Fortnite, and more.',
-            'keywords' => $page->meta_keywords ?? null,
-        ]);
+        // Use provided SEO data or generate defaults
+        if (!isset($seoData)) {
+            $seoService = app(\App\Services\SeoService::class);
+            $seoData = $seoService->generateMetaTags([
+                'title' => $page->meta_title ?? $page->title ?? 'FPSociety - Ultimate Gaming Community',
+                'description' => $page->meta_description ?? 'Join FPSociety, the premier gaming community for Counter Strike 2, GTA V, Fortnite, and more.',
+                'keywords' => $page->meta_keywords ?? null,
+            ]);
+        }
     @endphp
 
     <title>{{ $seoData['basic']['title'] }}</title>
