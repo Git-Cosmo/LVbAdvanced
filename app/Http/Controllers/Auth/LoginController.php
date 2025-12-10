@@ -10,6 +10,13 @@ use Illuminate\View\View;
 
 class LoginController extends Controller
 {
+    protected \App\Services\GamificationService $gamificationService;
+
+    public function __construct(\App\Services\GamificationService $gamificationService)
+    {
+        $this->gamificationService = $gamificationService;
+    }
+
     public function showLoginForm(): View
     {
         return view('auth.login');
@@ -24,6 +31,9 @@ class LoginController extends Controller
 
         if (Auth::attempt($credentials, $request->filled('remember'))) {
             $request->session()->regenerate();
+
+            // Award XP for daily login and check streaks
+            $this->gamificationService->awardActionXP(Auth::user(), 'daily_login');
 
             if (Auth::user()->hasRole('Administrator')) {
                 return redirect()->intended(route('admin.dashboard'));

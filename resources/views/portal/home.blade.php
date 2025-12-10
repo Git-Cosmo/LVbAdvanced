@@ -7,10 +7,10 @@
         <!-- Welcome Block -->
         <div class="dark:bg-dark-bg-secondary bg-light-bg-secondary rounded-lg shadow-md p-6">
             <h3 class="text-lg font-bold dark:text-dark-text-bright text-light-text-bright mb-4 border-b dark:border-dark-border-primary border-light-border-primary pb-2">
-                Welcome
+                Welcome to FPSociety
             </h3>
             <p class="dark:text-dark-text-secondary text-light-text-secondary text-sm mb-4">
-                Welcome to vBadvanced Portal, a modern forum platform built with Laravel 12.
+                Join the ultimate gaming community for Counter Strike 2, GTA V, Fortnite, and more. Share mods, compete, and connect!
             </p>
             @guest
                 <div class="space-y-2">
@@ -101,28 +101,33 @@
             <!-- Hero Welcome -->
             <div class="dark:bg-gradient-to-r from-dark-bg-secondary to-dark-bg-tertiary bg-gradient-to-r from-light-bg-secondary to-light-bg-tertiary rounded-lg shadow-md p-8">
                 <h1 class="text-3xl font-bold dark:text-dark-text-bright text-light-text-bright mb-3">
-                    Welcome to vBadvanced Portal
+                    Welcome to FPSociety Gaming Community
                 </h1>
                 <p class="dark:text-dark-text-secondary text-light-text-secondary mb-4">
-                    A modern, feature-rich portal system inspired by vBadvanced CMPS, built with Laravel 12 and TailwindCSS.
+                    The premier destination for FPS and gaming enthusiasts. Download custom maps for CS2, GTA V mods, Fortnite skins, and connect with gamers worldwide. Compete in tournaments, share gameplay, and level up your gaming experience!
                 </p>
-                <a href="{{ route('forum.index') }}" class="inline-block px-6 py-2 bg-gradient-to-r from-accent-blue to-accent-purple text-white rounded-lg font-medium hover:shadow-lg hover:scale-105 transition-all">
-                    Visit Forums
-                </a>
+                <div class="flex flex-wrap gap-3">
+                    <a href="{{ route('forum.index') }}" class="inline-block px-6 py-2 bg-gradient-to-r from-accent-blue to-accent-purple text-white rounded-lg font-medium hover:shadow-lg hover:scale-105 transition-all">
+                        Explore Forums
+                    </a>
+                    <a href="{{ route('media.index') }}" class="inline-block px-6 py-2 dark:bg-dark-bg-elevated bg-light-bg-elevated dark:text-dark-text-bright text-light-text-bright rounded-lg font-medium hover:shadow-lg hover:scale-105 transition-all">
+                        Browse Downloads
+                    </a>
+                </div>
             </div>
 
             <!-- Latest News -->
             <div class="dark:bg-dark-bg-secondary bg-light-bg-secondary rounded-lg shadow-md p-6">
                 <h3 class="text-xl font-bold dark:text-dark-text-bright text-light-text-bright mb-4 border-b dark:border-dark-border-primary border-light-border-primary pb-2">
-                    Latest News
+                    Gaming News & Updates
                 </h3>
                 <div class="space-y-4">
                     <article class="border-b dark:border-dark-border-primary border-light-border-primary pb-4 last:border-0">
                         <h4 class="font-semibold dark:text-dark-text-primary text-light-text-primary mb-2">
-                            Welcome to Our New Portal
+                            🎮 Welcome to FPSociety!
                         </h4>
                         <p class="dark:text-dark-text-secondary text-light-text-secondary text-sm mb-2">
-                            We're excited to announce the launch of our new portal system. Explore the forums, connect with community members, and share your ideas.
+                            Join thousands of gamers in our community! Download custom CS2 maps, GTA V mods, Fortnite skins, and more. Participate in tournaments, earn XP, and climb the leaderboards!
                         </p>
                         <span class="text-xs dark:text-dark-text-tertiary text-light-text-tertiary">
                             Posted on {{ now()->format('M d, Y') }}
@@ -130,10 +135,10 @@
                     </article>
                     <article class="border-b dark:border-dark-border-primary border-light-border-primary pb-4 last:border-0">
                         <h4 class="font-semibold dark:text-dark-text-primary text-light-text-primary mb-2">
-                            Forum Features Overview
+                            🏆 New Gamification System Live
                         </h4>
                         <p class="dark:text-dark-text-secondary text-light-text-secondary text-sm mb-2">
-                            Our forum includes powerful features like polls, reactions, BBCode support, file attachments, and a comprehensive moderation system.
+                            Earn XP, unlock achievements, and compete on seasonal leaderboards. Build your reputation and become a legend in the FPSociety community!
                         </p>
                         <span class="text-xs dark:text-dark-text-tertiary text-light-text-tertiary">
                             Posted on {{ now()->subDays(2)->format('M d, Y') }}
@@ -145,7 +150,7 @@
             <!-- Features Overview -->
             <div class="dark:bg-dark-bg-secondary bg-light-bg-secondary rounded-lg shadow-md p-6">
                 <h3 class="text-xl font-bold dark:text-dark-text-bright text-light-text-bright mb-4 border-b dark:border-dark-border-primary border-light-border-primary pb-2">
-                    Key Features
+                    Community Features
                 </h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div class="flex items-start space-x-3">
@@ -155,8 +160,8 @@
                             </svg>
                         </div>
                         <div>
-                            <h4 class="font-semibold dark:text-dark-text-primary text-light-text-primary text-sm">Forum System</h4>
-                            <p class="dark:text-dark-text-tertiary text-light-text-tertiary text-xs">Full-featured discussions</p>
+                            <h4 class="font-semibold dark:text-dark-text-primary text-light-text-primary text-sm">Game Downloads</h4>
+                            <p class="dark:text-dark-text-tertiary text-light-text-tertiary text-xs">Maps, mods, skins & more</p>
                         </div>
                     </div>
                     <div class="flex items-start space-x-3">
@@ -166,8 +171,8 @@
                             </svg>
                         </div>
                         <div>
-                            <h4 class="font-semibold dark:text-dark-text-primary text-light-text-primary text-sm">User Profiles</h4>
-                            <p class="dark:text-dark-text-tertiary text-light-text-tertiary text-xs">XP, levels & badges</p>
+                            <h4 class="font-semibold dark:text-dark-text-primary text-light-text-primary text-sm">XP & Leveling</h4>
+                            <p class="dark:text-dark-text-tertiary text-light-text-tertiary text-xs">Earn rewards for activity</p>
                         </div>
                     </div>
                     <div class="flex items-start space-x-3">
@@ -177,8 +182,8 @@
                             </svg>
                         </div>
                         <div>
-                            <h4 class="font-semibold dark:text-dark-text-primary text-light-text-primary text-sm">Moderation Tools</h4>
-                            <p class="dark:text-dark-text-tertiary text-light-text-tertiary text-xs">Reports, warnings & bans</p>
+                            <h4 class="font-semibold dark:text-dark-text-primary text-light-text-primary text-sm">Leaderboards</h4>
+                            <p class="dark:text-dark-text-tertiary text-light-text-tertiary text-xs">Compete with gamers</p>
                         </div>
                     </div>
                     <div class="flex items-start space-x-3">
@@ -188,8 +193,8 @@
                             </svg>
                         </div>
                         <div>
-                            <h4 class="font-semibold dark:text-dark-text-primary text-light-text-primary text-sm">Rich Content</h4>
-                            <p class="dark:text-dark-text-tertiary text-light-text-tertiary text-xs">BBCode & attachments</p>
+                            <h4 class="font-semibold dark:text-dark-text-primary text-light-text-primary text-sm">Tournaments</h4>
+                            <p class="dark:text-dark-text-tertiary text-light-text-tertiary text-xs">Compete & win prizes</p>
                         </div>
                     </div>
                 </div>
@@ -238,15 +243,18 @@
         <!-- Community Info Block -->
         <div class="dark:bg-dark-bg-secondary bg-light-bg-secondary rounded-lg shadow-md p-6">
             <h3 class="text-lg font-bold dark:text-dark-text-bright text-light-text-bright mb-4 border-b dark:border-dark-border-primary border-light-border-primary pb-2">
-                About
+                Popular Games
             </h3>
             <p class="dark:text-dark-text-secondary text-light-text-secondary text-sm mb-4">
-                Built with Laravel 12, this modern forum platform combines the classic vBadvanced CMPS layout with contemporary design and features.
+                Find content, discussions, and downloads for your favorite games!
             </p>
             <div class="flex flex-wrap gap-2">
-                <span class="px-2 py-1 dark:bg-dark-bg-tertiary bg-light-bg-tertiary dark:text-dark-text-accent text-light-text-accent text-xs rounded">Laravel 12</span>
-                <span class="px-2 py-1 dark:bg-dark-bg-tertiary bg-light-bg-tertiary dark:text-dark-text-accent text-light-text-accent text-xs rounded">TailwindCSS</span>
-                <span class="px-2 py-1 dark:bg-dark-bg-tertiary bg-light-bg-tertiary dark:text-dark-text-accent text-light-text-accent text-xs rounded">Alpine.js</span>
+                <span class="px-2 py-1 dark:bg-dark-bg-tertiary bg-light-bg-tertiary dark:text-dark-text-accent text-light-text-accent text-xs rounded">CS2</span>
+                <span class="px-2 py-1 dark:bg-dark-bg-tertiary bg-light-bg-tertiary dark:text-dark-text-accent text-light-text-accent text-xs rounded">GTA V</span>
+                <span class="px-2 py-1 dark:bg-dark-bg-tertiary bg-light-bg-tertiary dark:text-dark-text-accent text-light-text-accent text-xs rounded">Fortnite</span>
+                <span class="px-2 py-1 dark:bg-dark-bg-tertiary bg-light-bg-tertiary dark:text-dark-text-accent text-light-text-accent text-xs rounded">Call of Duty</span>
+                <span class="px-2 py-1 dark:bg-dark-bg-tertiary bg-light-bg-tertiary dark:text-dark-text-accent text-light-text-accent text-xs rounded">Minecraft</span>
+                <span class="px-2 py-1 dark:bg-dark-bg-tertiary bg-light-bg-tertiary dark:text-dark-text-accent text-light-text-accent text-xs rounded">Valorant</span>
             </div>
         </div>
     </aside>

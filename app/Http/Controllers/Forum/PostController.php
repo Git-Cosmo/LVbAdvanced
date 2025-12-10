@@ -6,13 +6,15 @@ use App\Http\Controllers\Controller;
 use App\Models\Forum\ForumPost;
 use App\Models\Forum\ForumThread;
 use App\Services\Forum\ThreadService;
+use App\Services\GamificationService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 class PostController extends Controller
 {
     public function __construct(
-        protected ThreadService $threadService
+        protected ThreadService $threadService,
+        protected GamificationService $gamificationService
     ) {}
 
     /**
@@ -28,6 +30,9 @@ class PostController extends Controller
         ]);
         
         $this->threadService->createPost($thread, $validated, $request->user());
+        
+        // Award XP for creating a post
+        $this->gamificationService->awardActionXP($request->user(), 'create_post');
         
         return redirect()->route('forum.thread.show', $thread->slug)
             ->with('success', 'Post created successfully!');

@@ -5,15 +5,38 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ $page->meta_title ?? $page->title ?? config('app.name', 'vBadvanced Portal') }}</title>
+    @php
+        // Use provided SEO data or generate defaults
+        if (!isset($seoData)) {
+            $seoService = app(\App\Services\SeoService::class);
+            $seoData = $seoService->generateMetaTags([
+                'title' => $page->meta_title ?? $page->title ?? 'FPSociety - Ultimate Gaming Community',
+                'description' => $page->meta_description ?? 'Join FPSociety, the premier gaming community for Counter Strike 2, GTA V, Fortnite, and more.',
+                'keywords' => $page->meta_keywords ?? null,
+            ]);
+        }
+    @endphp
+
+    <title>{{ $seoData['basic']['title'] }}</title>
     
-    @if(isset($page->meta_description))
-        <meta name="description" content="{{ $page->meta_description }}">
-    @endif
+    <!-- Basic Meta Tags -->
+    <meta name="description" content="{{ $seoData['basic']['description'] }}">
+    <meta name="keywords" content="{{ $seoData['basic']['keywords'] }}">
     
-    @if(isset($page->meta_keywords))
-        <meta name="keywords" content="{{ $page->meta_keywords }}">
-    @endif
+    <!-- Open Graph Meta Tags -->
+    @foreach($seoData['og'] as $property => $content)
+        <meta property="{{ $property }}" content="{{ $content }}">
+    @endforeach
+    
+    <!-- Twitter Card Meta Tags -->
+    @foreach($seoData['twitter'] as $name => $content)
+        <meta name="{{ $name }}" content="{{ $content }}">
+    @endforeach
+    
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+        {!! json_encode($seoData['structured']) !!}
+    </script>
 
     @vite(['resources/css/app.css', 'resources/css/forum.css', 'resources/js/app.js', 'resources/js/forum.js', 'resources/js/mentions.js'])
 </head>
@@ -32,7 +55,7 @@
                             </svg>
                         </div>
                         <span class="text-xl font-bold dark:text-dark-text-bright text-light-text-bright gradient-text">
-                            {{ config('app.name', 'vBadvanced Portal') }}
+                            FPSociety
                         </span>
                     </a>
 
@@ -182,15 +205,15 @@
 
             <!-- Secondary Navigation Bar (like vBadvanced) -->
             <div class="hidden md:flex items-center space-x-4 py-3 border-t dark:border-dark-border-secondary border-light-border-secondary">
-                <a href="#" class="text-sm dark:text-dark-text-secondary text-light-text-secondary dark:hover:text-dark-text-accent hover:text-light-text-accent transition-colors">What's New</a>
+                <a href="{{ route('activity.whats-new') }}" class="text-sm dark:text-dark-text-secondary text-light-text-secondary dark:hover:text-dark-text-accent hover:text-light-text-accent transition-colors">What's New</a>
                 <span class="dark:text-dark-border-primary text-light-border-primary">•</span>
-                <a href="#" class="text-sm dark:text-dark-text-secondary text-light-text-secondary dark:hover:text-dark-text-accent hover:text-light-text-accent transition-colors">Recent Posts</a>
+                <a href="{{ route('activity.recent-posts') }}" class="text-sm dark:text-dark-text-secondary text-light-text-secondary dark:hover:text-dark-text-accent hover:text-light-text-accent transition-colors">Recent Posts</a>
                 <span class="dark:text-dark-border-primary text-light-border-primary">•</span>
-                <a href="#" class="text-sm dark:text-dark-text-secondary text-light-text-secondary dark:hover:text-dark-text-accent hover:text-light-text-accent transition-colors">Top Members</a>
+                <a href="{{ route('activity.trending') }}" class="text-sm dark:text-dark-text-secondary text-light-text-secondary dark:hover:text-dark-text-accent hover:text-light-text-accent transition-colors">Trending</a>
                 <span class="dark:text-dark-border-primary text-light-border-primary">•</span>
-                <a href="#" class="text-sm dark:text-dark-text-secondary text-light-text-secondary dark:hover:text-dark-text-accent hover:text-light-text-accent transition-colors">Calendar</a>
+                <a href="{{ route('leaderboard.index') }}" class="text-sm dark:text-dark-text-secondary text-light-text-secondary dark:hover:text-dark-text-accent hover:text-light-text-accent transition-colors">Leaderboard</a>
                 <span class="dark:text-dark-border-primary text-light-border-primary">•</span>
-                <a href="#" class="text-sm dark:text-dark-text-secondary text-light-text-secondary dark:hover:text-dark-text-accent hover:text-light-text-accent transition-colors">Help</a>
+                <a href="{{ route('media.index') }}" class="text-sm dark:text-dark-text-secondary text-light-text-secondary dark:hover:text-dark-text-accent hover:text-light-text-accent transition-colors">Gallery</a>
                 <div class="flex-1"></div>
                 <div class="text-sm dark:text-dark-text-tertiary text-light-text-tertiary">
                     <span class="dark:text-dark-text-accent text-light-text-accent font-semibold">{{ \App\Models\User::count() }}</span> members,
@@ -211,9 +234,9 @@
             <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
                 <!-- About Section -->
                 <div>
-                    <h3 class="text-lg font-bold dark:text-dark-text-bright text-light-text-bright mb-4">About Portal</h3>
+                    <h3 class="text-lg font-bold dark:text-dark-text-bright text-light-text-bright mb-4">About FPSociety</h3>
                     <p class="dark:text-dark-text-secondary text-light-text-secondary text-sm">
-                        A modern, feature-rich portal system inspired by vBadvanced CMPS, built with Laravel 12 and TailwindCSS.
+                        FPSociety is the ultimate gaming community for Counter Strike 2, GTA V, Fortnite, Call of Duty and more. Share mods, maps, and connect with gamers worldwide.
                     </p>
                 </div>
                 
@@ -264,10 +287,10 @@
             
             <div class="border-t dark:border-dark-border-primary border-light-border-primary mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
                 <p class="dark:text-dark-text-tertiary text-light-text-tertiary text-sm">
-                    &copy; {{ date('Y') }} {{ config('app.name') }}. All rights reserved.
+                    &copy; {{ date('Y') }} FPSociety - Gaming Community. All rights reserved.
                 </p>
                 <p class="dark:text-dark-text-tertiary text-light-text-tertiary text-sm mt-2 md:mt-0">
-                    Powered by <span class="gradient-text font-semibold">vBadvanced Portal System</span>
+                    Powered by <span class="gradient-text font-semibold">Laravel & Passion for Gaming</span>
                 </p>
             </div>
         </div>

@@ -48,3 +48,4 @@ Homestead.yaml
 auth.json
 
 public/build/manifest.json
+/public/build

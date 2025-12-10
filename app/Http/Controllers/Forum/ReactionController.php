@@ -10,6 +10,13 @@ use Illuminate\Http\Request;
 
 class ReactionController extends Controller
 {
+    protected \App\Services\GamificationService $gamificationService;
+
+    public function __construct(\App\Services\GamificationService $gamificationService)
+    {
+        $this->gamificationService = $gamificationService;
+    }
+
     /**
      * Add or remove a reaction to a post.
      */
@@ -42,6 +49,11 @@ class ReactionController extends Controller
                 'type' => $validated['type'],
             ]);
             $post->increment('reactions_count');
+            
+            // Award XP to post author for receiving a like
+            if ($validated['type'] === 'like' && $post->user_id !== auth()->id()) {
+                $this->gamificationService->awardActionXP($post->user, 'receive_like');
+            }
         }
         
         return back()->with('success', 'Reaction updated!');
