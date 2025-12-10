@@ -128,4 +128,132 @@ class ModerationController extends Controller
         
         return back()->with('success', 'User unbanned successfully.');
     }
+    
+    /**
+     * Show form to merge threads.
+     */
+    public function mergeThreadsForm(): View
+    {
+        return view('admin.moderation.merge-threads');
+    }
+    
+    /**
+     * Merge threads.
+     */
+    public function mergeThreads(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'source_thread_id' => 'required|exists:forum_threads,id',
+            'target_thread_id' => 'required|exists:forum_threads,id|different:source_thread_id',
+        ]);
+        
+        $sourceThread = ForumThread::findOrFail($validated['source_thread_id']);
+        $targetThread = ForumThread::findOrFail($validated['target_thread_id']);
+        
+        // Move all posts from source to target
+        ForumPost::where('thread_id', $sourceThread->id)
+            ->update(['thread_id' => $targetThread->id]);
+        
+        // Update target thread stats
+        $targetThread->increment('posts_count', $sourceThread->posts_count);
+        $targetThread->increment('views_count', $sourceThread->views_count);
+        
+        // Delete source thread
+        $sourceThread->delete();
+        
+        return redirect()->route('admin.moderation.index')
+            ->with('success', 'Threads merged successfully.');
+    }
+    
+    /**
+     * Show form to move thread.
+     */
+    public function moveThreadForm(ForumThread $thread): View
+    {
+        $forums = \App\Models\Forum\Forum::with('category')->get()->groupBy('category_id');
+        return view('admin.moderation.move-thread', compact('thread', 'forums'));
+    }
+    
+    /**
+     * Move thread to different forum.
+     */
+    public function moveThread(Request $request, ForumThread $thread): RedirectResponse
+    {
+        $validated = $request->validate([
+            'forum_id' => 'required|exists:forums,id|different:' . $thread->forum_id,
+        ]);
+        
+        $oldForum = $thread->forum;
+        $newForum = \App\Models\Forum\Forum::findOrFail($validated['forum_id']);
+        
+        // Update thread
+        $thread->update(['forum_id' => $newForum->id]);
+        
+        // Update forum stats
+        $oldForum->decrement('threads_count');
+        $oldForum->decrement('posts_count', $thread->posts_count);
+        
+        $newForum->increment('threads_count');
+        $newForum->increment('posts_count', $thread->posts_count);
+        
+        return redirect()->route('admin.moderation.index')
+            ->with('success', 'Thread moved successfully.');
+    }
+    
+    /**
+     * Show pending content approval queue.
+     */
+    public function approvalQueue(): View
+    {
+        $pendingThreads = ForumThread::where('is_hidden', true)
+            ->where('is_locked', false)
+            ->with(['user', 'forum'])
+            ->orderByDesc('created_at')
+            ->paginate(20);
+        
+        return view('admin.moderation.approval-queue', compact('pendingThreads'));
+    }
+    
+    /**
+     * Approve content.
+     */
+    public function approveContent(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'type' => 'required|in:thread,post',
+            'id' => 'required|integer',
+        ]);
+        
+        if ($validated['type'] === 'thread') {
+            $thread = ForumThread::findOrFail($validated['id']);
+            $thread->update(['is_hidden' => false]);
+        } else {
+            $post = ForumPost::findOrFail($validated['id']);
+            $post->update(['is_hidden' => false]);
+        }
+        
+        return back()->with('success', 'Content approved successfully.');
+    }
+    
+    /**
+     * Reject/deny content.
+     */
+    public function denyContent(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'type' => 'required|in:thread,post',
+            'id' => 'required|integer',
+            'reason' => 'nullable|string|max:500',
+        ]);
+        
+        if ($validated['type'] === 'thread') {
+            $thread = ForumThread::findOrFail($validated['id']);
+            $thread->delete();
+        } else {
+            $post = ForumPost::findOrFail($validated['id']);
+            $post->delete();
+        }
+        
+        return back()->with('success', 'Content denied and deleted.');
+    }
 }

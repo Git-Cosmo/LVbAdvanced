@@ -188,6 +188,17 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
         Route::get('/warnings', [\App\Http\Controllers\Admin\ModerationController::class, 'warnings'])->name('warnings');
         Route::get('/bans', [\App\Http\Controllers\Admin\ModerationController::class, 'bans'])->name('bans');
         Route::post('/bans/{ban}/unban', [\App\Http\Controllers\Admin\ModerationController::class, 'unban'])->name('unban');
+        
+        // Thread management
+        Route::get('/merge-threads', [\App\Http\Controllers\Admin\ModerationController::class, 'mergeThreadsForm'])->name('merge-threads-form');
+        Route::post('/merge-threads', [\App\Http\Controllers\Admin\ModerationController::class, 'mergeThreads'])->name('merge-threads');
+        Route::get('/move-thread/{thread}', [\App\Http\Controllers\Admin\ModerationController::class, 'moveThreadForm'])->name('move-thread-form');
+        Route::post('/move-thread/{thread}', [\App\Http\Controllers\Admin\ModerationController::class, 'moveThread'])->name('move-thread');
+        
+        // Approval queue
+        Route::get('/approval-queue', [\App\Http\Controllers\Admin\ModerationController::class, 'approvalQueue'])->name('approval-queue');
+        Route::post('/approve', [\App\Http\Controllers\Admin\ModerationController::class, 'approveContent'])->name('approve');
+        Route::post('/deny', [\App\Http\Controllers\Admin\ModerationController::class, 'denyContent'])->name('deny');
     });
     
     // Reputation Management
