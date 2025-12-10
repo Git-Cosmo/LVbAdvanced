@@ -23,6 +23,10 @@ return new class extends Migration
      */
     public function up(): void
     {
+        if (DB::getDriverName() === 'sqlite') {
+            return;
+        }
+
         // Add fulltext index to forum_threads table (only title, no content column)
         Schema::table('forum_threads', function (Blueprint $table) {
             DB::statement('ALTER TABLE forum_threads ADD FULLTEXT fulltext_threads_title (title)');
@@ -41,6 +45,10 @@ return new class extends Migration
      */
     public function down(): void
     {
+        if (DB::getDriverName() === 'sqlite') {
+            return;
+        }
+
         Schema::table('forum_threads', function (Blueprint $table) {
             DB::statement('ALTER TABLE forum_threads DROP INDEX fulltext_threads_title');
         });
