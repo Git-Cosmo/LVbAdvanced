@@ -22,10 +22,13 @@ class Forum extends Model
         'last_post_id',
     ];
 
-    protected $casts = [
-        'is_active' => 'boolean',
-        'is_locked' => 'boolean',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'is_active' => 'boolean',
+            'is_locked' => 'boolean',
+        ];
+    }
 
     /**
      * Get the category that owns the forum.

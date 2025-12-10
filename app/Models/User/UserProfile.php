@@ -61,9 +61,10 @@ class UserProfile extends Model
     protected function checkLevelUp(): void
     {
         $requiredXp = $this->level * 1000; // Simple formula
-        if ($this->xp >= $requiredXp) {
+        while ($this->xp >= $requiredXp) {
             $this->level++;
             $this->xp -= $requiredXp;
+            $requiredXp = $this->level * 1000; // Recalculate for next level
         }
     }
 }

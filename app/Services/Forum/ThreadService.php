@@ -121,18 +121,46 @@ class ThreadService
 
     /**
      * Convert BBCode/Markdown content to HTML.
+     * Note: For production, use a dedicated BBCode parser library like s9e/TextFormatter
      */
     protected function convertToHtml(string $content): string
     {
-        // Simple conversion - in production use a proper BBCode/Markdown parser
-        $content = nl2br(e($content));
+        // Escape HTML first to prevent XSS
+        $content = htmlspecialchars($content, ENT_QUOTES, 'UTF-8');
         
-        // Basic BBCode support
+        // Convert newlines to br tags
+        $content = nl2br($content);
+        
+        // Basic BBCode support with validation
         $content = preg_replace('/\[b\](.*?)\[\/b\]/s', '<strong>$1</strong>', $content);
         $content = preg_replace('/\[i\](.*?)\[\/i\]/s', '<em>$1</em>', $content);
         $content = preg_replace('/\[u\](.*?)\[\/u\]/s', '<u>$1</u>', $content);
-        $content = preg_replace('/\[url=(.*?)\](.*?)\[\/url\]/s', '<a href="$1" target="_blank">$2</a>', $content);
-        $content = preg_replace('/\[img\](.*?)\[\/img\]/s', '<img src="$1" class="max-w-full h-auto" />', $content);
+        
+        // URL with validation - only allow http/https
+        $content = preg_replace_callback(
+            '/\[url=(https?:\/\/[^\]]+)\](.*?)\[\/url\]/s',
+            function ($matches) {
+                $url = filter_var($matches[1], FILTER_VALIDATE_URL);
+                if ($url === false) {
+                    return $matches[0]; // Return original if invalid
+                }
+                return '<a href="' . htmlspecialchars($url, ENT_QUOTES, 'UTF-8') . '" target="_blank" rel="noopener noreferrer">' . $matches[2] . '</a>';
+            },
+            $content
+        );
+        
+        // Image with validation - only allow http/https
+        $content = preg_replace_callback(
+            '/\[img\](https?:\/\/[^\[]+)\[\/img\]/s',
+            function ($matches) {
+                $url = filter_var($matches[1], FILTER_VALIDATE_URL);
+                if ($url === false) {
+                    return $matches[0]; // Return original if invalid
+                }
+                return '<img src="' . htmlspecialchars($url, ENT_QUOTES, 'UTF-8') . '" class="max-w-full h-auto" alt="User posted image" />';
+            },
+            $content
+        );
         
         return $content;
     }

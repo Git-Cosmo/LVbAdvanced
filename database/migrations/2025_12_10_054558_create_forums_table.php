@@ -23,7 +23,7 @@ return new class extends Migration
             $table->boolean('is_locked')->default(false);
             $table->integer('threads_count')->default(0);
             $table->integer('posts_count')->default(0);
-            $table->foreignId('last_post_id')->nullable()->constrained('forum_posts')->onDelete('set null');
+            $table->unsignedBigInteger('last_post_id')->nullable(); // No FK constraint - circular dependency
             $table->timestamps();
             
             $table->index(['category_id', 'order']);

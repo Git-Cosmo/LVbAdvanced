@@ -29,12 +29,15 @@ class ForumThread extends Model
         'last_post_at',
     ];
 
-    protected $casts = [
-        'is_pinned' => 'boolean',
-        'is_locked' => 'boolean',
-        'is_hidden' => 'boolean',
-        'last_post_at' => 'datetime',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'is_pinned' => 'boolean',
+            'is_locked' => 'boolean',
+            'is_hidden' => 'boolean',
+            'last_post_at' => 'datetime',
+        ];
+    }
 
     /**
      * Get the forum that owns the thread.

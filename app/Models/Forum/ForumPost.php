@@ -26,11 +26,14 @@ class ForumPost extends Model
         'edited_by',
     ];
 
-    protected $casts = [
-        'is_approved' => 'boolean',
-        'is_hidden' => 'boolean',
-        'edited_at' => 'datetime',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'is_approved' => 'boolean',
+            'is_hidden' => 'boolean',
+            'edited_at' => 'datetime',
+        ];
+    }
 
     /**
      * Get the thread that owns the post.
