@@ -179,7 +179,9 @@
                 <a href="#" class="text-sm dark:text-dark-text-secondary text-light-text-secondary dark:hover:text-dark-text-accent hover:text-light-text-accent transition-colors">Help</a>
                 <div class="flex-1"></div>
                 <div class="text-sm dark:text-dark-text-tertiary text-light-text-tertiary">
-                    <span class="dark:text-dark-text-accent text-light-text-accent font-semibold">{{ \App\Models\User::count() }}</span> members
+                    @if(isset($totalMembers))
+                        <span class="dark:text-dark-text-accent text-light-text-accent font-semibold">{{ $totalMembers }}</span> members
+                    @endif
                 </div>
             </div>
         </div>

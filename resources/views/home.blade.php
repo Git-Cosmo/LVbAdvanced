@@ -129,15 +129,15 @@
                 <div class="p-6 space-y-4">
                     <div class="flex items-center justify-between">
                         <span class="dark:text-dark-text-secondary text-light-text-secondary">Members</span>
-                        <span class="font-bold dark:text-dark-text-accent text-light-text-accent">{{ \App\Models\User::count() }}</span>
+                        <span class="font-bold dark:text-dark-text-accent text-light-text-accent">{{ $totalMembers }}</span>
                     </div>
                     <div class="flex items-center justify-between">
                         <span class="dark:text-dark-text-secondary text-light-text-secondary">Online Now</span>
-                        <span class="font-bold text-accent-green">{{ rand(5, 15) }}</span>
+                        <span class="font-bold text-accent-green">-</span>
                     </div>
                     <div class="flex items-center justify-between">
                         <span class="dark:text-dark-text-secondary text-light-text-secondary">Active Today</span>
-                        <span class="font-bold dark:text-dark-text-accent text-light-text-accent">{{ rand(20, 50) }}</span>
+                        <span class="font-bold dark:text-dark-text-accent text-light-text-accent">-</span>
                     </div>
                 </div>
             </div>
@@ -206,7 +206,7 @@
                 </div>
                 <div class="p-6">
                     <p class="text-sm dark:text-dark-text-secondary text-light-text-secondary text-center">
-                        <span class="font-semibold text-accent-green">{{ rand(5, 15) }}</span> members online now
+                        No members currently online
                     </p>
                 </div>
             </div>
