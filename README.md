@@ -30,10 +30,12 @@ A modern, modular, block-based portal system built with Laravel 12, inspired by 
 - ✅ **Activity Monitoring** - System logs
 
 ### Block Types
-- ✅ Custom HTML Block
-- ✅ Latest News Block
-- ✅ Link List Block
-- ✅ Stats Block
+- ✅ Custom HTML Block - Display custom HTML content
+- ✅ Latest News Block - Display latest news articles
+- ✅ Link List Block - Display a list of links with icons
+- ✅ Stats Block - Display site statistics with colorful cards
+- ✅ Recent Activity Block - Display recent system activity logs
+- ✅ Advertisement Block - Display advertisements (image, text, or ad code)
 
 ## Installation
 
