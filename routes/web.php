@@ -216,6 +216,17 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
         Route::delete('/{news}', [\App\Http\Controllers\Admin\NewsManagementController::class, 'destroy'])->name('destroy');
     });
     
+    // RSS Feed Management
+    Route::prefix('rss')->name('rss.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Admin\RssFeedController::class, 'index'])->name('index');
+        Route::get('/create', [\App\Http\Controllers\Admin\RssFeedController::class, 'create'])->name('create');
+        Route::post('/', [\App\Http\Controllers\Admin\RssFeedController::class, 'store'])->name('store');
+        Route::get('/{rssFeed}/edit', [\App\Http\Controllers\Admin\RssFeedController::class, 'edit'])->name('edit');
+        Route::patch('/{rssFeed}', [\App\Http\Controllers\Admin\RssFeedController::class, 'update'])->name('update');
+        Route::delete('/{rssFeed}', [\App\Http\Controllers\Admin\RssFeedController::class, 'destroy'])->name('destroy');
+        Route::post('/{rssFeed}/import', [\App\Http\Controllers\Admin\RssFeedController::class, 'import'])->name('import');
+    });
+    
     // Gamification Settings
     Route::prefix('gamification')->name('gamification.')->group(function () {
         Route::get('/', [\App\Http\Controllers\Admin\GamificationController::class, 'index'])->name('index');
