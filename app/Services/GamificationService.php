@@ -48,11 +48,14 @@ class GamificationService
             $lastLogin = $user->profile->last_login_at;
             $today = Carbon::today();
             
-            if ($lastLogin && $lastLogin->isYesterday()) {
+            if ($lastLogin && $lastLogin->isToday()) {
+                // Already logged in today, don't modify streak
+                return;
+            } elseif ($lastLogin && $lastLogin->isYesterday()) {
                 // Continue streak
                 $user->profile->increment('login_streak');
-            } elseif (!$lastLogin || !$lastLogin->isToday()) {
-                // Reset or start streak
+            } else {
+                // Reset or start streak (no login yesterday or first time)
                 $user->profile->update(['login_streak' => 1]);
             }
             
