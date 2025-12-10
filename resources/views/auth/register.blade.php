@@ -13,15 +13,15 @@
                 </div>
             </div>
             <h2 class="text-3xl font-extrabold dark:text-dark-text-bright text-light-text-bright">
-                Welcome Back
+                Create your account
             </h2>
             <p class="mt-2 text-sm dark:text-dark-text-secondary text-light-text-secondary">
-                Sign in to your account or <a href="{{ route('register') }}" class="font-medium text-accent-blue hover:text-accent-purple transition-colors">create a new account</a>
+                Join our community today
             </p>
         </div>
         
         <div class="dark:bg-dark-bg-secondary bg-light-bg-secondary rounded-xl shadow-lg p-8">
-            <form method="POST" action="{{ route('login') }}" class="space-y-6">
+            <form method="POST" action="{{ route('register') }}" class="space-y-6">
                 @csrf
                 
                 @if($errors->any())
@@ -34,11 +34,15 @@
                     </div>
                 @endif
 
-                @if(session('status'))
-                    <div class="bg-green-500/10 border border-green-500/50 text-green-600 dark:text-green-400 px-4 py-3 rounded-lg">
-                        <p class="text-sm">{{ session('status') }}</p>
-                    </div>
-                @endif
+                <div>
+                    <label for="name" class="block text-sm font-medium dark:text-dark-text-primary text-light-text-primary mb-2">
+                        Username
+                    </label>
+                    <input id="name" name="name" type="text" autocomplete="name" required 
+                           value="{{ old('name') }}"
+                           class="w-full px-4 py-3 dark:bg-dark-bg-tertiary bg-light-bg-tertiary dark:text-dark-text-primary text-light-text-primary rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-blue @error('name') ring-2 ring-red-500 @enderror"
+                           placeholder="Choose a username">
+                </div>
 
                 <div>
                     <label for="email" class="block text-sm font-medium dark:text-dark-text-primary text-light-text-primary mb-2">
@@ -51,31 +55,38 @@
                 </div>
                 
                 <div>
-                    <div class="flex items-center justify-between mb-2">
-                        <label for="password" class="block text-sm font-medium dark:text-dark-text-primary text-light-text-primary">
-                            Password
-                        </label>
-                        <a href="{{ route('password.request') }}" class="text-sm text-accent-blue hover:text-accent-purple transition-colors">
-                            Forgot password?
-                        </a>
-                    </div>
-                    <input id="password" name="password" type="password" autocomplete="current-password" required 
+                    <label for="password" class="block text-sm font-medium dark:text-dark-text-primary text-light-text-primary mb-2">
+                        Password
+                    </label>
+                    <input id="password" name="password" type="password" autocomplete="new-password" required 
                            class="w-full px-4 py-3 dark:bg-dark-bg-tertiary bg-light-bg-tertiary dark:text-dark-text-primary text-light-text-primary rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-blue @error('password') ring-2 ring-red-500 @enderror"
-                           placeholder="Enter your password">
+                           placeholder="Create a strong password">
+                    <p class="mt-1 text-xs dark:text-dark-text-tertiary text-light-text-tertiary">
+                        Must be at least 8 characters
+                    </p>
                 </div>
 
-                <div class="flex items-center">
-                    <input id="remember" name="remember" type="checkbox" 
-                           class="h-4 w-4 text-accent-blue focus:ring-accent-blue border-gray-300 rounded">
-                    <label for="remember" class="ml-2 block text-sm dark:text-dark-text-secondary text-light-text-secondary">
-                        Remember me
+                <div>
+                    <label for="password_confirmation" class="block text-sm font-medium dark:text-dark-text-primary text-light-text-primary mb-2">
+                        Confirm Password
+                    </label>
+                    <input id="password_confirmation" name="password_confirmation" type="password" autocomplete="new-password" required 
+                           class="w-full px-4 py-3 dark:bg-dark-bg-tertiary bg-light-bg-tertiary dark:text-dark-text-primary text-light-text-primary rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-blue"
+                           placeholder="Confirm your password">
+                </div>
+
+                <div class="flex items-start">
+                    <input id="terms" name="terms" type="checkbox" required
+                           class="h-4 w-4 mt-1 text-accent-blue focus:ring-accent-blue border-gray-300 rounded">
+                    <label for="terms" class="ml-2 block text-sm dark:text-dark-text-secondary text-light-text-secondary">
+                        I agree to the <a href="#" class="text-accent-blue hover:text-accent-purple">Terms of Service</a> and <a href="#" class="text-accent-blue hover:text-accent-purple">Privacy Policy</a>
                     </label>
                 </div>
 
                 <div>
                     <button type="submit" 
                             class="w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-gradient-to-r from-accent-blue to-accent-purple hover:shadow-lg hover:scale-105 transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent-blue">
-                        Sign in
+                        Create Account
                     </button>
                 </div>
 
@@ -86,7 +97,7 @@
                     </div>
                     <div class="relative flex justify-center text-sm">
                         <span class="px-2 dark:bg-dark-bg-secondary bg-light-bg-secondary dark:text-dark-text-tertiary text-light-text-tertiary">
-                            Or continue with
+                            Or sign up with
                         </span>
                     </div>
                 </div>
@@ -109,9 +120,9 @@
         </div>
         
         <p class="text-center text-sm dark:text-dark-text-tertiary text-light-text-tertiary">
-            Don't have an account? 
-            <a href="{{ route('register') }}" class="font-medium text-accent-blue hover:text-accent-purple transition-colors">
-                Sign up for free
+            Already have an account? 
+            <a href="{{ route('login') }}" class="font-medium text-accent-blue hover:text-accent-purple transition-colors">
+                Sign in
             </a>
         </p>
     </div>
