@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\Forum\Forum;
-use App\Models\Forum\Thread;
+use App\Models\Forum\ForumThread;
 use Illuminate\View\View;
 
 class DashboardController extends Controller
@@ -15,7 +15,7 @@ class DashboardController extends Controller
         $stats = [
             'users' => User::count(),
             'forums' => Forum::count(),
-            'threads' => Thread::count(),
+            'threads' => ForumThread::count(),
         ];
 
         return view('admin.dashboard', compact('stats'));

@@ -120,13 +120,13 @@
         </div>
         <div class="dark:bg-dark-bg-secondary bg-light-bg-secondary rounded-lg p-6 text-center shadow-md">
             <div class="text-3xl font-bold dark:text-dark-text-accent text-light-text-accent mb-2">
-                {{ \App\Models\Forum\Thread::count() }}
+                {{ \App\Models\Forum\ForumThread::count() }}
             </div>
             <div class="dark:text-dark-text-secondary text-light-text-secondary">Threads</div>
         </div>
         <div class="dark:bg-dark-bg-secondary bg-light-bg-secondary rounded-lg p-6 text-center shadow-md">
             <div class="text-3xl font-bold dark:text-dark-text-accent text-light-text-accent mb-2">
-                {{ \App\Models\Forum\Post::count() }}
+                {{ \App\Models\Forum\ForumPost::count() }}
             </div>
             <div class="dark:text-dark-text-secondary text-light-text-secondary">Posts</div>
         </div>
