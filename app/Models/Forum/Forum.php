@@ -5,9 +5,12 @@ namespace App\Models\Forum;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Spatie\Sluggable\HasSlug;
+use Spatie\Sluggable\SlugOptions;
 
 class Forum extends Model
 {
+    use HasSlug;
     protected $fillable = [
         'category_id',
         'parent_id',
@@ -68,6 +71,25 @@ class Forum extends Model
     public function lastPost(): BelongsTo
     {
         return $this->belongsTo(ForumPost::class, 'last_post_id');
+    }
+
+    /**
+     * Get the options for generating the slug.
+     */
+    public function getSlugOptions(): SlugOptions
+    {
+        return SlugOptions::create()
+            ->generateSlugsFrom('name')
+            ->saveSlugsTo('slug')
+            ->doNotGenerateSlugsOnUpdate();
+    }
+
+    /**
+     * Get the route key for the model.
+     */
+    public function getRouteKeyName(): string
+    {
+        return 'slug';
     }
 
     /**

@@ -56,6 +56,15 @@ Route::middleware('auth')->group(function () {
     Route::post('/2fa/verify', [\App\Http\Controllers\Auth\TwoFactorController::class, 'verify'])->name('2fa.verify');
 });
 
+// Settings Routes
+Route::middleware('auth')->prefix('settings')->name('settings.')->group(function () {
+    Route::get('/', [\App\Http\Controllers\SettingsController::class, 'index'])->name('index');
+    Route::patch('/account', [\App\Http\Controllers\SettingsController::class, 'updateAccount'])->name('update.account');
+    Route::patch('/password', [\App\Http\Controllers\SettingsController::class, 'updatePassword'])->name('update.password');
+    Route::patch('/privacy', [\App\Http\Controllers\SettingsController::class, 'updatePrivacy'])->name('update.privacy');
+    Route::patch('/notifications', [\App\Http\Controllers\SettingsController::class, 'updateNotifications'])->name('update.notifications');
+});
+
 // Profile Routes
 Route::prefix('profile')->name('profile.')->group(function () {
     Route::get('/{user}', [ProfileController::class, 'show'])->name('show');
@@ -208,14 +217,22 @@ Route::prefix('activity')->name('activity.')->group(function () {
     Route::get('/recommended', [ActivityFeedController::class, 'recommended'])->name('recommended')->middleware('auth');
 });
 
+// News Routes
+Route::prefix('news')->name('news.')->group(function () {
+    Route::get('/', [\App\Http\Controllers\NewsController::class, 'index'])->name('index');
+    Route::get('/{news}', [\App\Http\Controllers\NewsController::class, 'show'])->name('show');
+});
+
 // Media & Gallery Routes
 Route::prefix('media')->name('media.')->group(function () {
     Route::get('/', [MediaController::class, 'index'])->name('index');
-    Route::get('/{id}', [MediaController::class, 'show'])->name('show');
+    Route::get('/{gallery}', [MediaController::class, 'show'])->name('show');
     Route::get('/download/{mediaId}', [MediaController::class, 'download'])->name('download');
     
     Route::middleware('auth')->group(function () {
         Route::get('/create/upload', [MediaController::class, 'create'])->name('create');
         Route::post('/store', [MediaController::class, 'store'])->name('store');
+        Route::delete('/{gallery}', [MediaController::class, 'destroy'])->name('destroy');
+        Route::post('/{gallery}/comment', [MediaController::class, 'storeComment'])->name('comment.store');
     });
 });
