@@ -53,7 +53,14 @@ class ForumManagementController extends Controller
         $validated['order'] = $validated['order'] ?? 0;
         $validated['is_active'] = $validated['is_active'] ?? true;
         
-        $this->forumService->createCategory($validated);
+        $category = $this->forumService->createCategory($validated);
+        
+        // Log activity
+        activity()
+            ->causedBy(auth()->user())
+            ->performedOn($category)
+            ->withProperties(['name' => $validated['name']])
+            ->log('forum_category_created');
         
         return redirect()->route('admin.forum.index')
             ->with('success', 'Category created successfully!');
@@ -91,7 +98,14 @@ class ForumManagementController extends Controller
         $validated['is_active'] = $validated['is_active'] ?? true;
         $validated['is_locked'] = $validated['is_locked'] ?? false;
         
-        $this->forumService->createForum($validated);
+        $forum = $this->forumService->createForum($validated);
+        
+        // Log activity
+        activity()
+            ->causedBy(auth()->user())
+            ->performedOn($forum)
+            ->withProperties(['name' => $validated['name'], 'category_id' => $validated['category_id']])
+            ->log('forum_created');
         
         return redirect()->route('admin.forum.index')
             ->with('success', 'Forum created successfully!');

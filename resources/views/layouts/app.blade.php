@@ -431,5 +431,8 @@
         }
     </script>
     @endauth
+
+    <!-- Cookie Consent -->
+    @include('cookie-consent::index')
 </body>
 </html>

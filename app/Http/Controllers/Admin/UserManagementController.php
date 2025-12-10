@@ -76,6 +76,13 @@ class UserManagementController extends Controller
             $user->syncRoles($validated['roles']);
         }
 
+        // Log activity
+        activity()
+            ->causedBy(auth()->user())
+            ->performedOn($user)
+            ->withProperties(['roles' => $validated['roles'] ?? []])
+            ->log('user_updated');
+
         return redirect()->route('admin.users.edit', $user)
             ->with('success', 'User updated successfully.');
     }
@@ -100,6 +107,13 @@ class UserManagementController extends Controller
         }
 
         $user->profile->update($validated);
+
+        // Log activity
+        activity()
+            ->causedBy(auth()->user())
+            ->performedOn($user)
+            ->withProperties($validated)
+            ->log('user_profile_updated');
 
         return redirect()->route('admin.users.edit', $user)
             ->with('success', 'User profile updated successfully.');
@@ -127,6 +141,13 @@ class UserManagementController extends Controller
             if ($achievement->points > 0 && $user->profile) {
                 $user->profile->addXp($achievement->points);
             }
+
+            // Log activity
+            activity()
+                ->causedBy(auth()->user())
+                ->performedOn($user)
+                ->withProperties(['achievement' => $achievement->name])
+                ->log('achievement_granted');
         }
 
         return redirect()->route('admin.users.edit', $user)

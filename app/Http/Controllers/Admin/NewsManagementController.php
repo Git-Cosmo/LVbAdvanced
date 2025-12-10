@@ -67,6 +67,13 @@ class NewsManagementController extends Controller
             $news->syncTags($tags);
         }
 
+        // Log activity
+        activity()
+            ->causedBy(auth()->user())
+            ->performedOn($news)
+            ->withProperties(['title' => $validated['title'], 'is_published' => $validated['is_published']])
+            ->log('news_created');
+
         return redirect()->route('admin.news.index')
             ->with('success', 'News article created successfully.');
     }
@@ -120,6 +127,13 @@ class NewsManagementController extends Controller
             $news->syncTags([]);
         }
 
+        // Log activity
+        activity()
+            ->causedBy(auth()->user())
+            ->performedOn($news)
+            ->withProperties(['title' => $validated['title'], 'is_published' => $validated['is_published']])
+            ->log('news_updated');
+
         return redirect()->route('admin.news.index')
             ->with('success', 'News article updated successfully.');
     }
@@ -133,6 +147,13 @@ class NewsManagementController extends Controller
         if ($news->image) {
             Storage::disk('public')->delete($news->image);
         }
+
+        // Log activity
+        activity()
+            ->causedBy(auth()->user())
+            ->performedOn($news)
+            ->withProperties(['title' => $news->title])
+            ->log('news_deleted');
 
         $news->delete();
 

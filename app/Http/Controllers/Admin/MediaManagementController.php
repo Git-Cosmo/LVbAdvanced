@@ -13,7 +13,7 @@ class MediaManagementController extends Controller
      */
     public function index()
     {
-        $galleries = Gallery::with(['user', 'media'])
+        $galleries = Gallery::with(['user', 'galleryMedia'])
             ->latest()
             ->paginate(20);
         
@@ -38,7 +38,7 @@ class MediaManagementController extends Controller
     public function destroy(Gallery $gallery)
     {
         // Delete associated media files
-        foreach ($gallery->media as $media) {
+        foreach ($gallery->galleryMedia as $media) {
             \Storage::disk('public')->delete($media->path);
             if ($media->thumbnail) {
                 \Storage::disk('public')->delete($media->thumbnail);

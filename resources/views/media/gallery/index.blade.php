@@ -44,8 +44,8 @@
         @forelse($galleries as $gallery)
             <div class="dark:bg-dark-bg-secondary bg-light-bg-secondary rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow">
                 <div class="relative h-48 dark:bg-dark-bg-tertiary bg-light-bg-tertiary">
-                    @if($gallery->media->first())
-                        <img src="{{ $gallery->media->first()->url }}" alt="{{ $gallery->title }}" class="w-full h-full object-cover">
+                    @if($gallery->galleryMedia->first())
+                        <img src="{{ $gallery->galleryMedia->first()->url }}" alt="{{ $gallery->title }}" class="w-full h-full object-cover">
                     @else
                         <div class="w-full h-full flex items-center justify-center">
                             <svg class="w-16 h-16 dark:text-dark-text-tertiary text-light-text-tertiary" fill="none" stroke="currentColor" viewBox="0 0 24 24">

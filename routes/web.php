@@ -276,3 +276,6 @@ Route::prefix('media')->name('media.')->group(function () {
         Route::post('/{gallery}/comment', [MediaController::class, 'storeComment'])->name('comment.store');
     });
 });
+
+// Sitemap Route
+Route::get('/sitemap.xml', [\App\Http\Controllers\SitemapController::class, 'index'])->name('sitemap');

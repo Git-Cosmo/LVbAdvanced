@@ -22,7 +22,7 @@ class MediaController extends Controller
      */
     public function index()
     {
-        $galleries = Gallery::with(['user', 'media'])
+        $galleries = Gallery::with(['user', 'galleryMedia'])
             ->latest()
             ->paginate(20);
         
@@ -41,7 +41,7 @@ class MediaController extends Controller
      */
     public function show($id)
     {
-        $gallery = Gallery::with(['user', 'media', 'comments'])->findOrFail($id);
+        $gallery = Gallery::with(['user', 'galleryMedia', 'comments'])->findOrFail($id);
         $gallery->increment('views');
         
         return view('media.gallery.show', [
@@ -96,7 +96,7 @@ class MediaController extends Controller
         if ($request->hasFile('files')) {
             foreach ($request->file('files') as $file) {
                 $mediaData = $this->mediaService->uploadGameResource($file, $validated['game'], $validated['category']);
-                $gallery->media()->create($mediaData);
+                $gallery->galleryMedia()->create($mediaData);
             }
         }
 
