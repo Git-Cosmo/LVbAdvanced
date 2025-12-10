@@ -139,21 +139,61 @@
     <!-- Center Content -->
     <div class="col-span-12 lg:col-span-6">
         <div class="space-y-6">
-            <!-- Hero Welcome -->
-            <div class="dark:bg-gradient-to-r from-dark-bg-secondary to-dark-bg-tertiary bg-gradient-to-r from-light-bg-secondary to-light-bg-tertiary rounded-lg shadow-md p-8">
-                <h1 class="text-3xl font-bold dark:text-dark-text-bright text-light-text-bright mb-3">
-                    Welcome to FPSociety Gaming Community
-                </h1>
-                <p class="dark:text-dark-text-secondary text-light-text-secondary mb-4">
-                    The premier destination for FPS and gaming enthusiasts. Download custom maps for CS2, GTA V mods, Fortnite skins, and connect with gamers worldwide. Compete in tournaments, share gameplay, and level up your gaming experience!
-                </p>
-                <div class="flex flex-wrap gap-3">
-                    <a href="{{ route('forum.index') }}" class="inline-block px-6 py-2 bg-gradient-to-r from-accent-blue to-accent-purple text-white rounded-lg font-medium hover:shadow-lg hover:scale-105 transition-all">
-                        Explore Forums
-                    </a>
-                    <a href="{{ route('media.index') }}" class="inline-block px-6 py-2 dark:bg-dark-bg-elevated bg-light-bg-elevated dark:text-dark-text-bright text-light-text-bright rounded-lg font-medium hover:shadow-lg hover:scale-105 transition-all">
-                        Browse Downloads
-                    </a>
+            @php
+                $currentSong = $nowPlaying['song'] ?? [];
+                $currentTitle = $currentSong['title'] ?? 'Nothing playing right now';
+                $currentArtist = $currentSong['artist'] ?? 'Waiting for the DJ';
+                $currentAlbum = $currentSong['album'] ?? null;
+                $currentArtwork = $currentSong['artwork_url'] ?? $currentSong['artwork'] ?? null;
+
+                $nextSong = ($upNext['song'] ?? []);
+                $nextTitle = $nextSong['title'] ?? 'Queue is empty';
+                $nextArtist = $nextSong['artist'] ?? null;
+            @endphp
+
+            <!-- Live Radio Now Playing -->
+            <div class="dark:bg-dark-bg-secondary bg-light-bg-secondary rounded-lg shadow-md p-6 border border-transparent dark:border-dark-border-primary border-light-border-primary">
+                <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+                    <div class="flex items-center gap-4">
+                        <div class="w-20 h-20 bg-gradient-to-br from-accent-purple to-accent-blue rounded-2xl flex items-center justify-center overflow-hidden">
+                            @if($currentArtwork)
+                                <img src="{{ $currentArtwork }}" alt="Now playing artwork" class="w-full h-full object-cover" loading="lazy">
+                            @else
+                                <span class="text-xs uppercase tracking-wider text-white">AZ</span>
+                            @endif
+                        </div>
+                        <div>
+                            <p class="text-xs uppercase tracking-wide dark:text-dark-text-tertiary text-light-text-tertiary">Now Playing</p>
+                            <h3 class="text-2xl font-semibold dark:text-dark-text-bright text-light-text-bright">{{ $currentTitle }}</h3>
+                            <p class="text-sm dark:text-dark-text-secondary text-light-text-secondary">{{ $currentArtist }}@if($currentAlbum) · {{ $currentAlbum }}@endif</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="px-3 py-1 text-xs font-semibold uppercase tracking-wider rounded-full {{ $stationOnline ? 'bg-emerald-500/20 text-emerald-300' : 'bg-rose-500/20 text-rose-300' }}">
+                            {{ $stationOnline ? 'On Air' : 'Offline' }}
+                        </span>
+                    </div>
+                </div>
+                <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="space-y-2 p-4 bg-gradient-to-b from-black/5 to-transparent rounded-2xl">
+                        <p class="text-xs uppercase tracking-wide dark:text-dark-text-tertiary text-light-text-tertiary">Next Up</p>
+                        <p class="text-lg font-semibold dark:text-dark-text-bright text-light-text-bright">{{ $nextTitle }}</p>
+                        <p class="text-sm dark:text-dark-text-secondary text-light-text-secondary">{{ $nextArtist ?? 'Curating the queue...' }}</p>
+                    </div>
+                    <div class="space-y-2 p-4 bg-gradient-to-b from-black/5 to-transparent rounded-2xl">
+                        <p class="text-xs uppercase tracking-wide dark:text-dark-text-tertiary text-light-text-tertiary">Recent History</p>
+                        <ul class="space-y-2 text-sm">
+                            @forelse($recentSongs as $entry)
+                                @php $historySong = $entry['song'] ?? []; @endphp
+                                <li class="flex justify-between">
+                                    <span class="dark:text-dark-text-bright text-light-text-bright">{{ $historySong['title'] ?? 'Unknown track' }}</span>
+                                    <span class="dark:text-dark-text-secondary text-light-text-secondary">{{ $historySong['artist'] ?? '' }}</span>
+                                </li>
+                            @empty
+                                <li class="text-xs dark:text-dark-text-secondary text-light-text-secondary">History is loading…</li>
+                            @endforelse
+                        </ul>
+                    </div>
                 </div>
             </div>
 
