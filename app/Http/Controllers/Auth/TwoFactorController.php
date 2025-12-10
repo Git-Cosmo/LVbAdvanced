@@ -101,7 +101,7 @@ class TwoFactorController extends Controller
         
         // Generate recovery codes
         $recoveryCodes = Collection::times(8, function () {
-            return Str::random(10);
+            return bin2hex(random_bytes(5)); // Cryptographically secure random codes
         });
 
         $user->forceFill([

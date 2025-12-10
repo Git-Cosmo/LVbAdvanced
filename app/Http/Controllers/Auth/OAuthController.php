@@ -49,10 +49,19 @@ class OAuthController extends Controller
                     $provider . '_id' => $socialUser->getId(),
                 ]);
             } else {
+                // For OAuth users without email, we need to handle this edge case
+                $email = $socialUser->getEmail();
+                if (!$email || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                    // Redirect back with error if no valid email provided
+                    return redirect()->route('login')->withErrors([
+                        'oauth' => 'Unable to get valid email from ' . ucfirst($provider) . '. Please use email registration.'
+                    ]);
+                }
+
                 // Create new user
                 $user = User::create([
-                    'name' => $socialUser->getName() ?? $socialUser->getNickname() ?? 'User' . rand(1000, 9999),
-                    'email' => $socialUser->getEmail() ?? $socialUser->getId() . '@' . $provider . '.local',
+                    'name' => $socialUser->getName() ?? $socialUser->getNickname() ?? 'User' . bin2hex(random_bytes(4)),
+                    'email' => $email,
                     'password' => Hash::make(Str::random(32)),
                     $provider . '_id' => $socialUser->getId(),
                     'email_verified_at' => now(), // OAuth providers verify email
