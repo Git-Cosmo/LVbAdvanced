@@ -129,6 +129,19 @@ Route::prefix('forum')->name('forum.')->group(function () {
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
     
+    // User Management
+    Route::prefix('users')->name('users.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Admin\UserManagementController::class, 'index'])->name('index');
+        Route::get('/{user}/edit', [\App\Http\Controllers\Admin\UserManagementController::class, 'edit'])->name('edit');
+        Route::patch('/{user}', [\App\Http\Controllers\Admin\UserManagementController::class, 'update'])->name('update');
+        Route::patch('/{user}/profile', [\App\Http\Controllers\Admin\UserManagementController::class, 'updateProfile'])->name('updateProfile');
+        Route::post('/{user}/achievements', [\App\Http\Controllers\Admin\UserManagementController::class, 'grantAchievement'])->name('grantAchievement');
+        Route::delete('/{user}/achievements', [\App\Http\Controllers\Admin\UserManagementController::class, 'revokeAchievement'])->name('revokeAchievement');
+        Route::post('/{user}/badges', [\App\Http\Controllers\Admin\UserManagementController::class, 'grantBadge'])->name('grantBadge');
+        Route::delete('/{user}/badges', [\App\Http\Controllers\Admin\UserManagementController::class, 'revokeBadge'])->name('revokeBadge');
+        Route::delete('/{user}', [\App\Http\Controllers\Admin\UserManagementController::class, 'destroy'])->name('destroy');
+    });
+    
     // Forum Management
     Route::prefix('forum')->name('forum.')->group(function () {
         Route::get('/', [\App\Http\Controllers\Admin\ForumManagementController::class, 'index'])->name('index');
@@ -158,3 +171,6 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
         Route::post('/bans/{ban}/unban', [\App\Http\Controllers\Admin\ModerationController::class, 'unban'])->name('unban');
     });
 });
+
+// Public Leaderboard Route
+Route::get('/leaderboard', [\App\Http\Controllers\LeaderboardController::class, 'index'])->name('leaderboard');

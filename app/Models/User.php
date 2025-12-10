@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\Forum\ForumPost;
 use App\Models\Forum\ForumThread;
 use App\Models\User\ProfilePost;
+use App\Models\User\UserAchievement;
 use App\Models\User\UserBadge;
 use App\Models\User\UserProfile;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -98,6 +99,16 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->belongsToMany(UserBadge::class, 'badge_user')
             ->withTimestamps()
             ->withPivot('awarded_at');
+    }
+
+    /**
+     * Get the achievements earned by the user.
+     */
+    public function achievements(): BelongsToMany
+    {
+        return $this->belongsToMany(UserAchievement::class, 'achievement_user')
+            ->withTimestamps()
+            ->withPivot(['progress', 'is_unlocked', 'unlocked_at']);
     }
 
     /**
