@@ -217,6 +217,12 @@ Route::prefix('activity')->name('activity.')->group(function () {
     Route::get('/recommended', [ActivityFeedController::class, 'recommended'])->name('recommended')->middleware('auth');
 });
 
+// News Routes
+Route::prefix('news')->name('news.')->group(function () {
+    Route::get('/', [\App\Http\Controllers\NewsController::class, 'index'])->name('index');
+    Route::get('/{news}', [\App\Http\Controllers\NewsController::class, 'show'])->name('show');
+});
+
 // Media & Gallery Routes
 Route::prefix('media')->name('media.')->group(function () {
     Route::get('/', [MediaController::class, 'index'])->name('index');
