@@ -65,6 +65,14 @@ Route::middleware('auth')->prefix('settings')->name('settings.')->group(function
     Route::patch('/notifications', [\App\Http\Controllers\SettingsController::class, 'updateNotifications'])->name('update.notifications');
 });
 
+// Notification Routes
+Route::middleware('auth')->prefix('notifications')->name('notifications.')->group(function () {
+    Route::get('/', [\App\Http\Controllers\NotificationController::class, 'index'])->name('index');
+    Route::post('/{id}/read', [\App\Http\Controllers\NotificationController::class, 'markAsRead'])->name('mark-as-read');
+    Route::post('/read-all', [\App\Http\Controllers\NotificationController::class, 'markAllAsRead'])->name('mark-all-as-read');
+    Route::delete('/{id}', [\App\Http\Controllers\NotificationController::class, 'destroy'])->name('destroy');
+});
+
 // Profile Routes
 Route::prefix('profile')->name('profile.')->group(function () {
     Route::get('/{user}', [ProfileController::class, 'show'])->name('show');
@@ -180,6 +188,17 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
         Route::get('/warnings', [\App\Http\Controllers\Admin\ModerationController::class, 'warnings'])->name('warnings');
         Route::get('/bans', [\App\Http\Controllers\Admin\ModerationController::class, 'bans'])->name('bans');
         Route::post('/bans/{ban}/unban', [\App\Http\Controllers\Admin\ModerationController::class, 'unban'])->name('unban');
+        
+        // Thread management
+        Route::get('/merge-threads', [\App\Http\Controllers\Admin\ModerationController::class, 'mergeThreadsForm'])->name('merge-threads-form');
+        Route::post('/merge-threads', [\App\Http\Controllers\Admin\ModerationController::class, 'mergeThreads'])->name('merge-threads');
+        Route::get('/move-thread/{thread}', [\App\Http\Controllers\Admin\ModerationController::class, 'moveThreadForm'])->name('move-thread-form');
+        Route::post('/move-thread/{thread}', [\App\Http\Controllers\Admin\ModerationController::class, 'moveThread'])->name('move-thread');
+        
+        // Approval queue
+        Route::get('/approval-queue', [\App\Http\Controllers\Admin\ModerationController::class, 'approvalQueue'])->name('approval-queue');
+        Route::post('/approve', [\App\Http\Controllers\Admin\ModerationController::class, 'approveContent'])->name('approve');
+        Route::post('/deny', [\App\Http\Controllers\Admin\ModerationController::class, 'denyContent'])->name('deny');
     });
     
     // Reputation Management
@@ -196,6 +215,27 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
         Route::post('/{gallery}/approve', [\App\Http\Controllers\Admin\MediaManagementController::class, 'approve'])->name('approve');
         Route::post('/{gallery}/feature', [\App\Http\Controllers\Admin\MediaManagementController::class, 'feature'])->name('feature');
         Route::delete('/{gallery}', [\App\Http\Controllers\Admin\MediaManagementController::class, 'destroy'])->name('destroy');
+    });
+    
+    // News Management
+    Route::prefix('news')->name('news.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Admin\NewsManagementController::class, 'index'])->name('index');
+        Route::get('/create', [\App\Http\Controllers\Admin\NewsManagementController::class, 'create'])->name('create');
+        Route::post('/', [\App\Http\Controllers\Admin\NewsManagementController::class, 'store'])->name('store');
+        Route::get('/{news}/edit', [\App\Http\Controllers\Admin\NewsManagementController::class, 'edit'])->name('edit');
+        Route::patch('/{news}', [\App\Http\Controllers\Admin\NewsManagementController::class, 'update'])->name('update');
+        Route::delete('/{news}', [\App\Http\Controllers\Admin\NewsManagementController::class, 'destroy'])->name('destroy');
+    });
+    
+    // RSS Feed Management
+    Route::prefix('rss')->name('rss.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Admin\RssFeedController::class, 'index'])->name('index');
+        Route::get('/create', [\App\Http\Controllers\Admin\RssFeedController::class, 'create'])->name('create');
+        Route::post('/', [\App\Http\Controllers\Admin\RssFeedController::class, 'store'])->name('store');
+        Route::get('/{rssFeed}/edit', [\App\Http\Controllers\Admin\RssFeedController::class, 'edit'])->name('edit');
+        Route::patch('/{rssFeed}', [\App\Http\Controllers\Admin\RssFeedController::class, 'update'])->name('update');
+        Route::delete('/{rssFeed}', [\App\Http\Controllers\Admin\RssFeedController::class, 'destroy'])->name('destroy');
+        Route::post('/{rssFeed}/import', [\App\Http\Controllers\Admin\RssFeedController::class, 'import'])->name('import');
     });
     
     // Gamification Settings

@@ -34,6 +34,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'steam_id',
         'discord_id',
         'battlenet_id',
+        'last_active_at',
     ];
 
     /**
@@ -55,6 +56,7 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return [
             'email_verified_at' => 'datetime',
+            'last_active_at' => 'datetime',
             'password' => 'hashed',
         ];
     }
@@ -152,5 +154,21 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->belongsToMany(\App\Models\Forum\Forum::class, 'forum_subscriptions', 'user_id', 'forum_id')
             ->withTimestamps();
+    }
+
+    /**
+     * Scope to get online users (active within last 15 minutes).
+     */
+    public function scopeOnline($query)
+    {
+        return $query->where('last_active_at', '>=', now()->subMinutes(15));
+    }
+
+    /**
+     * Check if the user is online.
+     */
+    public function isOnline(): bool
+    {
+        return $this->last_active_at && $this->last_active_at->diffInMinutes(now()) <= 15;
     }
 }

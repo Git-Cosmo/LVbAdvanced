@@ -131,12 +131,54 @@
                     </button>
 
                     <!-- Notifications -->
-                    <button class="relative p-2 rounded-lg dark:bg-dark-bg-tertiary bg-light-bg-tertiary dark:hover:bg-dark-bg-elevated hover:bg-light-bg-elevated transition-colors">
-                        <svg class="w-5 h-5 dark:text-dark-text-primary text-light-text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
-                        </svg>
-                        <span class="absolute top-1 right-1 w-2 h-2 bg-accent-red rounded-full"></span>
-                    </button>
+                    @auth
+                    <div x-data="notificationsDropdown()" @click.away="open = false" class="relative">
+                        <button @click="toggleNotifications()" class="relative p-2 rounded-lg dark:bg-dark-bg-tertiary bg-light-bg-tertiary dark:hover:bg-dark-bg-elevated hover:bg-light-bg-elevated transition-colors">
+                            <svg class="w-5 h-5 dark:text-dark-text-primary text-light-text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+                            </svg>
+                            <span x-show="unreadCount > 0" class="absolute top-1 right-1 w-5 h-5 bg-accent-red rounded-full text-white text-xs flex items-center justify-center font-bold" x-text="unreadCount"></span>
+                        </button>
+                        
+                        <div x-show="open" x-transition class="absolute right-0 mt-2 w-96 dark:bg-dark-bg-secondary bg-light-bg-secondary rounded-xl shadow-xl dark:border dark:border-dark-border-primary border-light-border-primary max-h-96 overflow-y-auto">
+                            <div class="px-4 py-3 dark:border-b dark:border-dark-border-primary border-light-border-primary flex items-center justify-between">
+                                <h3 class="font-semibold dark:text-dark-text-bright text-light-text-bright">Notifications</h3>
+                                <button @click="markAllAsRead()" x-show="unreadCount > 0" class="text-xs text-accent-blue hover:text-accent-purple transition-colors">
+                                    Mark all as read
+                                </button>
+                            </div>
+                            
+                            <div x-show="loading" class="p-4 text-center">
+                                <svg class="animate-spin h-6 w-6 mx-auto dark:text-dark-text-accent text-light-text-accent" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                            </div>
+                            
+                            <template x-if="!loading && notifications.length === 0">
+                                <div class="p-8 text-center dark:text-dark-text-tertiary text-light-text-tertiary">
+                                    <svg class="w-12 h-12 mx-auto mb-2 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+                                    </svg>
+                                    <p class="text-sm">No notifications yet</p>
+                                </div>
+                            </template>
+                            
+                            <template x-for="notification in notifications" :key="notification.id">
+                                <a :href="notification.url" @click="markAsRead(notification.id)" class="block px-4 py-3 dark:hover:bg-dark-bg-tertiary hover:bg-light-bg-tertiary transition-colors border-b dark:border-dark-border-primary border-light-border-primary last:border-0" :class="{ 'dark:bg-dark-bg-tertiary/50 bg-light-bg-tertiary/50': !notification.read_at }">
+                                    <div class="flex items-start space-x-3">
+                                        <div class="flex-1 min-w-0">
+                                            <p class="text-sm font-medium dark:text-dark-text-bright text-light-text-bright" x-text="notification.title"></p>
+                                            <p class="text-xs dark:text-dark-text-secondary text-light-text-secondary mt-1 line-clamp-2" x-text="notification.message"></p>
+                                            <p class="text-xs dark:text-dark-text-tertiary text-light-text-tertiary mt-1" x-text="notification.created_at"></p>
+                                        </div>
+                                        <span x-show="!notification.read_at" class="w-2 h-2 bg-accent-blue rounded-full mt-2"></span>
+                                    </div>
+                                </a>
+                            </template>
+                        </div>
+                    </div>
+                    @endauth
 
                     @auth
                         <!-- User Menu -->
@@ -217,6 +259,7 @@
                 <div class="flex-1"></div>
                 <div class="text-sm dark:text-dark-text-tertiary text-light-text-tertiary">
                     <span class="dark:text-dark-text-accent text-light-text-accent font-semibold">{{ \App\Models\User::count() }}</span> members,
+                    <span class="dark:text-dark-text-accent text-light-text-accent font-semibold">{{ \App\Models\User::online()->count() }}</span> online,
                     <span class="dark:text-dark-text-accent text-light-text-accent font-semibold">{{ \App\Models\Forum\Forum::count() }}</span> forums
                 </div>
             </div>
@@ -295,5 +338,98 @@
             </div>
         </div>
     </footer>
+
+    @auth
+    <script>
+        function notificationsDropdown() {
+            return {
+                open: false,
+                loading: false,
+                notifications: [],
+                unreadCount: 0,
+                
+                async toggleNotifications() {
+                    this.open = !this.open;
+                    // Load full notifications only when dropdown is opened for the first time
+                    if (this.open && this.notifications.length === 0) {
+                        await this.loadNotifications();
+                    }
+                },
+                
+                async loadNotifications() {
+                    this.loading = true;
+                    try {
+                        const response = await fetch('/notifications', {
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'Accept': 'application/json',
+                            }
+                        });
+                        const data = await response.json();
+                        this.notifications = data.notifications;
+                        this.unreadCount = data.unread_count;
+                    } catch (error) {
+                        console.error('Error loading notifications:', error);
+                    } finally {
+                        this.loading = false;
+                    }
+                },
+                
+                async markAsRead(id) {
+                    try {
+                        await fetch(`/notifications/${id}/read`, {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'Accept': 'application/json',
+                            }
+                        });
+                        const notification = this.notifications.find(n => n.id === id);
+                        if (notification && !notification.read_at) {
+                            notification.read_at = new Date();
+                            this.unreadCount = Math.max(0, this.unreadCount - 1);
+                        }
+                    } catch (error) {
+                        console.error('Error marking notification as read:', error);
+                    }
+                },
+                
+                async markAllAsRead() {
+                    try {
+                        await fetch('/notifications/read-all', {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'Accept': 'application/json',
+                            }
+                        });
+                        this.notifications.forEach(n => n.read_at = new Date());
+                        this.unreadCount = 0;
+                    } catch (error) {
+                        console.error('Error marking all as read:', error);
+                    }
+                },
+                
+                async init() {
+                    // Load only unread count initially to reduce page load overhead
+                    try {
+                        const response = await fetch('/notifications', {
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'Accept': 'application/json',
+                            }
+                        });
+                        const data = await response.json();
+                        this.unreadCount = data.unread_count;
+                    } catch (error) {
+                        console.error('Error loading notification count:', error);
+                    }
+                }
+            }
+        }
+    </script>
+    @endauth
 </body>
 </html>
