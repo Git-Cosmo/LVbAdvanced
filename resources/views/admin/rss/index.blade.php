@@ -52,7 +52,7 @@
                             <button type="submit" class="text-blue-600 hover:text-blue-900">Import Now</button>
                         </form>
                         <a href="{{ route('admin.rss.edit', $feed) }}" class="text-indigo-600 hover:text-indigo-900">Edit</a>
-                        <form action="{{ route('admin.rss.destroy', $feed) }}" method="POST" class="inline-block" onsubmit="return confirm('Delete?');">
+                        <form action="{{ route('admin.rss.destroy', $feed) }}" method="POST" class="inline-block" onsubmit="return confirm('Delete the RSS feed &quot;{{ $feed->name }}&quot;? All import history will be lost.');">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="text-red-600 hover:text-red-900">Delete</button>

@@ -22,7 +22,8 @@ class UpdateLastActive
             $lastActive = $user->last_active_at;
             
             if (!$lastActive || $lastActive->diffInMinutes(now()) >= 5) {
-                $user->update(['last_active_at' => now()]);
+                // Use updateQuietly to avoid triggering events and extra overhead
+                $user->updateQuietly(['last_active_at' => now()]);
             }
         }
 

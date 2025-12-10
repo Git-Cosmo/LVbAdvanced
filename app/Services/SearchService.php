@@ -11,15 +11,28 @@ use Illuminate\Support\Facades\DB;
 class SearchService
 {
     /**
+     * Sanitize the search query for use in MATCH AGAINST (BOOLEAN MODE).
+     * Removes special characters that have meaning in BOOLEAN MODE to prevent errors.
+     */
+    private function sanitizeBooleanQuery(string $query): string
+    {
+        // Remove or escape special characters used in BOOLEAN MODE
+        // This removes: + - > < ( ) ~ * " ' @
+        return preg_replace('/[+\-><\(\)~*"\'@]/', ' ', $query);
+    }
+
+    /**
      * Perform a full-text search across threads with relevancy ranking.
      */
     public function searchThreads(string $query, array $filters = [], int $perPage = 15)
     {
+        $sanitizedQuery = $this->sanitizeBooleanQuery($query);
+        
         $threadsQuery = ForumThread::with(['user', 'forum'])
             ->where('is_hidden', false)
             ->select('forum_threads.*')
-            ->selectRaw("MATCH(title) AGAINST(? IN BOOLEAN MODE) as relevance", [$query])
-            ->whereRaw("MATCH(title) AGAINST(? IN BOOLEAN MODE)", [$query]);
+            ->selectRaw("MATCH(title) AGAINST(? IN BOOLEAN MODE) as relevance", [$sanitizedQuery])
+            ->whereRaw("MATCH(title) AGAINST(? IN BOOLEAN MODE)", [$sanitizedQuery]);
 
         // Apply filters
         if (!empty($filters['forum_id'])) {
@@ -48,11 +61,13 @@ class SearchService
      */
     public function searchPosts(string $query, array $filters = [], int $perPage = 15)
     {
+        $sanitizedQuery = $this->sanitizeBooleanQuery($query);
+        
         $postsQuery = ForumPost::with(['user', 'thread.forum'])
             ->where('is_hidden', false)
             ->select('forum_posts.*')
-            ->selectRaw("MATCH(content) AGAINST(? IN BOOLEAN MODE) as relevance", [$query])
-            ->whereRaw("MATCH(content) AGAINST(? IN BOOLEAN MODE)", [$query]);
+            ->selectRaw("MATCH(content) AGAINST(? IN BOOLEAN MODE) as relevance", [$sanitizedQuery])
+            ->whereRaw("MATCH(content) AGAINST(? IN BOOLEAN MODE)", [$sanitizedQuery]);
 
         // Apply filters
         if (!empty($filters['user_id'])) {
@@ -77,11 +92,13 @@ class SearchService
      */
     public function searchNews(string $query, int $perPage = 15)
     {
+        $sanitizedQuery = $this->sanitizeBooleanQuery($query);
+        
         return News::published()
             ->with('user')
             ->select('news.*')
-            ->selectRaw("MATCH(title, excerpt, content) AGAINST(? IN BOOLEAN MODE) as relevance", [$query])
-            ->whereRaw("MATCH(title, excerpt, content) AGAINST(? IN BOOLEAN MODE)", [$query])
+            ->selectRaw("MATCH(title, excerpt, content) AGAINST(? IN BOOLEAN MODE) as relevance", [$sanitizedQuery])
+            ->whereRaw("MATCH(title, excerpt, content) AGAINST(? IN BOOLEAN MODE)", [$sanitizedQuery])
             ->orderByDesc('relevance')
             ->orderByDesc('published_at')
             ->paginate($perPage, ['*'], 'news_page');

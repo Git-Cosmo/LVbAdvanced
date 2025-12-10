@@ -5,7 +5,6 @@ namespace App\Services;
 use App\Models\News;
 use App\Models\RssFeed;
 use App\Models\RssImportedItem;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use SimplePie\SimplePie;
 
@@ -92,11 +91,16 @@ class RssFeedService
         $link = $item->get_link();
         $date = $item->get_date('Y-m-d H:i:s');
 
-        // Extract image if available
+        // Extract image if available - note: storing external URLs without downloading
+        // Images may break if source removes them. Consider downloading locally in production.
         $image = null;
         $enclosure = $item->get_enclosure();
         if ($enclosure && $enclosure->get_thumbnail()) {
-            $image = $enclosure->get_thumbnail();
+            $imageUrl = $enclosure->get_thumbnail();
+            // Basic validation that URL is accessible
+            if (filter_var($imageUrl, FILTER_VALIDATE_URL)) {
+                $image = $imageUrl;
+            }
         }
 
         // Create excerpt from content
@@ -106,9 +110,18 @@ class RssFeedService
             $excerpt .= '...';
         }
 
-        // Get first admin user or fallback to user ID 1
+        // Get first admin user; abort if none found
         $adminUser = \App\Models\User::role('Administrator')->first();
-        $userId = $adminUser ? $adminUser->id : 1;
+        if (!$adminUser) {
+            Log::error('RSS import failed: No admin user found to assign as news author.', [
+                'feed_id' => $feed->id,
+                'feed_name' => $feed->name,
+                'item_title' => $title,
+                'item_link' => $link,
+            ]);
+            throw new \Exception('No admin user found to assign as news author');
+        }
+        $userId = $adminUser->id;
         
         $news = News::create([
             'user_id' => $userId, // Use admin user

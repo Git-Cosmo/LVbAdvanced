@@ -9,6 +9,17 @@ return new class extends Migration
 {
     /**
      * Run the migrations.
+     * 
+     * This migration adds MySQL FULLTEXT indexes to enable full-text search with relevancy ranking.
+     * 
+     * Requirements:
+     * - MySQL 5.6+ (for InnoDB FULLTEXT support)
+     * - InnoDB storage engine
+     * 
+     * Indexes added:
+     * - forum_threads.title: Search thread titles
+     * - news (title, excerpt, content): Search news articles across multiple fields
+     * - forum_posts.content: Already indexed in table creation migration
      */
     public function up(): void
     {

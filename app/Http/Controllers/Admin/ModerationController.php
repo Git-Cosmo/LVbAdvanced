@@ -150,16 +150,19 @@ class ModerationController extends Controller
         $sourceThread = ForumThread::findOrFail($validated['source_thread_id']);
         $targetThread = ForumThread::findOrFail($validated['target_thread_id']);
         
-        // Move all posts from source to target
-        ForumPost::where('thread_id', $sourceThread->id)
-            ->update(['thread_id' => $targetThread->id]);
-        
-        // Update target thread stats
-        $targetThread->increment('posts_count', $sourceThread->posts_count);
-        $targetThread->increment('views_count', $sourceThread->views_count);
-        
-        // Delete source thread
-        $sourceThread->delete();
+        // Wrap merge operation in transaction for data integrity
+        \DB::transaction(function () use ($sourceThread, $targetThread) {
+            // Move all posts from source to target
+            ForumPost::where('thread_id', $sourceThread->id)
+                ->update(['thread_id' => $targetThread->id]);
+            
+            // Update target thread stats
+            $targetThread->increment('posts_count', $sourceThread->posts_count);
+            $targetThread->increment('views_count', $sourceThread->views_count);
+            
+            // Delete source thread
+            $sourceThread->delete();
+        });
         
         return redirect()->route('admin.moderation.index')
             ->with('success', 'Threads merged successfully.');

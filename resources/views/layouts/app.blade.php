@@ -350,6 +350,7 @@
                 
                 async toggleNotifications() {
                     this.open = !this.open;
+                    // Load full notifications only when dropdown is opened for the first time
                     if (this.open && this.notifications.length === 0) {
                         await this.loadNotifications();
                     }
@@ -411,9 +412,20 @@
                     }
                 },
                 
-                init() {
-                    // Load initial unread count
-                    this.loadNotifications();
+                async init() {
+                    // Load only unread count initially to reduce page load overhead
+                    try {
+                        const response = await fetch('/notifications', {
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'Accept': 'application/json',
+                            }
+                        });
+                        const data = await response.json();
+                        this.unreadCount = data.unread_count;
+                    } catch (error) {
+                        console.error('Error loading notification count:', error);
+                    }
                 }
             }
         }
