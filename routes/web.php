@@ -68,6 +68,9 @@ Route::prefix('forum')->name('forum.')->group(function () {
         Route::get('/messages/{conversationId}', [\App\Http\Controllers\Forum\MessagingController::class, 'conversation'])->name('messaging.conversation');
         Route::delete('/messages/{message}', [\App\Http\Controllers\Forum\MessagingController::class, 'destroy'])->name('messaging.destroy');
     });
+    
+    // Public leaderboard
+    Route::get('/leaderboard', [\App\Http\Controllers\Forum\LeaderboardController::class, 'index'])->name('leaderboard');
 });
 
 // Admin Routes
@@ -93,5 +96,15 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
         Route::get('/forum/{forum}/edit', [\App\Http\Controllers\Admin\ForumManagementController::class, 'editForum'])->name('forum.edit');
         Route::patch('/forum/{forum}', [\App\Http\Controllers\Admin\ForumManagementController::class, 'updateForum'])->name('forum.update');
         Route::delete('/forum/{forum}', [\App\Http\Controllers\Admin\ForumManagementController::class, 'deleteForum'])->name('forum.delete');
+    });
+    
+    // Moderation routes
+    Route::prefix('moderation')->name('moderation.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Admin\ModerationController::class, 'index'])->name('index');
+        Route::get('/reports/{report}', [\App\Http\Controllers\Admin\ModerationController::class, 'show'])->name('show');
+        Route::post('/reports/{report}/resolve', [\App\Http\Controllers\Admin\ModerationController::class, 'resolve'])->name('resolve');
+        Route::get('/warnings', [\App\Http\Controllers\Admin\ModerationController::class, 'warnings'])->name('warnings');
+        Route::get('/bans', [\App\Http\Controllers\Admin\ModerationController::class, 'bans'])->name('bans');
+        Route::post('/bans/{ban}/unban', [\App\Http\Controllers\Admin\ModerationController::class, 'unban'])->name('unban');
     });
 });
