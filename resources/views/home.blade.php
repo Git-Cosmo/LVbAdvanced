@@ -10,9 +10,66 @@
         <p class="text-lg opacity-90">A modern, feature-rich portal system inspired by vBadvanced CMPS, built with Laravel 12 and TailwindCSS.</p>
     </div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <!-- Main Content Area -->
-        <div class="lg:col-span-2 space-y-6">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <!-- Left Sidebar -->
+        <aside class="lg:col-span-3 space-y-6">
+            <!-- Quick Links -->
+            <div class="dark:bg-dark-bg-secondary bg-light-bg-secondary rounded-xl dark:border dark:border-dark-border-primary border border-light-border-primary overflow-hidden shadow-md">
+                <div class="dark:bg-dark-bg-elevated bg-light-bg-elevated dark:border-b dark:border-dark-border-primary border-b border-light-border-primary px-6 py-4">
+                    <h2 class="text-lg font-bold dark:text-dark-text-bright text-light-text-bright flex items-center space-x-2">
+                        <span class="w-1 h-5 bg-gradient-to-b from-accent-blue to-accent-purple rounded-full"></span>
+                        <span>Quick Links</span>
+                    </h2>
+                </div>
+                <div class="p-6">
+                    <ul class="space-y-2">
+                        <li>
+                            <a href="#" class="flex items-center space-x-2 dark:text-dark-text-primary text-light-text-primary dark:hover:text-dark-text-accent hover:text-light-text-accent transition-colors">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                                </svg>
+                                <span>What's New</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="flex items-center space-x-2 dark:text-dark-text-primary text-light-text-primary dark:hover:text-dark-text-accent hover:text-light-text-accent transition-colors">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                                </svg>
+                                <span>Recent Posts</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="flex items-center space-x-2 dark:text-dark-text-primary text-light-text-primary dark:hover:text-dark-text-accent hover:text-light-text-accent transition-colors">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                                </svg>
+                                <span>Top Members</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="flex items-center space-x-2 dark:text-dark-text-primary text-light-text-primary dark:hover:text-dark-text-accent hover:text-light-text-accent transition-colors">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                                </svg>
+                                <span>Forum Rules</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="flex items-center space-x-2 dark:text-dark-text-primary text-light-text-primary dark:hover:text-dark-text-accent hover:text-light-text-accent transition-colors">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                                </svg>
+                                <span>Help & FAQ</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Center Content Area -->
+        <div class="lg:col-span-6 space-y-6">
             <!-- Latest News/Posts Section -->
             <div class="dark:bg-dark-bg-secondary bg-light-bg-secondary rounded-xl dark:border dark:border-dark-border-primary border border-light-border-primary overflow-hidden shadow-md">
                 <div class="dark:bg-dark-bg-elevated bg-light-bg-elevated dark:border-b dark:border-dark-border-primary border-b border-light-border-primary px-6 py-4">
@@ -116,8 +173,8 @@
             </div>
         </div>
 
-        <!-- Sidebar -->
-        <div class="space-y-6">
+        <!-- Right Sidebar -->
+        <aside class="lg:col-span-3 space-y-6">
             <!-- Stats Card -->
             <div class="dark:bg-dark-bg-secondary bg-light-bg-secondary rounded-xl dark:border dark:border-dark-border-primary border border-light-border-primary overflow-hidden shadow-md">
                 <div class="dark:bg-dark-bg-elevated bg-light-bg-elevated dark:border-b dark:border-dark-border-primary border-b border-light-border-primary px-6 py-4">
@@ -142,60 +199,6 @@
                 </div>
             </div>
 
-            <!-- Quick Links -->
-            <div class="dark:bg-dark-bg-secondary bg-light-bg-secondary rounded-xl dark:border dark:border-dark-border-primary border border-light-border-primary overflow-hidden shadow-md">
-                <div class="dark:bg-dark-bg-elevated bg-light-bg-elevated dark:border-b dark:border-dark-border-primary border-b border-light-border-primary px-6 py-4">
-                    <h2 class="text-lg font-bold dark:text-dark-text-bright text-light-text-bright flex items-center space-x-2">
-                        <span class="w-1 h-5 bg-gradient-to-b from-accent-blue to-accent-purple rounded-full"></span>
-                        <span>Quick Links</span>
-                    </h2>
-                </div>
-                <div class="p-6">
-                    <ul class="space-y-2">
-                        <li>
-                            <a href="#" class="flex items-center space-x-2 dark:text-dark-text-primary text-light-text-primary dark:hover:text-dark-text-accent hover:text-light-text-accent transition-colors">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                                </svg>
-                                <span>What's New</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#" class="flex items-center space-x-2 dark:text-dark-text-primary text-light-text-primary dark:hover:text-dark-text-accent hover:text-light-text-accent transition-colors">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                                </svg>
-                                <span>Recent Posts</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#" class="flex items-center space-x-2 dark:text-dark-text-primary text-light-text-primary dark:hover:text-dark-text-accent hover:text-light-text-accent transition-colors">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                                </svg>
-                                <span>Top Members</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#" class="flex items-center space-x-2 dark:text-dark-text-primary text-light-text-primary dark:hover:text-dark-text-accent hover:text-light-text-accent transition-colors">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                                </svg>
-                                <span>Forum Rules</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#" class="flex items-center space-x-2 dark:text-dark-text-primary text-light-text-primary dark:hover:text-dark-text-accent hover:text-light-text-accent transition-colors">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                                </svg>
-                                <span>Help & FAQ</span>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-
             <!-- Active Users -->
             <div class="dark:bg-dark-bg-secondary bg-light-bg-secondary rounded-xl dark:border dark:border-dark-border-primary border border-light-border-primary overflow-hidden shadow-md">
                 <div class="dark:bg-dark-bg-elevated bg-light-bg-elevated dark:border-b dark:border-dark-border-primary border-b border-light-border-primary px-6 py-4">
@@ -210,7 +213,7 @@
                     </p>
                 </div>
             </div>
-        </div>
+        </aside>
     </div>
 </div>
 @endsection
