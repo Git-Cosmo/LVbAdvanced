@@ -128,4 +128,29 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->belongsToMany(User::class, 'user_follows', 'following_id', 'follower_id')
             ->withTimestamps();
     }
+
+    /**
+     * Get the user's galleries.
+     */
+    public function galleries(): HasMany
+    {
+        return $this->hasMany(\App\Models\User\Gallery::class);
+    }
+
+    /**
+     * Get the user's albums.
+     */
+    public function albums(): HasMany
+    {
+        return $this->hasMany(\App\Models\User\Album::class);
+    }
+
+    /**
+     * Get subscribed forums
+     */
+    public function subscribedForums(): BelongsToMany
+    {
+        return $this->belongsToMany(\App\Models\Forum\Forum::class, 'forum_subscriptions', 'user_id', 'forum_id')
+            ->withTimestamps();
+    }
 }

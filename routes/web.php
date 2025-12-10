@@ -172,6 +172,29 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
         Route::get('/bans', [\App\Http\Controllers\Admin\ModerationController::class, 'bans'])->name('bans');
         Route::post('/bans/{ban}/unban', [\App\Http\Controllers\Admin\ModerationController::class, 'unban'])->name('unban');
     });
+    
+    // Reputation Management
+    Route::prefix('reputation')->name('reputation.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Admin\ReputationController::class, 'index'])->name('index');
+        Route::post('/{user}/award-xp', [\App\Http\Controllers\Admin\ReputationController::class, 'awardXP'])->name('award-xp');
+        Route::post('/{user}/reset-level', [\App\Http\Controllers\Admin\ReputationController::class, 'resetLevel'])->name('reset-level');
+        Route::post('/recalculate-karma', [\App\Http\Controllers\Admin\ReputationController::class, 'recalculateKarma'])->name('recalculate-karma');
+    });
+    
+    // Media Management
+    Route::prefix('media')->name('media.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Admin\MediaManagementController::class, 'index'])->name('index');
+        Route::post('/{gallery}/approve', [\App\Http\Controllers\Admin\MediaManagementController::class, 'approve'])->name('approve');
+        Route::post('/{gallery}/feature', [\App\Http\Controllers\Admin\MediaManagementController::class, 'feature'])->name('feature');
+        Route::delete('/{gallery}', [\App\Http\Controllers\Admin\MediaManagementController::class, 'destroy'])->name('destroy');
+    });
+    
+    // Gamification Settings
+    Route::prefix('gamification')->name('gamification.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Admin\GamificationController::class, 'index'])->name('index');
+        Route::post('/update-xp', [\App\Http\Controllers\Admin\GamificationController::class, 'updateXPSettings'])->name('update-xp');
+        Route::post('/reset-season', [\App\Http\Controllers\Admin\GamificationController::class, 'resetSeason'])->name('reset-season');
+    });
 });
 
 // Public Leaderboard Route

@@ -13,7 +13,8 @@ use Illuminate\View\View;
 class ThreadController extends Controller
 {
     public function __construct(
-        protected ThreadService $threadService
+        protected ThreadService $threadService,
+        protected \App\Services\GamificationService $gamificationService
     ) {}
 
     /**
@@ -58,6 +59,9 @@ class ThreadController extends Controller
         $this->threadService->createPost($thread, [
             'content' => $validated['content'],
         ], $request->user());
+        
+        // Award XP for creating a thread
+        $this->gamificationService->awardActionXP($request->user(), 'create_thread');
         
         return redirect()->route('forum.thread.show', $thread->slug)
             ->with('success', 'Thread created successfully!');
