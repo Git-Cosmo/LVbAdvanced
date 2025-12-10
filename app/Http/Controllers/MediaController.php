@@ -14,7 +14,6 @@ class MediaController extends Controller
 
     public function __construct(MediaService $mediaService)
     {
-        $this->middleware('auth')->except(['index', 'show', 'download']);
         $this->mediaService = $mediaService;
     }
 
