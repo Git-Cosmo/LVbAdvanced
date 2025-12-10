@@ -7,7 +7,7 @@
 
     <title>@yield('title', 'Admin Panel') - {{ config('app.name') }}</title>
 
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @vite(['resources/css/app.css', 'resources/css/forum.css', 'resources/js/app.js', 'resources/js/forum.js'])
 </head>
 <body class="bg-gray-100">
     <div class="min-h-screen flex">

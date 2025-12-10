@@ -5,7 +5,7 @@
     <!-- Profile Header with Cover Image -->
     <div class="relative mb-6">
         @if($user->profile?->cover_image)
-        <div class="h-64 rounded-t-xl bg-cover bg-center" style="background-image: url('{{ Storage::url($user->profile->cover_image) }}')"></div>
+        <div class="h-64 rounded-t-xl bg-cover bg-center bg-cover-image" data-bg-image="{{ Storage::url($user->profile->cover_image) }}"></div>
         @else
         <div class="h-64 rounded-t-xl bg-gradient-to-r from-accent-blue via-accent-purple to-accent-blue"></div>
         @endif
@@ -154,7 +154,7 @@
                 <h3 class="text-lg font-bold dark:text-dark-text-bright text-light-text-bright mb-4">Badges</h3>
                 <div class="flex flex-wrap gap-2">
                     @foreach($user->badges as $badge)
-                    <div class="px-3 py-1 rounded-lg text-sm font-medium" style="background-color: {{ $badge->color }}20; color: {{ $badge->color }}">
+                    <div class="px-3 py-1 rounded-lg text-sm font-medium" data-badge-color="{{ $badge->color }}">
                         {{ $badge->name }}
                     </div>
                     @endforeach
