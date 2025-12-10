@@ -45,12 +45,13 @@
 - ✅ **Subscriptions** - Subscribe to threads and forums
 - ✅ **Attachments** - Upload files to posts
 - ✅ **BBCode Support** - Rich text formatting
-- ✅ **Moderation Tools** - Report system, warnings, bans
+- ✅ **Moderation Tools** - Report system, warnings, bans, thread merge/move, approval queue
 - ✅ **Follow System** - Follow other users
 - ✅ **Wall Posts** - Post on user profiles
-- 🚧 **Search** - Full-text search (coming soon)
+- ✅ **Full-text Search** - MySQL full-text search with relevancy ranking across threads, posts, and news
+- ✅ **Real-time Notifications** - Database notifications with interactive dropdown
+- ✅ **Online Members Tracking** - Live count of active users (15-minute activity window)
 - 🚧 **Private Messaging** - Direct messages between users (coming soon)
-- 🚧 **Real-time Notifications** - WebSocket notifications (coming soon)
 
 ### Reputation & Gamification System
 - ✅ **XP & Leveling** - Earn experience points for all community activities
@@ -102,10 +103,13 @@
 
 ### News & Content System
 - ✅ **Gaming News** - Dedicated news section for gaming updates
+- ✅ **Admin News Management** - Full CRUD interface for creating, editing, and managing news articles
+- ✅ **RSS Feed Imports** - Automatic news import from RSS feeds with deduplication
+- ✅ **Scheduled Imports** - Configurable refresh intervals for RSS feeds (15 min to 24 hours)
 - ✅ **Featured Stories** - Highlight important news articles
 - ✅ **Rich Content** - Support for images, excerpts, and full articles
 - ✅ **Source Attribution** - Track news sources for aggregated content
-- ✅ **Article Tagging** - Organize news by topics and games
+- ✅ **Article Tagging** - Organize news by topics and games with auto-tagging from RSS feeds
 - ✅ **View Tracking** - Monitor article popularity
 - ✅ **Related Articles** - Automatic related content suggestions
 - ✅ **SEO Optimized** - Full meta tags and structured data for news articles
@@ -125,7 +129,13 @@
 - ✅ **Dashboard** - Forum statistics and quick actions
 - ✅ **Forum Management** - Create and manage categories and forums
 - ✅ **User Management** - Role-based permissions with badges and achievements
-- ✅ **Moderation Tools** - Handle reports, warnings, and bans
+- ✅ **Advanced Moderation Tools** - Handle reports, warnings, and bans
+  - Thread merge functionality to combine multiple threads
+  - Thread move to relocate discussions between forums
+  - Content approval queue for reviewing pending submissions
+  - Approve/deny actions for threads and posts
+- ✅ **News Management** - Complete CRUD interface for news articles with image upload
+- ✅ **RSS Feed Management** - Configure and manage RSS feeds for automatic news imports
 - ✅ **Activity Monitoring** - System logs with Spatie Activity Log
 - ✅ **Reputation Management**:
   - View top users by XP, karma, and posts
@@ -196,13 +206,27 @@
    php artisan serve
    ```
 
-7. **Access**
+7. **Set up RSS feed imports (optional)**
+   ```bash
+   # Import RSS feeds manually
+   php artisan rss:import
+   
+   # Import specific feed
+   php artisan rss:import --feed=1
+   
+   # Add to cron for automatic imports
+   * * * * * cd /path-to-your-project && php artisan schedule:run >> /dev/null 2>&1
+   ```
+
+8. **Access**
    - Portal: http://localhost:8000
    - Forums: http://localhost:8000/forum
    - Gallery: http://localhost:8000/media
    - What's New: http://localhost:8000/activity/whats-new
    - Leaderboard: http://localhost:8000/leaderboard
    - Admin: http://localhost:8000/admin
+   - Admin News: http://localhost:8000/admin/news
+   - Admin RSS: http://localhost:8000/admin/rss
    - Credentials: admin@example.com / password
 
 ## OAuth Configuration
@@ -484,6 +508,7 @@ The authentication system includes:
 - socialiteproviders/discord - Discord OAuth
 - socialiteproviders/battlenet - Battle.net OAuth
 - pragmarx/google2fa-laravel - Two-Factor Authentication
+- simplepie/simplepie - RSS feed parsing and import
 
 ## Gaming Community Features
 
@@ -530,6 +555,47 @@ XP_CREATE_POST=10
 XP_RECEIVE_LIKE=5
 XP_DAILY_LOGIN=5
 ```
+
+## New Features in Latest Update
+
+### Real-time Notifications
+- Interactive notification dropdown in the navigation bar
+- Database-driven notifications for thread replies and mentions
+- Mark as read/unread functionality
+- Unread count badge
+
+### Full-text Search
+- MySQL full-text search with relevancy ranking
+- Search across threads, posts, news, and users
+- Advanced filtering by forum, user, and date range
+- Fast and accurate results with MATCH AGAINST queries
+
+### RSS Feed Management
+- Admin interface to add and manage RSS feeds
+- Automatic news import with configurable refresh intervals
+- GUID-based deduplication to avoid duplicate articles
+- Auto-tagging support for imported content
+- Manual import via `php artisan rss:import` command
+
+### Enhanced Moderation
+- Thread merge functionality to combine discussions
+- Thread move to relocate content between forums
+- Content approval queue for reviewing pending submissions
+- Approve/deny actions with moderation notes
+- Enhanced report handling workflow
+
+### Online Members Tracking
+- Real-time display of active users
+- 15-minute activity window
+- Automatic tracking via middleware
+- Displays count in navigation bar
+
+### Admin News Management
+- Full CRUD interface for news articles
+- Image upload with validation
+- Publish/unpublish scheduling
+- Featured article support
+- Tag management for better organization
 
 ## Contributing
 
