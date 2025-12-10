@@ -18,8 +18,7 @@ return new class extends Migration
             $table->text('data');
             $table->timestamp('read_at')->nullable();
             $table->timestamps();
-            
-            $table->index(['notifiable_type', 'notifiable_id']);
+            // The morphs() method already creates the index for notifiable_type and notifiable_id
         });
     }
 

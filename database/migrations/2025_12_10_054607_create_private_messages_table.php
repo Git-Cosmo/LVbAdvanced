@@ -23,7 +23,7 @@ return new class extends Migration
             $table->softDeletes();
             
             $table->index(['sender_id', 'recipient_id']);
-            $table->index('conversation_id');
+            // Removed duplicate index for conversation_id
         });
     }
 
