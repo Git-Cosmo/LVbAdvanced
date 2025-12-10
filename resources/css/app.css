@@ -1,5 +1,68 @@
-@import 'tailwindcss';
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import 'tailwindcss';
+
+/**
+ * Tailwind CSS v4 Theme Configuration
+ * 
+ * Dark mode color scheme inspired by GitHub Copilot interface
+ * Light mode provides clean, professional appearance with good contrast
+ */
+@theme {
+  /* Dark Mode Colors - Main background for the page */
+  --color-dark-bg-primary: #0d1117;      /* Page background */
+  --color-dark-bg-secondary: #161b22;    /* Cards, blocks, header background */
+  --color-dark-bg-tertiary: #21262d;     /* Hover states, buttons */
+  --color-dark-bg-elevated: #1c2128;     /* Block headers, elevated surfaces */
+  
+  /* Dark Mode Borders */
+  --color-dark-border-primary: #30363d;  /* Main borders, dividers */
+  --color-dark-border-secondary: #21262d; /* Subtle separators */
+  --color-dark-border-accent: #58a6ff;   /* Active/focused borders */
+  
+  /* Dark Mode Text */
+  --color-dark-text-primary: #c9d1d9;    /* Main content text */
+  --color-dark-text-secondary: #8b949e;  /* Secondary labels, metadata */
+  --color-dark-text-tertiary: #6e7681;   /* Muted text, timestamps */
+  --color-dark-text-bright: #f0f6fc;     /* Headings, emphasized text */
+  --color-dark-text-accent: #58a6ff;     /* Links, interactive elements */
+  
+  /* Light Mode Colors */
+  --color-light-bg-primary: #f6f8fa;     /* Page background */
+  --color-light-bg-secondary: #ffffff;   /* Cards, blocks, header background */
+  --color-light-bg-tertiary: #f3f4f6;    /* Hover states, buttons */
+  --color-light-bg-elevated: #ffffff;    /* Block headers, elevated surfaces */
+  
+  /* Light Mode Borders */
+  --color-light-border-primary: #d0d7de; /* Main borders, dividers */
+  --color-light-border-secondary: #e5e7eb; /* Subtle separators */
+  --color-light-border-accent: #0969da;  /* Active/focused borders */
+  
+  /* Light Mode Text */
+  --color-light-text-primary: #24292f;   /* Main content text */
+  --color-light-text-secondary: #57606a; /* Secondary labels, metadata */
+  --color-light-text-tertiary: #6e7781;  /* Muted text, timestamps */
+  --color-light-text-bright: #1f2328;    /* Headings, emphasized text */
+  --color-light-text-accent: #0969da;    /* Links, interactive elements */
+  
+  /* Accent Colors - Used for badges, alerts, status indicators, gradients */
+  --color-accent-purple: #a371f7;        /* Brand gradient, special highlights */
+  --color-accent-blue: #58a6ff;          /* Primary actions, brand color */
+  --color-accent-green: #3fb950;         /* Success states, online indicators */
+  --color-accent-orange: #f78166;        /* Warnings, attention needed */
+  --color-accent-yellow: #d29922;        /* Caution, pending states */
+  --color-accent-red: #f85149;           /* Errors, destructive actions */
+  
+  /* Typography - Inter font family loaded via @import above */
+  --font-family-sans: Inter, system-ui, -apple-system, sans-serif;
+  
+  --breakpoint-sm: 40rem;
+  --breakpoint-md: 48rem;
+  --breakpoint-lg: 64rem;
+  --breakpoint-xl: 80rem;
+  --breakpoint-2xl: 96rem;
+}
+
+@variant dark (&:where(.dark, .dark *));
 
 /* Custom scrollbar for dark theme */
 .dark ::-webkit-scrollbar {
