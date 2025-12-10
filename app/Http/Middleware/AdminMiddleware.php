@@ -19,7 +19,7 @@ class AdminMiddleware
             return redirect()->route('login');
         }
 
-        if (!auth()->user()->hasRole('admin')) {
+        if (!auth()->user()->hasRole('Administrator')) {
             abort(403, 'Access denied. Admin privileges required.');
         }
 
