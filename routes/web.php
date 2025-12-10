@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ActivityFeedController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Auth\EmailVerificationController;
 use App\Http\Controllers\Auth\LoginController;
@@ -10,6 +11,7 @@ use App\Http\Controllers\Forum\ForumController;
 use App\Http\Controllers\Forum\PostController;
 use App\Http\Controllers\Forum\ProfileController;
 use App\Http\Controllers\Forum\ThreadController;
+use App\Http\Controllers\MediaController;
 use App\Http\Controllers\PortalController;
 use Illuminate\Support\Facades\Route;
 
@@ -173,4 +175,24 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
 });
 
 // Public Leaderboard Route
-Route::get('/leaderboard', [\App\Http\Controllers\LeaderboardController::class, 'index'])->name('leaderboard');
+Route::get('/leaderboard', [\App\Http\Controllers\LeaderboardController::class, 'index'])->name('leaderboard.index');
+
+// Activity Feed Routes
+Route::prefix('activity')->name('activity.')->group(function () {
+    Route::get('/whats-new', [ActivityFeedController::class, 'whatsNew'])->name('whats-new');
+    Route::get('/trending', [ActivityFeedController::class, 'trending'])->name('trending');
+    Route::get('/recent-posts', [ActivityFeedController::class, 'recentPosts'])->name('recent-posts');
+    Route::get('/recommended', [ActivityFeedController::class, 'recommended'])->name('recommended')->middleware('auth');
+});
+
+// Media & Gallery Routes
+Route::prefix('media')->name('media.')->group(function () {
+    Route::get('/', [MediaController::class, 'index'])->name('index');
+    Route::get('/{id}', [MediaController::class, 'show'])->name('show');
+    Route::get('/download/{mediaId}', [MediaController::class, 'download'])->name('download');
+    
+    Route::middleware('auth')->group(function () {
+        Route::get('/create/upload', [MediaController::class, 'create'])->name('create');
+        Route::post('/store', [MediaController::class, 'store'])->name('store');
+    });
+});
