@@ -86,17 +86,24 @@ class News extends Model implements HasMediaInterface
         $this->addMediaCollection('featured-image')
             ->useDisk('public')
             ->singleFile()
-            ->acceptsMimeTypes(['image/jpeg', 'image/png', 'image/gif', 'image/webp'])
-            ->registerMediaConversions(function () {
-                $this->addMediaConversion('thumb')
-                    ->width(400)
-                    ->height(300)
-                    ->optimize();
+            ->acceptsMimeTypes(['image/jpeg', 'image/png', 'image/gif', 'image/webp']);
+    }
 
-                $this->addMediaConversion('large')
-                    ->width(1200)
-                    ->height(630)
-                    ->optimize();
-            });
+    /**
+     * Register media conversions for this model.
+     */
+    public function registerMediaConversions(\Spatie\MediaLibrary\MediaCollections\Models\Media $media = null): void
+    {
+        $this->addMediaConversion('thumb')
+            ->width(400)
+            ->height(300)
+            ->optimize()
+            ->performOnCollections('featured-image');
+
+        $this->addMediaConversion('large')
+            ->width(1200)
+            ->height(630)
+            ->optimize()
+            ->performOnCollections('featured-image');
     }
 }

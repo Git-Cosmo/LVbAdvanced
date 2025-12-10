@@ -44,13 +44,15 @@ class SitemapController extends Controller
         }
 
         // Add forums
-        Forum::all()->each(function (Forum $forum) use ($sitemap) {
-            $sitemap->add(
-                Url::create(route('forum.show', $forum))
-                    ->setLastModificationDate($forum->updated_at)
-                    ->setChangeFrequency(Url::CHANGE_FREQUENCY_HOURLY)
-                    ->setPriority(0.8)
-            );
+        Forum::chunk(50, function ($forums) use ($sitemap) {
+            foreach ($forums as $forum) {
+                $sitemap->add(
+                    Url::create(route('forum.show', $forum))
+                        ->setLastModificationDate($forum->updated_at)
+                        ->setChangeFrequency(Url::CHANGE_FREQUENCY_HOURLY)
+                        ->setPriority(0.8)
+                );
+            }
         });
 
         // Add forum threads (limited to recent ones for performance)

@@ -72,20 +72,27 @@ class Gallery extends Model implements HasMediaInterface
     {
         $this->addMediaCollection('gallery-images')
             ->useDisk('public')
-            ->acceptsMimeTypes(['image/jpeg', 'image/png', 'image/gif', 'image/webp'])
-            ->registerMediaConversions(function () {
-                $this->addMediaConversion('thumb')
-                    ->width(300)
-                    ->height(300)
-                    ->optimize();
-
-                $this->addMediaConversion('preview')
-                    ->width(800)
-                    ->height(600)
-                    ->optimize();
-            });
+            ->acceptsMimeTypes(['image/jpeg', 'image/png', 'image/gif', 'image/webp']);
 
         $this->addMediaCollection('downloads')
             ->useDisk('public');
+    }
+
+    /**
+     * Register media conversions for this model.
+     */
+    public function registerMediaConversions(\Spatie\MediaLibrary\MediaCollections\Models\Media $media = null): void
+    {
+        $this->addMediaConversion('thumb')
+            ->width(300)
+            ->height(300)
+            ->optimize()
+            ->performOnCollections('gallery-images');
+
+        $this->addMediaConversion('preview')
+            ->width(800)
+            ->height(600)
+            ->optimize()
+            ->performOnCollections('gallery-images');
     }
 }

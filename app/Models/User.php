@@ -182,17 +182,24 @@ class User extends Authenticatable implements MustVerifyEmail, HasMediaInterface
         $this->addMediaCollection('avatar')
             ->useDisk('public')
             ->singleFile()
-            ->acceptsMimeTypes(['image/jpeg', 'image/png', 'image/gif', 'image/webp'])
-            ->registerMediaConversions(function () {
-                $this->addMediaConversion('thumb')
-                    ->width(150)
-                    ->height(150)
-                    ->optimize();
+            ->acceptsMimeTypes(['image/jpeg', 'image/png', 'image/gif', 'image/webp']);
+    }
 
-                $this->addMediaConversion('profile')
-                    ->width(400)
-                    ->height(400)
-                    ->optimize();
-            });
+    /**
+     * Register media conversions for this model.
+     */
+    public function registerMediaConversions(\Spatie\MediaLibrary\MediaCollections\Models\Media $media = null): void
+    {
+        $this->addMediaConversion('thumb')
+            ->width(150)
+            ->height(150)
+            ->optimize()
+            ->performOnCollections('avatar');
+
+        $this->addMediaConversion('profile')
+            ->width(400)
+            ->height(400)
+            ->optimize()
+            ->performOnCollections('avatar');
     }
 }
