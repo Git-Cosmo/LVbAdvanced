@@ -26,7 +26,6 @@ class ActivityFeedService
                 ]);
 
             $posts = ForumPost::with(['user', 'thread', 'thread.forum'])
-                ->where('is_first_post', false)
                 ->latest()
                 ->limit($limit)
                 ->get()
@@ -111,7 +110,6 @@ class ActivityFeedService
     public function getRecentPosts(int $limit = 20)
     {
         return ForumPost::with(['user', 'thread', 'thread.forum'])
-            ->where('is_first_post', false)
             ->latest()
             ->limit($limit)
             ->get();

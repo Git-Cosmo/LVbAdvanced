@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Media extends Model
 {
-    protected $table = 'media';
+    protected $table = 'gallery_media';
 
     protected $fillable = [
         'gallery_id',

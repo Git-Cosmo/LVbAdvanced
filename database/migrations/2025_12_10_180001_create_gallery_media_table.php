@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('media', function (Blueprint $table) {
+        Schema::create('gallery_media', function (Blueprint $table) {
             $table->id();
             $table->foreignId('gallery_id')->nullable()->constrained()->onDelete('cascade');
             $table->string('path');
@@ -26,6 +26,6 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('media');
+        Schema::dropIfExists('gallery_media');
     }
 };
