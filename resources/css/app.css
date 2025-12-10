@@ -1,5 +1,54 @@
-@import 'tailwindcss';
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import 'tailwindcss';
+
+@theme {
+  --color-dark-bg-primary: #0d1117;
+  --color-dark-bg-secondary: #161b22;
+  --color-dark-bg-tertiary: #21262d;
+  --color-dark-bg-elevated: #1c2128;
+  
+  --color-dark-border-primary: #30363d;
+  --color-dark-border-secondary: #21262d;
+  --color-dark-border-accent: #58a6ff;
+  
+  --color-dark-text-primary: #c9d1d9;
+  --color-dark-text-secondary: #8b949e;
+  --color-dark-text-tertiary: #6e7681;
+  --color-dark-text-bright: #f0f6fc;
+  --color-dark-text-accent: #58a6ff;
+  
+  --color-light-bg-primary: #f6f8fa;
+  --color-light-bg-secondary: #ffffff;
+  --color-light-bg-tertiary: #f3f4f6;
+  --color-light-bg-elevated: #ffffff;
+  
+  --color-light-border-primary: #d0d7de;
+  --color-light-border-secondary: #e5e7eb;
+  --color-light-border-accent: #0969da;
+  
+  --color-light-text-primary: #24292f;
+  --color-light-text-secondary: #57606a;
+  --color-light-text-tertiary: #6e7781;
+  --color-light-text-bright: #1f2328;
+  --color-light-text-accent: #0969da;
+  
+  --color-accent-purple: #a371f7;
+  --color-accent-blue: #58a6ff;
+  --color-accent-green: #3fb950;
+  --color-accent-orange: #f78166;
+  --color-accent-yellow: #d29922;
+  --color-accent-red: #f85149;
+  
+  --font-family-sans: Inter, system-ui, -apple-system, sans-serif;
+  
+  --breakpoint-sm: 40rem;
+  --breakpoint-md: 48rem;
+  --breakpoint-lg: 64rem;
+  --breakpoint-xl: 80rem;
+  --breakpoint-2xl: 96rem;
+}
+
+@variant dark (&:where(.dark, .dark *));
 
 /* Custom scrollbar for dark theme */
 .dark ::-webkit-scrollbar {
