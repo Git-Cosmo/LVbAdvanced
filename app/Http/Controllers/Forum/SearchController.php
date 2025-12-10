@@ -6,11 +6,19 @@ use App\Http\Controllers\Controller;
 use App\Models\Forum\ForumPost;
 use App\Models\Forum\ForumThread;
 use App\Models\User;
+use App\Services\SearchService;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class SearchController extends Controller
 {
+    protected SearchService $searchService;
+
+    public function __construct(SearchService $searchService)
+    {
+        $this->searchService = $searchService;
+    }
+
     /**
      * Display search results.
      */
@@ -28,58 +36,24 @@ class SearchController extends Controller
         $users = collect();
         
         if ($query) {
-            if (in_array($filter, ['all', 'threads'])) {
-                $threadsQuery = ForumThread::with(['user', 'forum'])
-                    ->where('is_hidden', false)
-                    ->where(function($q) use ($query) {
-                        $q->where('title', 'like', "%{$query}%");
-                    });
-                
-                if ($forumId) {
-                    $threadsQuery->where('forum_id', $forumId);
-                }
-                
-                if ($userId) {
-                    $threadsQuery->where('user_id', $userId);
-                }
-                
-                if ($dateFrom) {
-                    $threadsQuery->where('created_at', '>=', $dateFrom);
-                }
-                
-                if ($dateTo) {
-                    $threadsQuery->where('created_at', '<=', $dateTo);
-                }
-                
-                $threads = $threadsQuery->orderByDesc('created_at')->paginate(15, ['*'], 'threads_page');
-            }
-            
-            if (in_array($filter, ['all', 'posts'])) {
-                $postsQuery = ForumPost::with(['user', 'thread.forum'])
-                    ->where('is_hidden', false)
-                    ->where(function($q) use ($query) {
-                        $q->where('content', 'like', "%{$query}%");
-                    });
-                
-                if ($userId) {
-                    $postsQuery->where('user_id', $userId);
-                }
-                
-                if ($dateFrom) {
-                    $postsQuery->where('created_at', '>=', $dateFrom);
-                }
-                
-                if ($dateTo) {
-                    $postsQuery->where('created_at', '<=', $dateTo);
-                }
-                
-                $posts = $postsQuery->orderByDesc('created_at')->paginate(15, ['*'], 'posts_page');
-            }
-            
-            if (in_array($filter, ['all', 'users'])) {
-                $users = User::where('name', 'like', "%{$query}%")
-                    ->withCount('threads', 'posts')
-                    ->paginate(15, ['*'], 'users_page');
+            $filters = array_filter([
+                'forum_id' => $forumId,
+                'user_id' => $userId,
+                'date_from' => $dateFrom,
+                'date_to' => $dateTo,
+            ]);
+
+            if ($filter === 'threads') {
+                $threads = $this->searchService->searchThreads($query, $filters);
+            } elseif ($filter === 'posts') {
+                $posts = $this->searchService->searchPosts($query, $filters);
+            } elseif ($filter === 'users') {
+                $users = $this->searchService->searchUsers($query);
+            } else {
+                // 'all' filter
+                $threads = $this->searchService->searchThreads($query, $filters);
+                $posts = $this->searchService->searchPosts($query, $filters);
+                $users = $this->searchService->searchUsers($query);
             }
         }
         
