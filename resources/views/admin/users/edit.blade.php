@@ -288,7 +288,7 @@
                 <div class="dark:bg-dark-bg-secondary bg-light-bg-secondary rounded-lg p-6">
                     <div class="text-center">
                         <div class="w-24 h-24 mx-auto rounded-full bg-gradient-to-br from-accent-blue to-accent-purple flex items-center justify-center text-white text-3xl font-bold mb-4">
-                            {{ strtoupper(substr($user->name, 0, 2)) }}
+                            {{ strtoupper(substr($user->name, 0, 1)) }}
                         </div>
                         <h3 class="font-semibold dark:text-dark-text-bright text-light-text-bright">{{ $user->name }}</h3>
                         <p class="text-sm dark:text-dark-text-tertiary text-light-text-tertiary mt-1">{{ $user->email }}</p>

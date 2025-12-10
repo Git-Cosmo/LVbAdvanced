@@ -118,7 +118,7 @@ class AchievementsBadgesSeeder extends Seeder
                 'name' => 'Level 100',
                 'slug' => 'level-100',
                 'description' => 'Reach level 100',
-                'icon' => '👑',
+                'icon' => '💯',
                 'points' => 1000,
                 'criteria' => ['type' => 'level', 'count' => 100],
                 'is_active' => true,

@@ -93,6 +93,12 @@ class UserManagementController extends Controller
             'about_me' => 'nullable|string',
         ]);
 
+        // Ensure user has a profile
+        if (!$user->profile) {
+            UserProfile::create(['user_id' => $user->id]);
+            $user->load('profile');
+        }
+
         $user->profile->update($validated);
 
         return redirect()->route('admin.users.edit', $user)
@@ -117,8 +123,8 @@ class UserManagementController extends Controller
                 'unlocked_at' => now(),
             ]);
 
-            // Award XP for achievement
-            if ($achievement->points > 0) {
+            // Award XP for achievement (ensure profile exists)
+            if ($achievement->points > 0 && $user->profile) {
                 $user->profile->addXp($achievement->points);
             }
         }
