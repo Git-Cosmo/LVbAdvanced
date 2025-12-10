@@ -35,4 +35,23 @@ return [
         ],
     ],
 
+    'steam' => [
+        'client_id' => null,
+        'client_secret' => env('STEAM_API_KEY'),
+        'redirect' => env('APP_URL') . '/auth/steam/callback',
+    ],
+
+    'discord' => [
+        'client_id' => env('DISCORD_CLIENT_ID'),
+        'client_secret' => env('DISCORD_CLIENT_SECRET'),
+        'redirect' => env('APP_URL') . '/auth/discord/callback',
+    ],
+
+    'battlenet' => [
+        'client_id' => env('BATTLENET_CLIENT_ID'),
+        'client_secret' => env('BATTLENET_CLIENT_SECRET'),
+        'redirect' => env('APP_URL') . '/auth/battlenet/callback',
+        'region' => env('BATTLENET_REGION', 'us'),
+    ],
+
 ];

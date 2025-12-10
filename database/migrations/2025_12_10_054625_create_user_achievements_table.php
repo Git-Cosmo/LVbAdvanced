@@ -31,6 +31,7 @@ return new class extends Migration
             $table->integer('progress')->default(0);
             $table->boolean('is_unlocked')->default(false);
             $table->timestamp('unlocked_at')->nullable();
+            $table->timestamps();
             
             $table->unique(['user_id', 'achievement_id']);
         });

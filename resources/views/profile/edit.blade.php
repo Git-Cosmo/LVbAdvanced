@@ -188,5 +188,58 @@
             </div>
         </form>
     </div>
+
+    <!-- Two-Factor Authentication Section -->
+    <div class="dark:bg-dark-bg-secondary bg-light-bg-secondary rounded-xl p-6 mt-6">
+        <h2 class="text-2xl font-bold dark:text-dark-text-bright text-light-text-bright mb-4">Two-Factor Authentication</h2>
+        
+        @if(session('recovery_codes'))
+            <div class="mb-6 bg-yellow-500/10 border border-yellow-500/50 text-yellow-600 dark:text-yellow-400 px-4 py-3 rounded-lg">
+                <p class="font-bold mb-2">Save these recovery codes in a secure location!</p>
+                <div class="grid grid-cols-2 gap-2 mt-2">
+                    @foreach(session('recovery_codes') as $code)
+                        <code class="text-sm font-mono">{{ $code }}</code>
+                    @endforeach
+                </div>
+            </div>
+        @endif
+
+        @if($user->two_factor_confirmed_at)
+            <div class="flex items-start justify-between">
+                <div>
+                    <p class="dark:text-dark-text-primary text-light-text-primary mb-2">
+                        Two-factor authentication is currently <strong class="text-green-500">enabled</strong>.
+                    </p>
+                    <p class="text-sm dark:text-dark-text-secondary text-light-text-secondary">
+                        Enabled on {{ $user->two_factor_confirmed_at->format('F j, Y') }}
+                    </p>
+                </div>
+                <form method="POST" action="{{ route('2fa.disable') }}" class="inline">
+                    @csrf
+                    <input type="password" name="password" placeholder="Confirm password" required
+                           class="px-3 py-2 dark:bg-dark-bg-tertiary bg-light-bg-tertiary dark:text-dark-text-primary text-light-text-primary rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-blue mr-2">
+                    <button type="submit" 
+                            class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors">
+                        Disable 2FA
+                    </button>
+                </form>
+            </div>
+        @else
+            <div class="flex items-start justify-between">
+                <div>
+                    <p class="dark:text-dark-text-primary text-light-text-primary mb-2">
+                        Add additional security to your account using two-factor authentication.
+                    </p>
+                    <p class="text-sm dark:text-dark-text-secondary text-light-text-secondary">
+                        When enabled, you'll be prompted for a secure code during authentication.
+                    </p>
+                </div>
+                <a href="{{ route('2fa.setup') }}" 
+                   class="px-6 py-2 bg-gradient-to-r from-accent-blue to-accent-purple text-white rounded-lg font-medium hover:shadow-lg hover:scale-105 transition-all">
+                    Enable 2FA
+                </a>
+            </div>
+        @endif
+    </div>
 </div>
 @endsection

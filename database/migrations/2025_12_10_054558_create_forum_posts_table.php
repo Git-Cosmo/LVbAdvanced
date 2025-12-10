@@ -29,7 +29,11 @@ return new class extends Migration
             
             $table->index(['thread_id', 'created_at']);
             $table->index('user_id');
-            $table->fullText('content');
+            
+            // Only add fulltext if not using SQLite
+            if (config('database.default') !== 'sqlite') {
+                $table->fullText('content');
+            }
         });
     }
 

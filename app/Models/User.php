@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Models\Forum\ForumPost;
 use App\Models\Forum\ForumThread;
 use App\Models\User\ProfilePost;
+use App\Models\User\UserAchievement;
 use App\Models\User\UserBadge;
 use App\Models\User\UserProfile;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -16,7 +17,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
 
-class User extends Authenticatable
+class User extends Authenticatable implements MustVerifyEmail
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable, HasRoles;
@@ -30,6 +31,9 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'steam_id',
+        'discord_id',
+        'battlenet_id',
     ];
 
     /**
@@ -92,9 +96,19 @@ class User extends Authenticatable
      */
     public function badges(): BelongsToMany
     {
-        return $this->belongsToMany(UserBadge::class, 'badge_user')
+        return $this->belongsToMany(UserBadge::class, 'badge_user', 'user_id', 'badge_id')
             ->withTimestamps()
             ->withPivot('awarded_at');
+    }
+
+    /**
+     * Get the achievements earned by the user.
+     */
+    public function achievements(): BelongsToMany
+    {
+        return $this->belongsToMany(UserAchievement::class, 'achievement_user', 'user_id', 'achievement_id')
+            ->withTimestamps()
+            ->withPivot(['progress', 'is_unlocked', 'unlocked_at']);
     }
 
     /**
