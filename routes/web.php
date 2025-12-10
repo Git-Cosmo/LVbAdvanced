@@ -206,6 +206,16 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
         Route::delete('/{gallery}', [\App\Http\Controllers\Admin\MediaManagementController::class, 'destroy'])->name('destroy');
     });
     
+    // News Management
+    Route::prefix('news')->name('news.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Admin\NewsManagementController::class, 'index'])->name('index');
+        Route::get('/create', [\App\Http\Controllers\Admin\NewsManagementController::class, 'create'])->name('create');
+        Route::post('/', [\App\Http\Controllers\Admin\NewsManagementController::class, 'store'])->name('store');
+        Route::get('/{news}/edit', [\App\Http\Controllers\Admin\NewsManagementController::class, 'edit'])->name('edit');
+        Route::patch('/{news}', [\App\Http\Controllers\Admin\NewsManagementController::class, 'update'])->name('update');
+        Route::delete('/{news}', [\App\Http\Controllers\Admin\NewsManagementController::class, 'destroy'])->name('destroy');
+    });
+    
     // Gamification Settings
     Route::prefix('gamification')->name('gamification.')->group(function () {
         Route::get('/', [\App\Http\Controllers\Admin\GamificationController::class, 'index'])->name('index');
