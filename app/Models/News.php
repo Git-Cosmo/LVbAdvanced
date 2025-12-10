@@ -91,14 +91,12 @@ class News extends Model implements HasMediaInterface
                 $this->addMediaConversion('thumb')
                     ->width(400)
                     ->height(300)
-                    ->optimize()
-                    ->nonQueued();
+                    ->optimize();
 
                 $this->addMediaConversion('large')
                     ->width(1200)
                     ->height(630)
-                    ->optimize()
-                    ->nonQueued();
+                    ->optimize();
             });
     }
 }

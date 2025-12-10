@@ -57,41 +57,44 @@ class SitemapController extends Controller
         ForumThread::where('is_hidden', false)
             ->orderBy('updated_at', 'desc')
             ->limit(1000)
-            ->get()
-            ->each(function (ForumThread $thread) use ($sitemap) {
-                $sitemap->add(
-                    Url::create(route('forum.thread.show', [$thread->forum, $thread]))
-                        ->setLastModificationDate($thread->updated_at)
-                        ->setChangeFrequency(Url::CHANGE_FREQUENCY_DAILY)
-                        ->setPriority(0.6)
-                );
+            ->chunk(100, function ($threads) use ($sitemap) {
+                foreach ($threads as $thread) {
+                    $sitemap->add(
+                        Url::create(route('forum.thread.show', [$thread->forum, $thread]))
+                            ->setLastModificationDate($thread->updated_at)
+                            ->setChangeFrequency(Url::CHANGE_FREQUENCY_DAILY)
+                            ->setPriority(0.6)
+                    );
+                }
             });
 
         // Add published news articles
         News::published()
             ->orderBy('published_at', 'desc')
             ->limit(500)
-            ->get()
-            ->each(function (News $news) use ($sitemap) {
-                $sitemap->add(
-                    Url::create(route('news.show', $news))
-                        ->setLastModificationDate($news->updated_at)
-                        ->setChangeFrequency(Url::CHANGE_FREQUENCY_WEEKLY)
-                        ->setPriority(0.7)
-                );
+            ->chunk(100, function ($newsArticles) use ($sitemap) {
+                foreach ($newsArticles as $news) {
+                    $sitemap->add(
+                        Url::create(route('news.show', $news))
+                            ->setLastModificationDate($news->updated_at)
+                            ->setChangeFrequency(Url::CHANGE_FREQUENCY_WEEKLY)
+                            ->setPriority(0.7)
+                    );
+                }
             });
 
         // Add galleries
         Gallery::orderBy('updated_at', 'desc')
             ->limit(500)
-            ->get()
-            ->each(function (Gallery $gallery) use ($sitemap) {
-                $sitemap->add(
-                    Url::create(route('media.gallery.show', $gallery))
-                        ->setLastModificationDate($gallery->updated_at)
-                        ->setChangeFrequency(Url::CHANGE_FREQUENCY_WEEKLY)
-                        ->setPriority(0.6)
-                );
+            ->chunk(100, function ($galleries) use ($sitemap) {
+                foreach ($galleries as $gallery) {
+                    $sitemap->add(
+                        Url::create(route('media.show', $gallery))
+                            ->setLastModificationDate($gallery->updated_at)
+                            ->setChangeFrequency(Url::CHANGE_FREQUENCY_WEEKLY)
+                            ->setPriority(0.6)
+                    );
+                }
             });
 
         return $sitemap->toResponse(request());

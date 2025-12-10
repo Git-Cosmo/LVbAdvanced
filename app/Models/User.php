@@ -187,14 +187,12 @@ class User extends Authenticatable implements MustVerifyEmail, HasMediaInterface
                 $this->addMediaConversion('thumb')
                     ->width(150)
                     ->height(150)
-                    ->optimize()
-                    ->nonQueued();
+                    ->optimize();
 
                 $this->addMediaConversion('profile')
                     ->width(400)
                     ->height(400)
-                    ->optimize()
-                    ->nonQueued();
+                    ->optimize();
             });
     }
 }

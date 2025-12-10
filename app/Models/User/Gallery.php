@@ -77,14 +77,12 @@ class Gallery extends Model implements HasMediaInterface
                 $this->addMediaConversion('thumb')
                     ->width(300)
                     ->height(300)
-                    ->optimize()
-                    ->nonQueued();
+                    ->optimize();
 
                 $this->addMediaConversion('preview')
                     ->width(800)
                     ->height(600)
-                    ->optimize()
-                    ->nonQueued();
+                    ->optimize();
             });
 
         $this->addMediaCollection('downloads')
