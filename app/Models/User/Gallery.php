@@ -37,7 +37,7 @@ class Gallery extends Model implements HasMediaInterface
         return $this->belongsTo(User::class);
     }
 
-    public function media(): HasMany
+    public function galleryMedia(): HasMany
     {
         return $this->hasMany(Media::class);
     }

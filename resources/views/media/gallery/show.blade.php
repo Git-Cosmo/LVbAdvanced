@@ -62,12 +62,12 @@
     <!-- Media Files -->
     <div class="dark:bg-dark-bg-secondary bg-light-bg-secondary rounded-lg shadow-md p-6 mb-6">
         <h2 class="text-xl font-bold dark:text-dark-text-bright text-light-text-bright mb-4">
-            Files ({{ $gallery->media->count() }})
+            Files ({{ $gallery->galleryMedia->count() }})
         </h2>
         
-        @if($gallery->media->count() > 0)
+        @if($gallery->galleryMedia->count() > 0)
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                @foreach($gallery->media as $media)
+                @foreach($gallery->galleryMedia as $media)
                     <div class="dark:bg-dark-bg-tertiary bg-light-bg-tertiary rounded-lg overflow-hidden">
                         @if(str_starts_with($media->mime_type, 'image/'))
                             <div class="relative h-48">
