@@ -1,6 +1,80 @@
 @import 'tailwindcss';
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
-@theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-        'Segoe UI Symbol', 'Noto Color Emoji';
+/* Custom scrollbar for dark theme */
+.dark ::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+}
+
+.dark ::-webkit-scrollbar-track {
+    background: #161b22;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+    background: #30363d;
+    border-radius: 6px;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+    background: #484f58;
+}
+
+/* Smooth transitions */
+* {
+    transition-property: background-color, border-color, color, fill, stroke;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms;
+}
+
+/* Navbar blur effect */
+.navbar-blur {
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+
+/* Block hover effect */
+.block-hover {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.block-hover:hover {
+    transform: translateY(-2px);
+}
+
+/* Link underline animation */
+.link-underline {
+    position: relative;
+}
+
+.link-underline::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: -2px;
+    left: 0;
+    transition: width 0.3s ease;
+}
+
+.link-underline:hover::after {
+    width: 100%;
+}
+
+/* Dark theme link underline */
+.dark .link-underline::after {
+    background-color: #58a6ff;
+}
+
+/* Light theme link underline */
+.light .link-underline::after {
+    background-color: #0969da;
+}
+
+/* Gradient text */
+.gradient-text {
+    background: linear-gradient(135deg, #58a6ff 0%, #a371f7 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
 }
