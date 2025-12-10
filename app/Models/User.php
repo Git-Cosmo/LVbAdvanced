@@ -106,7 +106,7 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function achievements(): BelongsToMany
     {
-        return $this->belongsToMany(UserAchievement::class, 'achievement_user')
+        return $this->belongsToMany(UserAchievement::class, 'achievement_user', 'user_id', 'achievement_id')
             ->withTimestamps()
             ->withPivot(['progress', 'is_unlocked', 'unlocked_at']);
     }
