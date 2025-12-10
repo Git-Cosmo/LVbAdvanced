@@ -194,7 +194,7 @@
                 <div class="flex-1"></div>
                 <div class="text-sm dark:text-dark-text-tertiary text-light-text-tertiary">
                     <span class="dark:text-dark-text-accent text-light-text-accent font-semibold">{{ \App\Models\User::count() }}</span> members,
-                    <span class="dark:text-dark-text-accent text-light-text-accent font-semibold">{{ \App\Models\Block::count() }}</span> blocks
+                    <span class="dark:text-dark-text-accent text-light-text-accent font-semibold">{{ \App\Models\Forum\Forum::count() }}</span> forums
                 </div>
             </div>
         </div>

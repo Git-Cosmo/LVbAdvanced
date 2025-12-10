@@ -1,4 +1,4 @@
-@extends('portal.layouts.app')
+@extends('layouts.app')
 
 @section('content')
 <div class="max-w-7xl mx-auto" x-data="{ activeTab: 'xp' }">

@@ -1,6 +1,6 @@
-# LVbAdvanced - vBadvanced-Style Portal System in Laravel 12
+# LVbAdvanced - Modern Forum Platform in Laravel 12
 
-A modern, modular, block-based portal system with integrated forum platform built with Laravel 12, inspired by the classic vBadvanced CMPS.
+A modern forum platform with integrated portal built with Laravel 12, inspired by the classic vBadvanced CMPS.
 
 ![Portal Homepage](https://github.com/user-attachments/assets/1cc6c754-78d9-4317-b3cf-d44465b5a060)
 
@@ -8,9 +8,8 @@ A modern, modular, block-based portal system with integrated forum platform buil
 
 ### Core System
 - ✅ **Laravel 12** with PHP 8.4
-- ✅ **Modular Architecture** - Clean separation of concerns
-- ✅ **Block Engine** - Flexible, extensible block system with caching
-- ✅ **Three-Column Layout** - Left/Center/Right column support + full-width blocks
+- ✅ **Clean Architecture** - Standard Laravel structure with Blade templates
+- ✅ **Shared Layout System** - Consistent UI across portal and forum
 - ✅ **Role-Based Access Control** - Using Spatie Permission
 - ✅ **Activity Logging** - Track admin actions with Spatie Activity Log
 - ✅ **Media Library** - File management with Spatie Media Library
@@ -33,25 +32,16 @@ A modern, modular, block-based portal system with integrated forum platform buil
 ### Frontend
 - ✅ **TailwindCSS** - Modern, responsive design
 - ✅ **Alpine.js** - Lightweight JavaScript framework
-- ✅ **Block-Based Layout** - Dynamic homepage with configurable blocks
+- ✅ **Clean Homepage** - Responsive homepage with feature showcase and stats
 - ✅ **SEO Friendly** - Meta tags, clean URLs, sitemap support
 
 ### Admin Panel
 - ✅ **Custom Admin Interface** - No external UI packages
-- ✅ **Dashboard** - Statistics and quick actions
-- ✅ **Page Management** - Full CRUD operations
-- ✅ **Block Management** - Create and configure blocks
+- ✅ **Dashboard** - Forum statistics and quick actions
+- ✅ **Forum Management** - Create and manage categories and forums
 - ✅ **User Management** - Role-based permissions
+- ✅ **Moderation Tools** - Handle reports, warnings, and bans
 - ✅ **Activity Monitoring** - System logs
-
-### Block Types
-- ✅ Custom HTML Block - Display custom HTML content
-- ✅ Latest News Block - Display latest news articles
-- ✅ Latest Threads Block - Display latest forum threads
-- ✅ Link List Block - Display a list of links with icons
-- ✅ Stats Block - Display site statistics with colorful cards
-- ✅ Recent Activity Block - Display recent system activity logs
-- ✅ Advertisement Block - Display advertisements (image, text, or ad code)
 
 ## Installation
 
@@ -97,6 +87,23 @@ A modern, modular, block-based portal system with integrated forum platform buil
 
 ## Architecture
 
+### Layout Structure
+The application uses a shared Blade layout located at `resources/views/layouts/app.blade.php` that provides:
+- Responsive navigation with dark/light mode toggle
+- User authentication menu
+- Search functionality
+- Secondary navigation bar
+- Footer with site information
+
+All portal and forum pages extend this layout using standard Blade `@extends('layouts.app')` syntax.
+
+### Portal
+The portal homepage is a static Blade template (`resources/views/portal/home.blade.php`) that displays:
+- Hero section with call-to-action
+- Feature cards highlighting system capabilities
+- Live statistics (users, forums, threads, posts)
+- Registration/login prompts for guests
+
 ### Forum System
 The forum system is built using standard Laravel architecture:
 
@@ -117,23 +124,6 @@ The forum system is built using standard Laravel architecture:
 - **Polls** - Create polls in threads
 - **Subscriptions** - Get notified of new posts
 - **Moderation** - Report, warn, and ban users
-
-### Block System
-Blocks are modular components that can be placed on pages. Create new blocks by:
-
-1. Extending `AbstractBlock` class
-2. Registering in `PortalServiceProvider`
-3. Creating a Blade template
-
-Example:
-```php
-class MyBlock extends AbstractBlock {
-    public function getType(): string { return 'my_block'; }
-    public function getName(): string { return 'My Block'; }
-    public function getData(Block $block): array { return []; }
-    public function getTemplate(): string { return 'portal.blocks.my-block'; }
-}
-```
 
 ## Database Structure
 
