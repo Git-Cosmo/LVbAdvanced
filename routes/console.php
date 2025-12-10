@@ -10,7 +10,7 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote');
 
 Artisan::command('cheapshark:sync {--runType=manual}', function (CheapSharkService $cheapSharkService) {
-    $runType = $this->option('runType') ?? 'manual';
+    $runType = $this->option('runType');
     $log = $cheapSharkService->runSync($runType);
 
     $this->info($log->message ?? 'Sync finished with status: ' . $log->status);

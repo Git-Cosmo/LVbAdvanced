@@ -206,7 +206,7 @@ class CheapSharkService
                 continue;
             }
 
-            $onSaleFlag = $deal['isOnSale'] ?? $deal['onSale'] ?? null;
+            $onSaleFlag = $deal['isOnSale'] ?? $deal['onSale'] ?? false;
 
             $records[] = [
                 'deal_id' => $deal['dealID'],
@@ -217,7 +217,7 @@ class CheapSharkService
                 'savings' => isset($deal['savings']) ? round((float) $deal['savings'], 2) : null,
                 'deal_rating' => $deal['dealRating'] ?? null,
                 'steam_app_id' => $deal['steamAppID'] ?? null,
-                'on_sale' => in_array($onSaleFlag, [1, '1', true, 'true'], true),
+                'on_sale' => filter_var($onSaleFlag, FILTER_VALIDATE_BOOLEAN),
                 'deal_link' => isset($deal['dealID']) ? 'https://www.cheapshark.com/redirect?dealID=' . $deal['dealID'] : null,
                 'created_at' => now(),
                 'updated_at' => now(),

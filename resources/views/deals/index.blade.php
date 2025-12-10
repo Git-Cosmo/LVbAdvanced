@@ -11,7 +11,7 @@
                     Live prices from CheapShark stores with fast search and smart filtering.
                 </p>
             </div>
-            <a href="{{ route('activity.trending') }}" class="px-4 py-2 rounded-lg bg-gradient-to-r from-accent-blue to-accent-purple text-white text-sm font-semibold shadow hover:shadow-lg transition">
+            <a href="{{ route('home') }}" class="px-4 py-2 rounded-lg bg-gradient-to-r from-accent-blue to-accent-purple text-white text-sm font-semibold shadow hover:shadow-lg transition">
                 Back to community
             </a>
         </div>
