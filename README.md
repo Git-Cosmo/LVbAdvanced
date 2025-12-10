@@ -1,6 +1,6 @@
 # LVbAdvanced - vBadvanced-Style Portal System in Laravel 12
 
-A modern, modular, block-based portal system with integrated forum platform built with Laravel 12, inspired by the classic vBadvanced CMPS.
+A modern portal system with integrated forum platform built with Laravel 12, inspired by the classic vBadvanced CMPS.
 
 ![Portal Homepage](https://github.com/user-attachments/assets/1cc6c754-78d9-4317-b3cf-d44465b5a060)
 
@@ -9,8 +9,7 @@ A modern, modular, block-based portal system with integrated forum platform buil
 ### Core System
 - ✅ **Laravel 12** with PHP 8.4
 - ✅ **Modular Architecture** - Clean separation of concerns
-- ✅ **Block Engine** - Flexible, extensible block system with caching
-- ✅ **Three-Column Layout** - Left/Center/Right column support + full-width blocks
+- ✅ **Flexible Layout System** - Standard Blade templating with shared layout
 - ✅ **Role-Based Access Control** - Using Spatie Permission
 - ✅ **Activity Logging** - Track admin actions with Spatie Activity Log
 - ✅ **Media Library** - File management with Spatie Media Library
@@ -33,25 +32,16 @@ A modern, modular, block-based portal system with integrated forum platform buil
 ### Frontend
 - ✅ **TailwindCSS** - Modern, responsive design
 - ✅ **Alpine.js** - Lightweight JavaScript framework
-- ✅ **Block-Based Layout** - Dynamic homepage with configurable blocks
+- ✅ **Clean Layout** - Responsive homepage with feature showcase
 - ✅ **SEO Friendly** - Meta tags, clean URLs, sitemap support
 
 ### Admin Panel
 - ✅ **Custom Admin Interface** - No external UI packages
 - ✅ **Dashboard** - Statistics and quick actions
 - ✅ **Page Management** - Full CRUD operations
-- ✅ **Block Management** - Create and configure blocks
+- ✅ **Block Management** - Create and configure blocks (available for custom pages)
 - ✅ **User Management** - Role-based permissions
 - ✅ **Activity Monitoring** - System logs
-
-### Block Types
-- ✅ Custom HTML Block - Display custom HTML content
-- ✅ Latest News Block - Display latest news articles
-- ✅ Latest Threads Block - Display latest forum threads
-- ✅ Link List Block - Display a list of links with icons
-- ✅ Stats Block - Display site statistics with colorful cards
-- ✅ Recent Activity Block - Display recent system activity logs
-- ✅ Advertisement Block - Display advertisements (image, text, or ad code)
 
 ## Installation
 
@@ -97,6 +87,16 @@ A modern, modular, block-based portal system with integrated forum platform buil
 
 ## Architecture
 
+### Layout Structure
+The application uses a shared Blade layout located at `resources/views/layouts/app.blade.php` that provides:
+- Responsive navigation with dark/light mode toggle
+- User authentication menu
+- Search functionality
+- Secondary navigation bar
+- Footer with site information
+
+All portal and forum pages extend this layout using standard Blade `@extends('layouts.app')` syntax.
+
 ### Forum System
 The forum system is built using standard Laravel architecture:
 
@@ -118,22 +118,8 @@ The forum system is built using standard Laravel architecture:
 - **Subscriptions** - Get notified of new posts
 - **Moderation** - Report, warn, and ban users
 
-### Block System
-Blocks are modular components that can be placed on pages. Create new blocks by:
-
-1. Extending `AbstractBlock` class
-2. Registering in `PortalServiceProvider`
-3. Creating a Blade template
-
-Example:
-```php
-class MyBlock extends AbstractBlock {
-    public function getType(): string { return 'my_block'; }
-    public function getName(): string { return 'My Block'; }
-    public function getData(Block $block): array { return []; }
-    public function getTemplate(): string { return 'portal.blocks.my-block'; }
-}
-```
+### Block System (For Custom Pages)
+Blocks are available for custom pages and can be managed through the admin panel. The block system provides modular components that can be placed on custom pages for additional functionality.
 
 ## Database Structure
 
