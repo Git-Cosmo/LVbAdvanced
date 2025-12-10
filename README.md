@@ -11,7 +11,8 @@ A modern forum platform with integrated portal built with Laravel 12, inspired b
 - ✅ **Laravel 12** with PHP 8.4
 - ✅ **Clean Architecture** - Standard Laravel structure with Blade templates
 - ✅ **Shared Layout System** - Consistent UI across portal and forum
-- ✅ **Role-Based Access Control** - Using Spatie Permission
+- ✅ **Role-Based Access Control** - Using Spatie Permission with 8 gaming community roles
+- ✅ **Comprehensive Permissions** - 52 granular permissions for complete access control
 - ✅ **Activity Logging** - Track admin actions with Spatie Activity Log
 - ✅ **Media Library** - File management with Spatie Media Library
 
@@ -156,6 +157,75 @@ Users can enable 2FA from their profile settings:
 5. Save recovery codes in a secure location
 
 To disable 2FA, users must enter their password for security confirmation.
+
+## Roles & Permissions System
+
+The platform includes a comprehensive role-based access control system inspired by vBulletin, with 8 predefined roles and 52 granular permissions.
+
+### Gaming Community Roles
+
+1. **Administrator** - Full system access (52 permissions)
+   - Complete control over forums, users, and system settings
+   - Access to admin panel and all moderation tools
+   - Default credentials: `admin@example.com` / `password`
+
+2. **Super Moderator** - Advanced moderation (38 permissions)
+   - Full moderation capabilities across all forums
+   - Can ban users, handle reports, and manage content
+   - Cannot access system settings or manage roles
+
+3. **Moderator** - Standard moderation (35 permissions)
+   - Moderate specific forums and handle reports
+   - Lock/pin threads and manage user warnings
+   - Limited to assigned forum sections
+
+4. **VIP Member** - Premium features (23 permissions)
+   - Enhanced posting and profile features
+   - Clan and tournament management
+   - Special badges and privileges
+
+5. **Clan Leader** - Clan management (22 permissions)
+   - Create and manage gaming clans
+   - Standard member permissions plus clan tools
+
+6. **Tournament Organizer** - Event management (23 permissions)
+   - Create and manage tournaments
+   - Leaderboard and scoring access
+
+7. **Registered** - Standard member (21 permissions)
+   - Post, reply, and interact with content
+   - Profile customization and social features
+   - Default role for new users
+
+8. **Guest** - Read-only access (7 permissions)
+   - View forums and profiles
+   - No posting or interaction capabilities
+
+### Permission Categories
+
+- **Forum Permissions**: View, create, edit, delete threads/posts
+- **User Permissions**: Profile management, bans, warnings
+- **Moderation**: Reports, mod queue, content approval
+- **Admin**: System settings, roles, backups
+- **Community**: Polls, reactions, messaging, follows
+- **Gaming**: Clans, tournaments, leaderboards, scores
+
+### Assigning Roles
+
+```php
+// Assign role to user
+$user->assignRole('Moderator');
+
+// Check permissions
+if ($user->hasPermissionTo('edit any post')) {
+    // User can edit any post
+}
+
+// Check role
+if ($user->hasRole('Administrator')) {
+    // User is an admin
+}
+```
 
 ## Email Configuration
 
