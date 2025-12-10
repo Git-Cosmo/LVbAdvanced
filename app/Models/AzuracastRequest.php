@@ -15,12 +15,7 @@ class AzuracastRequest extends Model
     protected $fillable = [
         'user_id',
         'request_id',
-        'requested_at',
         'status',
         'api_response_message',
-    ];
-
-    protected $casts = [
-        'requested_at' => 'datetime',
     ];
 }

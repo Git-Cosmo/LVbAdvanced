@@ -26,7 +26,7 @@ class AzuracastService
     /**
      * Fetch now playing payload with current, next, and recent tracks.
      *
-     * @return array{now_playing:mixed, playing_next:mixed, recently_played:array, is_online:mixed}
+     * @return array{now_playing:mixed, playing_next:mixed, song_history:array, is_online:mixed}
      */
     public function nowPlaying(): array
     {
@@ -37,7 +37,7 @@ class AzuracastService
         return [
             'now_playing' => $response['now_playing'] ?? null,
             'playing_next' => $response['playing_next'] ?? null,
-            'recently_played' => $response['song_history'] ?? [],
+            'song_history' => $response['song_history'] ?? [],
             'is_online' => $response['is_online'] ?? null,
         ];
     }
@@ -66,7 +66,6 @@ class AzuracastService
         $log = AzuracastRequest::create([
             'user_id' => $userId,
             'request_id' => $requestId,
-            'requested_at' => now(),
             'status' => 'pending',
         ]);
 

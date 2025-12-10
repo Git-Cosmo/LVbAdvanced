@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->nullable()->constrained()->nullOnDelete();
             $table->string('request_id');
-            $table->timestamp('requested_at')->useCurrent();
             $table->string('status')->default('pending');
             $table->text('api_response_message')->nullable();
             $table->timestamps();

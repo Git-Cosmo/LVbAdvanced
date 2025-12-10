@@ -40,7 +40,7 @@ class AzuracastServiceTest extends TestCase
 
         $this->assertSame('Current Song', $payload['now_playing']['song']['title']);
         $this->assertSame('Next Song', $payload['playing_next']['song']['title']);
-        $this->assertCount(1, $payload['recently_played']);
+        $this->assertCount(1, $payload['song_history']);
         $this->assertTrue($payload['is_online']);
     }
 
@@ -60,7 +60,7 @@ class AzuracastServiceTest extends TestCase
         $failed = $service->requestSong('bad123');
 
         $this->assertEquals('success', $success->status);
-        $this->assertNotNull($success->requested_at);
+        $this->assertNotNull($success->created_at);
         $this->assertDatabaseHas('azuracast_requests', [
             'user_id' => $user->id,
             'request_id' => 'abc123',
