@@ -47,3 +47,4 @@ Homestead.yaml
 /.zed/
 auth.json
 
+public/build/manifest.json
