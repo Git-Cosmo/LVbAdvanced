@@ -96,7 +96,7 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function badges(): BelongsToMany
     {
-        return $this->belongsToMany(UserBadge::class, 'badge_user')
+        return $this->belongsToMany(UserBadge::class, 'badge_user', 'user_id', 'badge_id')
             ->withTimestamps()
             ->withPivot('awarded_at');
     }
