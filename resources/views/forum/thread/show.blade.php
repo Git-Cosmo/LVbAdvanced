@@ -35,6 +35,11 @@
         </div>
     </div>
 
+    <!-- Poll (if exists) -->
+    @if($thread->poll)
+        @include('forum.poll.show', ['poll' => $thread->poll])
+    @endif
+
     <!-- Posts -->
     @foreach($posts as $post)
     <div id="post-{{ $post->id }}" class="dark:bg-dark-bg-secondary bg-light-bg-secondary rounded-xl mb-4 overflow-hidden">

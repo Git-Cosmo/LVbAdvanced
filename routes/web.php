@@ -57,6 +57,16 @@ Route::prefix('forum')->name('forum.')->group(function () {
         // Subscription routes
         Route::post('/thread/{thread}/subscribe', [\App\Http\Controllers\Forum\SubscriptionController::class, 'subscribe'])->name('thread.subscribe');
         Route::post('/thread/{thread}/unsubscribe', [\App\Http\Controllers\Forum\SubscriptionController::class, 'unsubscribe'])->name('thread.unsubscribe');
+        
+        // Poll routes
+        Route::post('/poll/{poll}/vote', [\App\Http\Controllers\Forum\PollController::class, 'vote'])->name('poll.vote');
+        
+        // Messaging routes
+        Route::get('/messages', [\App\Http\Controllers\Forum\MessagingController::class, 'inbox'])->name('messaging.inbox');
+        Route::get('/messages/compose/{recipient?}', [\App\Http\Controllers\Forum\MessagingController::class, 'compose'])->name('messaging.compose');
+        Route::post('/messages/send', [\App\Http\Controllers\Forum\MessagingController::class, 'send'])->name('messaging.send');
+        Route::get('/messages/{conversationId}', [\App\Http\Controllers\Forum\MessagingController::class, 'conversation'])->name('messaging.conversation');
+        Route::delete('/messages/{message}', [\App\Http\Controllers\Forum\MessagingController::class, 'destroy'])->name('messaging.destroy');
     });
 });
 
