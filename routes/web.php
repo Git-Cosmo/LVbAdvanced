@@ -36,6 +36,7 @@ Route::prefix('profile')->name('profile.')->group(function () {
 // Forum Routes
 Route::prefix('forum')->name('forum.')->group(function () {
     Route::get('/', [ForumController::class, 'index'])->name('index');
+    Route::get('/search', [\App\Http\Controllers\Forum\SearchController::class, 'index'])->name('search');
     Route::get('/{slug}', [ForumController::class, 'show'])->name('show');
     
     // Thread routes
@@ -48,6 +49,14 @@ Route::prefix('forum')->name('forum.')->group(function () {
         Route::post('/thread/{thread}/post', [PostController::class, 'store'])->name('post.store');
         Route::patch('/post/{post}', [PostController::class, 'update'])->name('post.update');
         Route::delete('/post/{post}', [PostController::class, 'destroy'])->name('post.destroy');
+        
+        // Reaction routes
+        Route::post('/post/{post}/reaction', [\App\Http\Controllers\Forum\ReactionController::class, 'toggle'])->name('reaction.toggle');
+        Route::get('/post/{post}/reactions', [\App\Http\Controllers\Forum\ReactionController::class, 'show'])->name('reaction.show');
+        
+        // Subscription routes
+        Route::post('/thread/{thread}/subscribe', [\App\Http\Controllers\Forum\SubscriptionController::class, 'subscribe'])->name('thread.subscribe');
+        Route::post('/thread/{thread}/unsubscribe', [\App\Http\Controllers\Forum\SubscriptionController::class, 'unsubscribe'])->name('thread.unsubscribe');
     });
 });
 

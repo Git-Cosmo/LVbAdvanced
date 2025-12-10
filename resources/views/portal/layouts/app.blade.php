@@ -54,6 +54,20 @@
                                 <span>Forums</span>
                             </div>
                         </a>
+                        
+                        <!-- Search Bar -->
+                        <form action="{{ route('forum.search') }}" method="GET" class="relative ml-4">
+                            <input type="text" 
+                                   name="q" 
+                                   placeholder="Search..." 
+                                   class="px-4 py-2 pl-10 w-64 rounded-lg dark:bg-dark-bg-tertiary bg-light-bg-tertiary dark:text-dark-text-primary text-light-text-primary focus:outline-none focus:ring-2 focus:ring-accent-blue">
+                            <button type="submit" class="absolute left-3 top-1/2 transform -translate-y-1/2">
+                                <svg class="w-4 h-4 dark:text-dark-text-tertiary text-light-text-tertiary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                                </svg>
+                            </button>
+                        </form>
+                        
                         <a href="#" class="px-4 py-2 rounded-lg dark:text-dark-text-primary text-light-text-primary dark:hover:bg-dark-bg-tertiary hover:bg-light-bg-tertiary dark:hover:text-dark-text-accent hover:text-light-text-accent transition-all font-medium">
                             <div class="flex items-center space-x-2">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

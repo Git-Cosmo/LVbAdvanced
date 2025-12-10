@@ -6,8 +6,6 @@
     <nav class="mb-6 flex items-center space-x-2 dark:text-dark-text-secondary text-light-text-secondary text-sm">
         <a href="{{ route('forum.index') }}" class="dark:hover:text-dark-text-accent hover:text-light-text-accent">Forums</a>
         <span>›</span>
-        <a href="{{ route('forum.show', $forum->category->slug) }}" class="dark:hover:text-dark-text-accent hover:text-light-text-accent">{{ $forum->category->name }}</a>
-        <span>›</span>
         <span class="dark:text-dark-text-primary text-light-text-primary">{{ $forum->name }}</span>
     </nav>
 
@@ -30,6 +28,45 @@
                 New Thread
             </a>
             @endauth
+        </div>
+    </div>
+
+    <!-- Sorting & Filtering -->
+    <div class="mb-4 flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+            <span class="text-sm dark:text-dark-text-secondary text-light-text-secondary">Sort by:</span>
+            <a href="{{ route('forum.show', [$forum->slug, 'sort' => 'latest', 'filter' => $filter]) }}" 
+               class="px-3 py-1 rounded-lg text-sm {{ $sort === 'latest' ? 'bg-accent-blue text-white' : 'dark:bg-dark-bg-secondary bg-light-bg-secondary dark:text-dark-text-primary text-light-text-primary' }} hover:opacity-80 transition-opacity">
+                Latest
+            </a>
+            <a href="{{ route('forum.show', [$forum->slug, 'sort' => 'popular', 'filter' => $filter]) }}" 
+               class="px-3 py-1 rounded-lg text-sm {{ $sort === 'popular' ? 'bg-accent-blue text-white' : 'dark:bg-dark-bg-secondary bg-light-bg-secondary dark:text-dark-text-primary text-light-text-primary' }} hover:opacity-80 transition-opacity">
+                Popular
+            </a>
+            <a href="{{ route('forum.show', [$forum->slug, 'sort' => 'views', 'filter' => $filter]) }}" 
+               class="px-3 py-1 rounded-lg text-sm {{ $sort === 'views' ? 'bg-accent-blue text-white' : 'dark:bg-dark-bg-secondary bg-light-bg-secondary dark:text-dark-text-primary text-light-text-primary' }} hover:opacity-80 transition-opacity">
+                Most Viewed
+            </a>
+            <a href="{{ route('forum.show', [$forum->slug, 'sort' => 'oldest', 'filter' => $filter]) }}" 
+               class="px-3 py-1 rounded-lg text-sm {{ $sort === 'oldest' ? 'bg-accent-blue text-white' : 'dark:bg-dark-bg-secondary bg-light-bg-secondary dark:text-dark-text-primary text-light-text-primary' }} hover:opacity-80 transition-opacity">
+                Oldest
+            </a>
+        </div>
+        
+        <div class="flex items-center space-x-3">
+            <span class="text-sm dark:text-dark-text-secondary text-light-text-secondary">Filter:</span>
+            <a href="{{ route('forum.show', [$forum->slug, 'sort' => $sort, 'filter' => 'all']) }}" 
+               class="px-3 py-1 rounded-lg text-sm {{ $filter === 'all' ? 'bg-accent-purple text-white' : 'dark:bg-dark-bg-secondary bg-light-bg-secondary dark:text-dark-text-primary text-light-text-primary' }} hover:opacity-80 transition-opacity">
+                All
+            </a>
+            <a href="{{ route('forum.show', [$forum->slug, 'sort' => $sort, 'filter' => 'pinned']) }}" 
+               class="px-3 py-1 rounded-lg text-sm {{ $filter === 'pinned' ? 'bg-accent-purple text-white' : 'dark:bg-dark-bg-secondary bg-light-bg-secondary dark:text-dark-text-primary text-light-text-primary' }} hover:opacity-80 transition-opacity">
+                📌 Pinned
+            </a>
+            <a href="{{ route('forum.show', [$forum->slug, 'sort' => $sort, 'filter' => 'locked']) }}" 
+               class="px-3 py-1 rounded-lg text-sm {{ $filter === 'locked' ? 'bg-accent-purple text-white' : 'dark:bg-dark-bg-secondary bg-light-bg-secondary dark:text-dark-text-primary text-light-text-primary' }} hover:opacity-80 transition-opacity">
+                🔒 Locked
+            </a>
         </div>
     </div>
 
