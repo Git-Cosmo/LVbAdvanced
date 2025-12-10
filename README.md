@@ -2,7 +2,8 @@
 
 A modern forum platform with integrated portal built with Laravel 12, inspired by the classic vBadvanced CMPS.
 
-![Portal Homepage](https://github.com/user-attachments/assets/1cc6c754-78d9-4317-b3cf-d44465b5a060)
+![Login Page](https://github.com/user-attachments/assets/24376722-0e09-440c-940d-fea8d8165b76)
+![Registration Page](https://github.com/user-attachments/assets/8c1b9fa8-af5b-470a-af57-409ad8917b0f)
 
 ## Features
 
@@ -13,6 +14,14 @@ A modern forum platform with integrated portal built with Laravel 12, inspired b
 - ✅ **Role-Based Access Control** - Using Spatie Permission
 - ✅ **Activity Logging** - Track admin actions with Spatie Activity Log
 - ✅ **Media Library** - File management with Spatie Media Library
+
+### Authentication & Security
+- ✅ **User Registration** - Modern registration page with validation
+- ✅ **Email Verification** - Verify user email addresses after registration
+- ✅ **Password Reset** - Secure password reset via email
+- ✅ **OAuth Authentication** - Login with Steam, Discord, or Battle.net
+- ✅ **Two-Factor Authentication (2FA)** - Google Authenticator support for enhanced security
+- ✅ **Modern UI/UX** - Beautiful, responsive authentication pages matching site design
 
 ### Forum System
 - ✅ **Categories & Forums** - Hierarchical forum structure with subforums
@@ -25,6 +34,8 @@ A modern forum platform with integrated portal built with Laravel 12, inspired b
 - ✅ **BBCode Support** - Rich text formatting
 - ✅ **Moderation Tools** - Report system, warnings, bans
 - ✅ **Gamification** - XP, levels, badges, achievements
+- ✅ **Follow System** - Follow other users
+- ✅ **Wall Posts** - Post on user profiles
 - 🚧 **Search** - Full-text search (coming soon)
 - 🚧 **Private Messaging** - Direct messages between users (coming soon)
 - 🚧 **Real-time Notifications** - WebSocket notifications (coming soon)
@@ -34,9 +45,11 @@ A modern forum platform with integrated portal built with Laravel 12, inspired b
 - ✅ **Alpine.js** - Lightweight JavaScript framework
 - ✅ **Clean Homepage** - Responsive homepage with feature showcase and stats
 - ✅ **SEO Friendly** - Meta tags, clean URLs, sitemap support
+- ✅ **Dark Mode** - Modern dark theme throughout the application
 
 ### Admin Panel
 - ✅ **Custom Admin Interface** - No external UI packages
+- ✅ **Modern Design** - Consistent with main site design aesthetic
 - ✅ **Dashboard** - Forum statistics and quick actions
 - ✅ **Forum Management** - Create and manage categories and forums
 - ✅ **User Management** - Role-based permissions
@@ -62,6 +75,23 @@ A modern forum platform with integrated portal built with Laravel 12, inspired b
    cp .env.example .env
    php artisan key:generate
    ```
+   
+   Update `.env` with your database and mail configuration:
+   ```env
+   DB_CONNECTION=mysql
+   DB_HOST=127.0.0.1
+   DB_PORT=3306
+   DB_DATABASE=lvbadvanced
+   DB_USERNAME=root
+   DB_PASSWORD=
+   
+   MAIL_MAILER=smtp
+   MAIL_HOST=mailhog
+   MAIL_PORT=1025
+   MAIL_USERNAME=null
+   MAIL_PASSWORD=null
+   MAIL_FROM_ADDRESS="hello@example.com"
+   ```
 
 4. **Run migrations**
    ```bash
@@ -84,6 +114,71 @@ A modern forum platform with integrated portal built with Laravel 12, inspired b
    - Forums: http://localhost:8000/forum
    - Admin: http://localhost:8000/login
    - Credentials: admin@example.com / password
+
+## OAuth Configuration
+
+The application supports authentication via Steam, Discord, and Battle.net. To enable OAuth:
+
+### Steam
+1. Get your Steam API key from https://steamcommunity.com/dev/apikey
+2. Add to `.env`:
+   ```env
+   STEAM_API_KEY=your_steam_api_key_here
+   ```
+
+### Discord
+1. Create an application at https://discord.com/developers/applications
+2. Add OAuth2 redirect URI: `http://your-domain.com/auth/discord/callback`
+3. Add to `.env`:
+   ```env
+   DISCORD_CLIENT_ID=your_client_id
+   DISCORD_CLIENT_SECRET=your_client_secret
+   ```
+
+### Battle.net
+1. Create an application at https://develop.battle.net/
+2. Add OAuth2 redirect URI: `http://your-domain.com/auth/battlenet/callback`
+3. Add to `.env`:
+   ```env
+   BATTLENET_CLIENT_ID=your_client_id
+   BATTLENET_CLIENT_SECRET=your_client_secret
+   BATTLENET_REGION=us
+   ```
+
+## Two-Factor Authentication (2FA)
+
+Users can enable 2FA from their profile settings:
+
+1. Navigate to Profile > Edit Profile
+2. Click "Enable 2FA" in the Two-Factor Authentication section
+3. Scan the QR code with Google Authenticator or any TOTP app
+4. Enter the verification code to confirm setup
+5. Save recovery codes in a secure location
+
+To disable 2FA, users must enter their password for security confirmation.
+
+## Email Configuration
+
+For email verification and password reset functionality, configure your email settings in `.env`:
+
+### Development (Mailhog)
+```env
+MAIL_MAILER=smtp
+MAIL_HOST=127.0.0.1
+MAIL_PORT=1025
+```
+
+### Production (SMTP)
+```env
+MAIL_MAILER=smtp
+MAIL_HOST=smtp.mailtrap.io
+MAIL_PORT=2525
+MAIL_USERNAME=your_username
+MAIL_PASSWORD=your_password
+MAIL_ENCRYPTION=tls
+MAIL_FROM_ADDRESS="noreply@yourdomain.com"
+MAIL_FROM_NAME="${APP_NAME}"
+```
 
 ## Architecture
 
@@ -108,10 +203,10 @@ The portal homepage is a static Blade template (`resources/views/portal/home.bla
 The forum system is built using standard Laravel architecture:
 
 - **Models**: `app/Models/Forum/` and `app/Models/User/`
-- **Controllers**: `app/Http/Controllers/Forum/`
+- **Controllers**: `app/Http/Controllers/Forum/` and `app/Http/Controllers/Auth/`
 - **Services**: `app/Services/Forum/`
 - **Policies**: `app/Policies/Forum/`
-- **Views**: `resources/views/forum/`
+- **Views**: `resources/views/forum/` and `resources/views/auth/`
 - **Migrations**: `database/migrations/`
 
 #### Key Features:
@@ -124,6 +219,16 @@ The forum system is built using standard Laravel architecture:
 - **Polls** - Create polls in threads
 - **Subscriptions** - Get notified of new posts
 - **Moderation** - Report, warn, and ban users
+
+### Authentication System
+The authentication system includes:
+
+- **Registration**: `app/Http/Controllers/Auth/RegisterController.php`
+- **Login**: `app/Http/Controllers/Auth/LoginController.php`
+- **Email Verification**: `app/Http/Controllers/Auth/EmailVerificationController.php`
+- **Password Reset**: `app/Http/Controllers/Auth/PasswordResetController.php`
+- **OAuth**: `app/Http/Controllers/Auth/OAuthController.php`
+- **Two-Factor Auth**: `app/Http/Controllers/Auth/TwoFactorController.php`
 
 ## Database Structure
 
@@ -141,6 +246,7 @@ The forum system is built using standard Laravel architecture:
 - `forum_reports` - Moderation reports
 
 ### User Tables
+- `users` - User accounts with OAuth and 2FA support
 - `user_profiles` - Extended user profiles
 - `user_follows` - User following system
 - `user_badges` - Achievement badges
@@ -158,6 +264,13 @@ The forum system is built using standard Laravel architecture:
 - laravel-backup
 - laravel-activitylog
 - laravel-menu
+
+## Additional Packages
+- laravel-socialite - OAuth authentication
+- socialiteproviders/steam - Steam OAuth
+- socialiteproviders/discord - Discord OAuth
+- socialiteproviders/battlenet - Battle.net OAuth
+- pragmarx/google2fa-laravel - Two-Factor Authentication
 
 ## License
 Open-source software.
