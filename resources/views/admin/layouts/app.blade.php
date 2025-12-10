@@ -7,7 +7,7 @@
 
     <title>@yield('title', 'Admin Panel') - {{ config('app.name') }}</title>
 
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @vite(['resources/css/app.css', 'resources/css/forum.css', 'resources/js/app.js', 'resources/js/forum.js'])
 </head>
 <body class="bg-gray-100">
     <div class="min-h-screen flex">
@@ -25,6 +25,8 @@
                     Dashboard
                 </a>
                 
+                <div class="mt-6 px-6 py-3 text-xs uppercase text-gray-500">Content</div>
+                
                 <a href="{{ route('admin.pages.index') }}" class="flex items-center px-6 py-3 {{ request()->routeIs('admin.pages.*') ? 'bg-primary-600' : 'hover:bg-gray-800' }} transition">
                     <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
@@ -37,6 +39,15 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h4a1 1 0 011 1v7a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM14 5a1 1 0 011-1h4a1 1 0 011 1v7a1 1 0 01-1 1h-4a1 1 0 01-1-1V5zM4 16a1 1 0 011-1h4a1 1 0 011 1v3a1 1 0 01-1 1H5a1 1 0 01-1-1v-3zM14 16a1 1 0 011-1h4a1 1 0 011 1v3a1 1 0 01-1 1h-4a1 1 0 01-1-1v-3z"></path>
                     </svg>
                     Blocks
+                </a>
+                
+                <div class="mt-6 px-6 py-3 text-xs uppercase text-gray-500">Forums</div>
+                
+                <a href="{{ route('admin.forum.index') }}" class="flex items-center px-6 py-3 {{ request()->routeIs('admin.forum.*') ? 'bg-primary-600' : 'hover:bg-gray-800' }} transition">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path>
+                    </svg>
+                    Forum Management
                 </a>
                 
                 <div class="mt-6 px-6 py-3 text-xs uppercase text-gray-500">System</div>

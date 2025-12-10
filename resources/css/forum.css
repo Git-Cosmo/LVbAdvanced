@@ -1,0 +1,38 @@
+/**
+ * Forum-specific CSS
+ * Extracted from inline styles in Blade templates
+ */
+
+/* Alpine.js x-cloak directive - hides elements until Alpine is loaded */
+[x-cloak] { 
+    display: none !important; 
+}
+
+/* Pulse animation for online indicators */
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}
+
+.animate-pulse {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Background image utility for cover images */
+.bg-cover-image {
+    background-size: cover;
+    background-position: center;
+}
+
+/* Badge color utilities - for dynamically colored badges */
+.badge-colored {
+    opacity: 0.2;
+}
+
+.badge-colored-text {
+    opacity: 1;
+}

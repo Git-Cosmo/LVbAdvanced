@@ -5,7 +5,9 @@ namespace App\Providers;
 use App\Modules\Portal\Blocks\AdvertisementBlock;
 use App\Modules\Portal\Blocks\CustomHtmlBlock;
 use App\Modules\Portal\Blocks\LatestNewsBlock;
+use App\Modules\Portal\Blocks\LatestThreadsBlock;
 use App\Modules\Portal\Blocks\LinkListBlock;
+use App\Modules\Portal\Blocks\OnlineUsersBlock;
 use App\Modules\Portal\Blocks\RecentActivityBlock;
 use App\Modules\Portal\Blocks\StatsBlock;
 use App\Modules\Portal\Services\BlockRegistry;
@@ -42,5 +44,7 @@ class PortalServiceProvider extends ServiceProvider
         $registry->register('stats', new StatsBlock);
         $registry->register('recent_activity', new RecentActivityBlock);
         $registry->register('advertisement', new AdvertisementBlock);
+        $registry->register('latest_threads', new LatestThreadsBlock);
+        $registry->register('online_users', new OnlineUsersBlock);
     }
 }
