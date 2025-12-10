@@ -18,8 +18,8 @@ class SearchService
         $threadsQuery = ForumThread::with(['user', 'forum'])
             ->where('is_hidden', false)
             ->select('forum_threads.*')
-            ->selectRaw("MATCH(title, content) AGAINST(? IN BOOLEAN MODE) as relevance", [$query])
-            ->whereRaw("MATCH(title, content) AGAINST(? IN BOOLEAN MODE)", [$query]);
+            ->selectRaw("MATCH(title) AGAINST(? IN BOOLEAN MODE) as relevance", [$query])
+            ->whereRaw("MATCH(title) AGAINST(? IN BOOLEAN MODE)", [$query]);
 
         // Apply filters
         if (!empty($filters['forum_id'])) {
