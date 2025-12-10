@@ -7,6 +7,9 @@ use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
+/**
+ * Handles Azuracast API interactions for live radio data and song requests.
+ */
 class AzuracastService
 {
     protected string $baseUrl;
@@ -20,6 +23,11 @@ class AzuracastService
         $this->apiKey = config('services.azuracast.api_key');
     }
 
+    /**
+     * Fetch now playing payload with current, next, and recent tracks.
+     *
+     * @return array{now_playing:mixed, playing_next:mixed, recently_played:array, is_online:mixed}
+     */
     public function nowPlaying(): array
     {
         $response = $this->http()->get(
@@ -34,6 +42,11 @@ class AzuracastService
         ];
     }
 
+    /**
+     * Retrieve requestable songs for the configured station.
+     *
+     * @return array
+     */
     public function requestableSongs(): array
     {
         return $this->http()->get(
@@ -41,6 +54,13 @@ class AzuracastService
         )->throw()->json();
     }
 
+    /**
+     * Submit a song request and log the attempt.
+     *
+     * @param string $requestId
+     * @param int|null $userId
+     * @return AzuracastRequest
+     */
     public function requestSong(string $requestId, ?int $userId = null): AzuracastRequest
     {
         $log = AzuracastRequest::create([

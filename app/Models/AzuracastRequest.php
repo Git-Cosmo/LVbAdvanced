@@ -5,6 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * Records Azuracast song request attempts for auditing.
+ */
 class AzuracastRequest extends Model
 {
     use HasFactory;
