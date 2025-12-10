@@ -8,6 +8,12 @@ return new class extends Migration
 {
     /**
      * Run the migrations.
+     *
+     * This migration creates the CheapShark data model:
+     * - cheap_shark_stores: CheapShark stores (id, name, status, logo)
+     * - cheap_shark_games: Games resolved from CheapShark with unique slugs
+     * - cheap_shark_deals: Deal entries linking stores to games with pricing
+     * - cheap_shark_sync_logs: Audit trail of sync runs and counts
      */
     public function up(): void
     {

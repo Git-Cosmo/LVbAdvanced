@@ -218,7 +218,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
         Route::get('/', [CheapSharkSyncController::class, 'index'])->name('index');
         Route::post('/sync', [CheapSharkSyncController::class, 'sync'])->name('sync');
     });
-    
+
     // Media Management
     Route::prefix('media')->name('media.')->group(function () {
         Route::get('/', [\App\Http\Controllers\Admin\MediaManagementController::class, 'index'])->name('index');

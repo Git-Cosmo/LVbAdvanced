@@ -16,4 +16,5 @@ Artisan::command('cheapshark:sync {--runType=manual}', function (CheapSharkServi
     $this->info($log->message ?? 'Sync finished with status: ' . $log->status);
 })->purpose('Sync CheapShark stores, games, and deals');
 
+// NOTE: To enable scheduled tasks, ensure that `php artisan schedule:run` is configured to run every minute in your system's cron or task scheduler.
 Schedule::command('cheapshark:sync --runType=scheduled')->hourly();

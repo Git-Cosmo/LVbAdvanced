@@ -162,6 +162,7 @@ class CheapSharkService
             foreach (($response->json() ?? []) as $id => $game) {
                 $info = $game['info'] ?? [];
                 $title = $info['title'] ?? 'Unknown Game';
+                // Append CheapShark ID to guarantee uniqueness even when titles collide across stores.
                 $slug = Str::slug($title) . '-' . $id;
 
                 $records[] = [
