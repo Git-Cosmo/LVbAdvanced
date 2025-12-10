@@ -56,6 +56,15 @@ Route::middleware('auth')->group(function () {
     Route::post('/2fa/verify', [\App\Http\Controllers\Auth\TwoFactorController::class, 'verify'])->name('2fa.verify');
 });
 
+// Settings Routes
+Route::middleware('auth')->prefix('settings')->name('settings.')->group(function () {
+    Route::get('/', [\App\Http\Controllers\SettingsController::class, 'index'])->name('index');
+    Route::patch('/account', [\App\Http\Controllers\SettingsController::class, 'updateAccount'])->name('update.account');
+    Route::patch('/password', [\App\Http\Controllers\SettingsController::class, 'updatePassword'])->name('update.password');
+    Route::patch('/privacy', [\App\Http\Controllers\SettingsController::class, 'updatePrivacy'])->name('update.privacy');
+    Route::patch('/notifications', [\App\Http\Controllers\SettingsController::class, 'updateNotifications'])->name('update.notifications');
+});
+
 // Profile Routes
 Route::prefix('profile')->name('profile.')->group(function () {
     Route::get('/{user}', [ProfileController::class, 'show'])->name('show');

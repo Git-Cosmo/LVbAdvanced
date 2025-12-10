@@ -6,13 +6,13 @@
     <aside class="col-span-12 lg:col-span-3 space-y-6">
         <!-- Welcome Block -->
         <div class="dark:bg-dark-bg-secondary bg-light-bg-secondary rounded-lg shadow-md p-6">
-            <h3 class="text-lg font-bold dark:text-dark-text-bright text-light-text-bright mb-4 border-b dark:border-dark-border-primary border-light-border-primary pb-2">
-                Welcome to FPSociety
-            </h3>
-            <p class="dark:text-dark-text-secondary text-light-text-secondary text-sm mb-4">
-                Join the ultimate gaming community for Counter Strike 2, GTA V, Fortnite, and more. Share mods, compete, and connect!
-            </p>
             @guest
+                <h3 class="text-lg font-bold dark:text-dark-text-bright text-light-text-bright mb-4 border-b dark:border-dark-border-primary border-light-border-primary pb-2">
+                    Welcome to FPSociety
+                </h3>
+                <p class="dark:text-dark-text-secondary text-light-text-secondary text-sm mb-4">
+                    Join the ultimate gaming community for Counter Strike 2, GTA V, Fortnite, and more. Share mods, compete, and connect!
+                </p>
                 <div class="space-y-2">
                     <a href="/register" class="block w-full px-4 py-2 bg-gradient-to-r from-accent-blue to-accent-purple text-white text-center rounded-lg font-medium hover:shadow-lg transition-all">
                         Sign Up
@@ -22,9 +22,50 @@
                     </a>
                 </div>
             @else
-                <p class="dark:text-dark-text-primary text-light-text-primary text-sm">
-                    Welcome back, <strong>{{ auth()->user()->name }}</strong>!
-                </p>
+                @php
+                    $user = auth()->user();
+                    $profile = $user->profile;
+                    $role = $user->roles->first()?->name ?? 'Member';
+                @endphp
+                <div class="text-center mb-4">
+                    <div class="w-20 h-20 mx-auto mb-3 rounded-full bg-gradient-to-br from-accent-blue to-accent-purple flex items-center justify-center text-white text-2xl font-bold">
+                        {{ substr($user->name, 0, 1) }}
+                    </div>
+                    <h3 class="text-lg font-bold dark:text-dark-text-bright text-light-text-bright">
+                        {{ $user->name }}
+                    </h3>
+                    <p class="text-sm dark:text-dark-text-secondary text-light-text-secondary">
+                        {{ $role }}
+                    </p>
+                </div>
+
+                <div class="space-y-3 mb-4 pb-4 border-b dark:border-dark-border-primary border-light-border-primary">
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm dark:text-dark-text-secondary text-light-text-secondary">Level:</span>
+                        <span class="text-sm font-semibold dark:text-dark-text-accent text-light-text-accent">{{ $profile->level ?? 1 }}</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm dark:text-dark-text-secondary text-light-text-secondary">XP:</span>
+                        <span class="text-sm font-semibold text-accent-purple">{{ $profile->xp ?? 0 }}</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm dark:text-dark-text-secondary text-light-text-secondary">Karma:</span>
+                        <span class="text-sm font-semibold text-accent-green">{{ $profile->karma ?? 0 }}</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm dark:text-dark-text-secondary text-light-text-secondary">Posts:</span>
+                        <span class="text-sm font-semibold dark:text-dark-text-primary text-light-text-primary">{{ $user->posts()->count() }}</span>
+                    </div>
+                </div>
+
+                <div class="space-y-2">
+                    <a href="{{ route('profile.show', $user) }}" class="block w-full px-4 py-2 dark:bg-dark-bg-tertiary bg-light-bg-tertiary dark:text-dark-text-primary text-light-text-primary text-center rounded-lg font-medium hover:shadow-lg transition-all text-sm">
+                        View Profile
+                    </a>
+                    <a href="{{ route('settings.index') }}" class="block w-full px-4 py-2 dark:bg-dark-bg-tertiary bg-light-bg-tertiary dark:text-dark-text-primary text-light-text-primary text-center rounded-lg font-medium hover:shadow-lg transition-all text-sm">
+                        Settings
+                    </a>
+                </div>
             @endguest
         </div>
 
