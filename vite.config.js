@@ -9,7 +9,8 @@ export default defineConfig({
                 'resources/css/app.css',
                 'resources/css/forum.css',
                 'resources/js/app.js',
-                'resources/js/forum.js'
+                'resources/js/forum.js',
+                'resources/js/mentions.js'
             ],
             refresh: true,
         }),

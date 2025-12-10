@@ -15,7 +15,7 @@
         <meta name="keywords" content="{{ $page->meta_keywords }}">
     @endif
 
-    @vite(['resources/css/app.css', 'resources/css/forum.css', 'resources/js/app.js', 'resources/js/forum.js'])
+    @vite(['resources/css/app.css', 'resources/css/forum.css', 'resources/js/app.js', 'resources/js/forum.js', 'resources/js/mentions.js'])
 </head>
 <body class="dark:bg-dark-bg-primary bg-light-bg-primary dark:text-dark-text-primary text-light-text-primary min-h-screen">
     <!-- Top Navigation Bar -->

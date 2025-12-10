@@ -69,6 +69,10 @@
                 
                 <!-- Actions -->
                 <div class="flex items-center space-x-3">
+                    <a href="{{ route('forum.gallery.index', $user) }}" 
+                       class="px-6 py-2 dark:bg-dark-bg-tertiary bg-light-bg-tertiary rounded-lg dark:hover:bg-dark-bg-elevated hover:bg-light-bg-elevated transition-colors">
+                        🖼️ Gallery
+                    </a>
                     @auth
                         @if(auth()->id() === $user->id)
                         <a href="{{ route('profile.edit') }}" 

@@ -165,15 +165,29 @@
         <h3 class="text-xl font-semibold dark:text-dark-text-bright text-light-text-bright mb-4">
             Post a Reply
         </h3>
-        <form action="{{ route('forum.post.store', $thread) }}" method="POST">
+        <form action="{{ route('forum.post.store', $thread) }}" method="POST" enctype="multipart/form-data">
             @csrf
             <textarea id="reply-content" 
                       name="content" 
                       rows="6" 
                       x-model="quoteContent"
+                      data-mention-enabled
                       class="w-full px-4 py-3 dark:bg-dark-bg-tertiary bg-light-bg-tertiary dark:text-dark-text-primary text-light-text-primary rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-blue" 
-                      placeholder="Write your reply..."></textarea>
-            <div class="mt-4 flex justify-end">
+                      placeholder="Write your reply... (Type @ to mention users)"></textarea>
+            
+            <!-- Attachments Section -->
+            <div id="attachment-progress" class="mt-2 space-y-1"></div>
+            <div id="attachments-list" class="mt-2 space-y-1"></div>
+            
+            <div class="mt-4 flex justify-between items-center">
+                <button type="button"
+                        data-upload-attachment
+                        data-attachable-type="App\Models\Forum\ForumPost"
+                        data-attachable-id="0"
+                        class="px-4 py-2 text-sm border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700">
+                    📎 Attach Files
+                </button>
+                
                 <button type="submit" 
                         class="px-6 py-3 bg-gradient-to-r from-accent-blue to-accent-purple text-white rounded-lg font-medium hover:shadow-lg hover:scale-105 transition-all">
                     Post Reply
