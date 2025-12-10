@@ -55,10 +55,7 @@
         </div>
         
         <p class="text-center text-sm dark:text-dark-text-tertiary text-light-text-tertiary">
-            Having trouble? 
-            <a href="#" class="font-medium text-accent-blue hover:text-accent-purple transition-colors">
-                Use a recovery code
-            </a>
+            Having trouble?
         </p>
     </div>
 </div>

@@ -99,9 +99,9 @@ class TwoFactorController extends Controller
 
         $user = auth()->user();
         
-        // Generate recovery codes
+        // Generate 8 cryptographically secure recovery codes, each a 10-character hexadecimal string (generated from 5 random bytes)
         $recoveryCodes = Collection::times(8, function () {
-            return bin2hex(random_bytes(5)); // Cryptographically secure random codes
+            return bin2hex(random_bytes(5));
         });
 
         $user->forceFill([

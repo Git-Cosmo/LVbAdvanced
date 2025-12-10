@@ -79,7 +79,7 @@
                     <input id="terms" name="terms" type="checkbox" required
                            class="h-4 w-4 mt-1 text-accent-blue focus:ring-accent-blue border-gray-300 rounded">
                     <label for="terms" class="ml-2 block text-sm dark:text-dark-text-secondary text-light-text-secondary">
-                        I agree to the <a href="#" class="text-accent-blue hover:text-accent-purple">Terms of Service</a> and <a href="#" class="text-accent-blue hover:text-accent-purple">Privacy Policy</a>
+                        I agree to the <a href="{{ url('/terms') }}" target="_blank" class="text-accent-blue hover:text-accent-purple">Terms of Service</a> and <a href="{{ url('/privacy') }}" target="_blank" class="text-accent-blue hover:text-accent-purple">Privacy Policy</a>
                     </label>
                 </div>
 
