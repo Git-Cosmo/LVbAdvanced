@@ -31,7 +31,7 @@ class SitemapController extends Controller
             ['url' => route('forum.index'), 'priority' => 0.9, 'frequency' => Url::CHANGE_FREQUENCY_HOURLY],
             ['url' => route('media.index'), 'priority' => 0.8, 'frequency' => Url::CHANGE_FREQUENCY_DAILY],
             ['url' => route('activity.whats-new'), 'priority' => 0.7, 'frequency' => Url::CHANGE_FREQUENCY_HOURLY],
-            ['url' => route('leaderboard'), 'priority' => 0.7, 'frequency' => Url::CHANGE_FREQUENCY_DAILY],
+            ['url' => route('leaderboard.index'), 'priority' => 0.7, 'frequency' => Url::CHANGE_FREQUENCY_DAILY],
         ];
 
         foreach ($staticPages as $page) {
