@@ -7,16 +7,20 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\OAuthController;
 use App\Http\Controllers\Auth\PasswordResetController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\DealController;
 use App\Http\Controllers\Forum\ForumController;
 use App\Http\Controllers\Forum\PostController;
 use App\Http\Controllers\Forum\ProfileController;
 use App\Http\Controllers\Forum\ThreadController;
 use App\Http\Controllers\MediaController;
 use App\Http\Controllers\PortalController;
+use App\Http\Controllers\Admin\CheapSharkSyncController;
 use Illuminate\Support\Facades\Route;
 
 // Public Portal Routes
 Route::get('/', [PortalController::class, 'home'])->name('home');
+Route::get('/deals', [DealController::class, 'index'])->name('deals.index');
+Route::get('/game/{slug}', [DealController::class, 'show'])->name('deals.show');
 
 // Authentication Routes
 Route::middleware('guest')->group(function () {
@@ -207,6 +211,12 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
         Route::post('/{user}/award-xp', [\App\Http\Controllers\Admin\ReputationController::class, 'awardXP'])->name('award-xp');
         Route::post('/{user}/reset-level', [\App\Http\Controllers\Admin\ReputationController::class, 'resetLevel'])->name('reset-level');
         Route::post('/recalculate-karma', [\App\Http\Controllers\Admin\ReputationController::class, 'recalculateKarma'])->name('recalculate-karma');
+    });
+
+    // CheapShark Deals Sync
+    Route::prefix('deals')->name('deals.')->group(function () {
+        Route::get('/', [CheapSharkSyncController::class, 'index'])->name('index');
+        Route::post('/sync', [CheapSharkSyncController::class, 'sync'])->name('sync');
     });
     
     // Media Management

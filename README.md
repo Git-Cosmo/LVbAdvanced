@@ -153,6 +153,15 @@
   - Reset seasonal rankings
   - Manage achievement criteria
 
+### Game Deals (CheapShark)
+- ✅ **Live Deals Feed** - CheapShark API integration for stores, deals, and games
+- ✅ **Database-Backed** - Stores data in `cheap_shark_stores`, `cheap_shark_games`, `cheap_shark_deals`, and `cheap_shark_sync_logs` with upserts to prevent duplicates
+- ✅ **Hourly Sync** - `php artisan cheapshark:sync` scheduled every hour; manual trigger available in Admin > Game Deals
+- ✅ **Batch Game Lookups** - Uses multi-ID `/games` endpoint to hydrate titles, thumbnails, and cheapest prices in batches
+- ✅ **Frontend Pages** - `/deals` searchable list with store filter and `/game/{slug}` detail page showing all offers
+- ✅ **Admin Monitoring** - Sync history, counts, and manual run from `/admin/deals`
+- ✅ **Configurable** - Override CheapShark base URL with `CHEAPSHARK_BASE_URL` if needed
+
 ## Installation
 
 1. **Clone repository**
@@ -227,7 +236,20 @@
    - Admin: http://localhost:8000/admin
    - Admin News: http://localhost:8000/admin/news
    - Admin RSS: http://localhost:8000/admin/rss
-   - Credentials: admin@example.com / password
+   - Admin Deals: http://localhost:8000/admin/deals
+    - Credentials: admin@example.com / password
+
+## CheapShark Deals Workflow
+
+1. Run a manual sync anytime:
+   ```bash
+   php artisan cheapshark:sync
+   ```
+2. The command is scheduled hourly via `routes/console.php` (ensure your scheduler runs `php artisan schedule:run`).
+3. Manual syncs and logs are available in the admin panel at **Admin → Game Deals**.
+4. Frontend routes:
+   - Deals listing: `/deals` (search + store filter)
+   - Game detail with all offers: `/game/{slug}`
 
 ## OAuth Configuration
 

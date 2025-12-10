@@ -41,6 +41,10 @@ return [
         'redirect' => env('APP_URL') . '/auth/steam/callback',
     ],
 
+    'cheapshark' => [
+        'base_url' => env('CHEAPSHARK_BASE_URL', 'https://www.cheapshark.com/api/1.0'),
+    ],
+
     'discord' => [
         'client_id' => env('DISCORD_CLIENT_ID'),
         'client_secret' => env('DISCORD_CLIENT_SECRET'),
