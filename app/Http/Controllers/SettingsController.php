@@ -8,11 +8,6 @@ use Illuminate\Validation\Rules\Password;
 
 class SettingsController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
-
     /**
      * Display the user settings page.
      */
