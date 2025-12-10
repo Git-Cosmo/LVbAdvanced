@@ -65,6 +65,14 @@ Route::middleware('auth')->prefix('settings')->name('settings.')->group(function
     Route::patch('/notifications', [\App\Http\Controllers\SettingsController::class, 'updateNotifications'])->name('update.notifications');
 });
 
+// Notification Routes
+Route::middleware('auth')->prefix('notifications')->name('notifications.')->group(function () {
+    Route::get('/', [\App\Http\Controllers\NotificationController::class, 'index'])->name('index');
+    Route::post('/{id}/read', [\App\Http\Controllers\NotificationController::class, 'markAsRead'])->name('mark-as-read');
+    Route::post('/read-all', [\App\Http\Controllers\NotificationController::class, 'markAllAsRead'])->name('mark-all-as-read');
+    Route::delete('/{id}', [\App\Http\Controllers\NotificationController::class, 'destroy'])->name('destroy');
+});
+
 // Profile Routes
 Route::prefix('profile')->name('profile.')->group(function () {
     Route::get('/{user}', [ProfileController::class, 'show'])->name('show');
