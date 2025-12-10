@@ -44,7 +44,7 @@ class SitemapController extends Controller
         }
 
         // Add forums
-        Forum::chunk(50, function ($forums) use ($sitemap) {
+        Forum::chunk(100, function ($forums) use ($sitemap) {
             foreach ($forums as $forum) {
                 $sitemap->add(
                     Url::create(route('forum.show', $forum))
