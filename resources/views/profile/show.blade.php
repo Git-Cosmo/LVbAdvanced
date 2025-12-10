@@ -5,7 +5,7 @@
     <!-- Profile Header with Cover Image -->
     <div class="relative mb-6">
         @if($user->profile?->cover_image)
-        <div class="h-64 rounded-t-xl bg-cover bg-center bg-cover-image" data-bg-image="{{ Storage::url($user->profile->cover_image) }}"></div>
+        <div class="h-64 rounded-t-xl bg-cover-image" data-bg-image="{{ Storage::url($user->profile->cover_image) }}"></div>
         @else
         <div class="h-64 rounded-t-xl bg-gradient-to-r from-accent-blue via-accent-purple to-accent-blue"></div>
         @endif
