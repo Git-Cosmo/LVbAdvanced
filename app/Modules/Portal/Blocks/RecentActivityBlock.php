@@ -32,7 +32,7 @@ class RecentActivityBlock extends AbstractBlock
         $activities = Activity::query()
             ->with('causer')
             ->latest()
-            ->limit($limit)
+            ->take($limit)
             ->get()
             ->map(function ($activity) {
                 return [
@@ -40,7 +40,7 @@ class RecentActivityBlock extends AbstractBlock
                     'description' => $activity->description ?? 'Activity',
                     'subject_type' => $activity->subject_type ? class_basename($activity->subject_type) : null,
                     'subject_id' => $activity->subject_id,
-                    'causer_name' => $activity->causer ? $activity->causer->name : 'System',
+                    'causer_name' => $activity->causer?->name ?? 'System',
                     'event' => $activity->event ?? 'action',
                     'created_at' => $activity->created_at,
                 ];

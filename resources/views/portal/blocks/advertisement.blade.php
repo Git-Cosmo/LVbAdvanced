@@ -1,6 +1,8 @@
 <div class="block advertisement-block">
     @if($adType === 'code' && $adCode)
         <!-- Third-party Ad Code -->
+        <!-- Note: Ad code is rendered unescaped by design to support third-party ad scripts. 
+             Only administrators should have permission to create/edit advertisement blocks. -->
         <div class="ad-code-wrapper">
             {!! $adCode !!}
         </div>
