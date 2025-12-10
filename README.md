@@ -251,6 +251,36 @@
    - Deals listing: `/deals` (search + store filter)
    - Game detail with all offers: `/game/{slug}`
 
+## Azuracast Radio Integration
+
+### Environment Variables
+Add the following to `.env`:
+```env
+AZURACAST_BASE_URL=https://radio.example.com
+AZURACAST_API_KEY=your_azuracast_api_key
+AZURACAST_STATION_ID=1
+```
+
+### How it Works
+- **Now playing + history**: `GET /api/nowplaying/{station_id}` returns `now_playing`, `playing_next`, `song_history`, and `is_online`.
+- **Requestable songs**: `GET /api/station/{station_id}/requests` lists songs users can request.
+- **Submit a request**: `POST /api/station/{station_id}/request/{request_id}` returns `200` on success with a message payload (errors surface in the response body).
+
+### Laravel Service Usage
+```php
+$radio = app(\App\Services\AzuracastService::class);
+
+$nowPlaying = $radio->nowPlaying();          // now_playing, playing_next, song_history, is_online
+$requestable = $radio->requestableSongs();   // list of songs that can be requested
+$log = $radio->requestSong($requestId, auth()->id()); // logs success/failure for the user
+```
+
+### Request Logging
+All attempts to request a song are stored in `azuracast_requests` with:
+- `user_id` (nullable), `request_id`, `requested_at`
+- `status` (`success`, `failed`, or `pending` during processing)
+- `api_response_message` (success or error text returned by Azuracast)
+
 ## OAuth Configuration
 
 The application supports authentication via Steam, Discord, and Battle.net. To enable OAuth:

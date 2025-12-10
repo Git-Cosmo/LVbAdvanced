@@ -58,4 +58,10 @@ return [
         'region' => env('BATTLENET_REGION', 'us'),
     ],
 
+    'azuracast' => [
+        'base_url' => env('AZURACAST_BASE_URL'),
+        'api_key' => env('AZURACAST_API_KEY'),
+        'station_id' => env('AZURACAST_STATION_ID'),
+    ],
+
 ];
