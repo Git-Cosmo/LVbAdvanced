@@ -3,10 +3,22 @@
 namespace App\Http\Controllers;
 
 use App\Models\News;
+use App\Services\SeoService;
 use Illuminate\Http\Request;
 
 class NewsController extends Controller
 {
+    /**
+     * Maximum length for meta descriptions
+     */
+    private const META_DESCRIPTION_LENGTH = 160;
+
+    protected SeoService $seoService;
+
+    public function __construct(SeoService $seoService)
+    {
+        $this->seoService = $seoService;
+    }
     /**
      * Display a listing of news articles.
      */
@@ -54,10 +66,11 @@ class NewsController extends Controller
             ->get();
 
         // Generate enhanced SEO data with Article structured data
-        $seoService = app(\App\Services\SeoService::class);
-        $seoData = $seoService->generateMetaTags([
+        $description = $news->excerpt ?? substr(strip_tags($news->content), 0, self::META_DESCRIPTION_LENGTH);
+        
+        $seoData = $this->seoService->generateMetaTags([
             'title' => $news->title . ' | Gaming News',
-            'description' => $news->excerpt ?? substr(strip_tags($news->content), 0, 160),
+            'description' => $description,
             'keywords' => $news->tags ?? 'gaming news, esports, FPSociety',
             'image' => $news->featured_image ?? asset('images/og-image-news.jpg'),
             'type' => 'article',
@@ -75,7 +88,7 @@ class NewsController extends Controller
             'page' => (object) [
                 'title' => $news->title . ' - FPSociety',
                 'meta_title' => $news->title . ' | Gaming News',
-                'meta_description' => $news->excerpt ?? substr(strip_tags($news->content), 0, 160),
+                'meta_description' => $description,
             ],
         ]);
     }

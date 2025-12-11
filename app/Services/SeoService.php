@@ -61,7 +61,7 @@ class SeoService
             '@context' => 'https://schema.org',
             '@type' => $meta['schema_type'] ?? 'WebSite',
             'name' => 'FPSociety',
-            'url' => $meta['url'],
+            'url' => $meta['url'] ?? url()->current(),
             'description' => $meta['description'],
         ];
 
@@ -69,7 +69,10 @@ class SeoService
         if (!isset($meta['schema_type']) || $meta['schema_type'] === 'WebSite') {
             $structuredData['potentialAction'] = [
                 '@type' => 'SearchAction',
-                'target' => config('app.url') . '/search?q={search_term_string}',
+                'target' => [
+                    '@type' => 'EntryPoint',
+                    'urlTemplate' => config('app.url') . '/search?q={search_term_string}',
+                ],
                 'query-input' => 'required name=search_term_string',
             ];
         }
