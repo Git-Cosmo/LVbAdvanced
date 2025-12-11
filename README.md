@@ -179,12 +179,26 @@
   - Reset seasonal rankings
   - Manage achievement criteria
 
-### Game Deals (CheapShark)
+### Game Deals & Stores (CheapShark)
+- ✅ **Games Dropdown Navigation** - Dedicated dropdown menu in navbar for game-related features
 - ✅ **Live Deals Feed** - CheapShark API integration for stores, deals, and games
+- ✅ **Stores Directory** - Browse all gaming stores at `/games/stores` with:
+  - Store logos and branding
+  - Deal count statistics per store
+  - Search and filter functionality
+  - Sort by name or deal count
+  - Active/inactive store filtering
+  - Beautiful card-based layout with hover effects
+  - Direct links to view deals from each store
+- ✅ **Deals Page** - Comprehensive deals listing at `/games/deals` with:
+  - Search functionality
+  - Store filtering
+  - Price comparisons
+  - Savings percentages
+  - Direct purchase links
 - ✅ **Database-Backed** - Stores data in `cheap_shark_stores`, `cheap_shark_games`, `cheap_shark_deals`, and `cheap_shark_sync_logs` with upserts to prevent duplicates
 - ✅ **Hourly Sync** - `php artisan cheapshark:sync` scheduled every hour; manual trigger available in Admin > Game Deals
 - ✅ **Batch Game Lookups** - Uses multi-ID `/games` endpoint to hydrate titles, thumbnails, and cheapest prices in batches
-- ✅ **Frontend Pages** - `/deals` searchable list with store filter and `/game/{slug}` detail page showing all offers
 - ✅ **Admin Monitoring** - Sync history, counts, and manual run from `/admin/deals`
 - ✅ **Configurable** - Override CheapShark base URL with `CHEAPSHARK_BASE_URL` if needed
 
@@ -274,24 +288,61 @@
    - Search: http://localhost:8000/search
    - What's New: http://localhost:8000/activity/whats-new
    - Leaderboard: http://localhost:8000/leaderboard
-   - Admin: http://localhost:8000/admin
-   - Admin News: http://localhost:8000/admin/news
-   - Admin RSS: http://localhost:8000/admin/rss
-   - Admin Deals: http://localhost:8000/admin/deals
-   - Admin Events: http://localhost:8000/admin/events
-    - Credentials: admin@example.com / password
+   - **Games:**
+     - Game Deals: http://localhost:8000/games/deals
+     - Game Stores: http://localhost:8000/games/stores
+   - **Admin:**
+     - Admin Panel: http://localhost:8000/admin
+     - Admin News: http://localhost:8000/admin/news
+     - Admin RSS: http://localhost:8000/admin/rss
+     - Admin Deals: http://localhost:8000/admin/deals
+     - Admin Events: http://localhost:8000/admin/events
+     - Credentials: admin@example.com / password
 
-## CheapShark Deals Workflow
+## CheapShark Deals & Stores Workflow
 
-1. Run a manual sync anytime:
+### Accessing the Features
+
+**Games Dropdown (Navbar):**
+- Click "Games" in the main navigation bar
+- Select "Deals" to browse game deals
+- Select "Stores" to view all gaming stores
+
+**Frontend Routes:**
+- Deals listing: `/games/deals` (also available at `/deals` for backward compatibility)
+- Stores directory: `/games/stores`
+- Game detail with all offers: `/game/{slug}`
+
+### Syncing Data from CheapShark
+
+1. **Manual sync** anytime:
    ```bash
    php artisan cheapshark:sync
    ```
-2. The command is scheduled hourly via `routes/console.php` (ensure your scheduler runs `php artisan schedule:run`).
-3. Manual syncs and logs are available in the admin panel at **Admin → Game Deals**.
-4. Frontend routes:
-   - Deals listing: `/deals` (search + store filter)
-   - Game detail with all offers: `/game/{slug}`
+
+2. **Automatic syncs** run hourly via `routes/console.php`:
+   - Ensure your scheduler runs: `php artisan schedule:run`
+   - Syncs stores, games, and deals automatically
+
+3. **Admin management**:
+   - Navigate to **Admin → Game Deals** (`/admin/deals`)
+   - View sync history and statistics
+   - Trigger manual syncs from the admin panel
+
+### Store Features
+
+**Browse Stores at `/games/stores`:**
+- View all CheapShark stores with logos
+- See deal counts for each store
+- Filter by active/inactive stores
+- Search stores by name
+- Sort by name or deal count
+- Click "View Deals" to see all deals from a specific store
+
+**Statistics Dashboard:**
+- Total stores tracked
+- Active stores count
+- Total deals available across all stores
 
 ## Gaming Events Workflow (OpenWebNinja API Integration)
 
