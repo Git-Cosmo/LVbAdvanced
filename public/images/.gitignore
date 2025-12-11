@@ -1,0 +1,10 @@
+# Ignore all image files (these should be generated/uploaded by site owner)
+*.jpg
+*.jpeg
+*.png
+*.webp
+*.gif
+*.svg
+
+# But track the README
+!README.md
