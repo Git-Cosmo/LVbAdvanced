@@ -40,11 +40,14 @@
         <div class="px-6 py-4 border-b dark:border-dark-border-primary border-light-border-primary flex items-center justify-between">
             <div>
                 <h2 class="text-lg font-semibold dark:text-dark-text-bright text-light-text-bright">Import Events</h2>
-                <p class="text-sm dark:text-dark-text-secondary text-light-text-secondary">Scrape events from GameSpot and IGN RSS feeds</p>
+                <p class="text-sm dark:text-dark-text-secondary text-light-text-secondary">Import real-time events from OpenWebNinja API</p>
+                @if(empty(config('services.openwebninja.api_key')))
+                <p class="text-xs text-red-400 mt-1">⚠️ API key not configured. Add OPEN_WEB_NINJA_API_KEY to your .env file.</p>
+                @endif
             </div>
             <form method="POST" action="{{ route('admin.events.import') }}">
                 @csrf
-                <button type="submit" class="px-4 py-2 rounded-lg bg-primary-600 text-white font-semibold hover:bg-primary-700 shadow">
+                <button type="submit" class="px-4 py-2 rounded-lg bg-primary-600 text-white font-semibold hover:bg-primary-700 shadow" @if(empty(config('services.openwebninja.api_key'))) disabled title="API key required" @endif>
                     Import Events Now
                 </button>
             </form>
@@ -74,12 +77,17 @@
                         <tr>
                             <td class="px-4 py-3">
                                 <div class="flex items-center">
-                                    @if($event->image)
-                                        <img src="{{ $event->image }}" alt="" class="w-10 h-10 rounded object-cover mr-3">
+                                    @if($event->thumbnail)
+                                        <img src="{{ $event->thumbnail }}" alt="" class="w-10 h-10 rounded object-cover mr-3">
                                     @endif
                                     <div>
-                                        <div class="font-medium dark:text-dark-text-bright text-light-text-bright">{{ Str::limit($event->title, 50) }}</div>
+                                        <div class="font-medium dark:text-dark-text-bright text-light-text-bright">{{ Str::limit($event->name, 50) }}</div>
                                         <div class="flex gap-1 mt-1">
+                                            @if($event->is_virtual)
+                                                <span class="px-2 py-0.5 rounded text-xs font-semibold bg-purple-500/20 text-purple-400">
+                                                    Virtual
+                                                </span>
+                                            @endif
                                             @if($event->is_featured)
                                                 <span class="px-2 py-0.5 rounded text-xs font-semibold bg-yellow-500/20 text-yellow-400">
                                                     Featured
@@ -113,10 +121,10 @@
                                 </span>
                             </td>
                             <td class="px-4 py-3 dark:text-dark-text-primary text-light-text-primary">
-                                {{ $event->start_date ? $event->start_date->format('M d, Y') : '-' }}
+                                {{ $event->start_time ? $event->start_time->format('M d, Y') : '-' }}
                             </td>
                             <td class="px-4 py-3 dark:text-dark-text-secondary text-light-text-secondary">
-                                {{ $event->source ?? '-' }}
+                                {{ $event->publisher ?? 'OpenWebNinja' }}
                             </td>
                             <td class="px-4 py-3 dark:text-dark-text-secondary text-light-text-secondary">
                                 {{ $event->views_count }}

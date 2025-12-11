@@ -15,7 +15,7 @@ class EventsManagementController extends Controller
      */
     public function index(): View
     {
-        $events = Event::orderBy('start_date', 'desc')
+        $events = Event::orderBy('start_time', 'desc')
             ->paginate(20);
 
         $stats = [
