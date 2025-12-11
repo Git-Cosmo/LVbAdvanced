@@ -1,0 +1,18 @@
+services:
+  fpsociety:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: fpsociety
+    restart: unless-stopped
+    ports:
+      - "8067:80"
+    volumes:
+      - .:/var/www
+      - ./scripts:/var/www/scripts
+    networks:
+      - main_network
+
+networks:
+  main_network:
+    external: true
