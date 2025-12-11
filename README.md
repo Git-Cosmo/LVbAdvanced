@@ -48,7 +48,7 @@
 - ✅ **Moderation Tools** - Report system, warnings, bans, thread merge/move, approval queue
 - ✅ **Follow System** - Follow other users
 - ✅ **Wall Posts** - Post on user profiles
-- ✅ **Full-text Search** - MySQL full-text search with relevancy ranking across threads, posts, and news
+- ✅ **Universal Search** - Spatie Searchable integration searching across all models (threads, posts, news, downloads, users)
 - ✅ **Real-time Notifications** - Database notifications with interactive dropdown
 - ✅ **Online Members Tracking** - Live count of active users (15-minute activity window)
 - 🚧 **Private Messaging** - Direct messages between users (coming soon)
@@ -79,8 +79,8 @@
 - ✅ **Recommended Content** - Personalized content based on user interests
 - ✅ **Activity Caching** - Optimized feed performance with smart caching
 
-### Media & Gallery System
-- ✅ **Gaming Gallery** - GameBanana-style resource sharing
+### Downloads System
+- ✅ **Downloads Section** - GameBanana-style resource sharing (formerly Gallery)
 - ✅ **Game Resources** - Download custom maps, skins, mods, and textures
 - ✅ **Supported Games**:
   - Counter Strike 2 (CS2) - Maps, skins, configs
@@ -96,10 +96,11 @@
 - ✅ **Image Optimization** - Automatic compression and thumbnail generation
 - ✅ **Albums & Collections** - Organize media into albums
 - ✅ **Download Tracking** - Track views and downloads
-- ✅ **User Galleries** - Personal media libraries
+- ✅ **User Downloads** - Personal media libraries for each user
 - ✅ **Comments & Ratings** - Community feedback on content
 - ✅ **Upload Interface** - Intuitive file upload with drag-and-drop support
 - ✅ **Content Tagging** - Tag media for better discoverability
+- ✅ **URL Structure** - Clean `/downloads` URLs for all download-related pages
 
 ### News & Content System
 - ✅ **Gaming News** - Dedicated news section for gaming updates
@@ -117,8 +118,9 @@
 ### Frontend
 - ✅ **TailwindCSS** - Modern, responsive design
 - ✅ **Alpine.js** - Lightweight JavaScript framework
-- ✅ **Clean Homepage** - Responsive homepage with feature showcase and stats
+- ✅ **Dynamic Homepage** - Real-time content from News, Deals, Downloads, and Forum sections
 - ✅ **Enhanced User Sidebar** - Display user stats, role, XP, level, and karma for logged-in users
+- ✅ **Universal Search** - Powerful search across all content with attractive result grouping
 - ✅ **SEO Friendly** - Meta tags, clean URLs, sitemap support
 - ✅ **Dark Mode** - Modern dark theme throughout the application
 - ✅ **Tabbed Settings Interface** - Easy-to-navigate settings with multiple tabs
@@ -142,7 +144,7 @@
   - Award or deduct XP manually
   - Reset user levels and stats
   - Recalculate karma for all users
-- ✅ **Media Management**:
+- ✅ **Downloads Management**:
   - Approve/reject uploaded content
   - Feature content on homepage
   - Delete inappropriate media
@@ -230,7 +232,8 @@
 8. **Access**
    - Portal: http://localhost:8000
    - Forums: http://localhost:8000/forum
-   - Gallery: http://localhost:8000/media
+   - Downloads: http://localhost:8000/downloads
+   - Search: http://localhost:8000/search
    - What's New: http://localhost:8000/activity/whats-new
    - Leaderboard: http://localhost:8000/leaderboard
    - Admin: http://localhost:8000/admin
@@ -421,13 +424,20 @@ MAIL_FROM_NAME="${APP_NAME}"
 The application uses a shared Blade layout located at `resources/views/layouts/app.blade.php` that provides:
 - Responsive navigation with dark/light mode toggle
 - User authentication menu
-- Search functionality
+- Universal search functionality (searches all models)
 - Secondary navigation bar
 - Footer with site information
 
 All portal and forum pages extend this layout using standard Blade `@extends('layouts.app')` syntax.
 
 ### Portal
+The portal homepage (`resources/views/portal/home.blade.php`) displays real-time dynamic content:
+- Live Azuracast radio player with now playing info
+- Latest gaming news articles from the database
+- Top game deals with savings and discounts
+- Latest downloads with thumbnails and stats
+- Recent forum threads with activity timestamps
+- Forum statistics and user information
 The portal homepage is a static Blade template (`resources/views/portal/home.blade.php`) that displays:
 - Hero section with call-to-action
 - Feature cards highlighting system capabilities
@@ -708,6 +718,35 @@ Dynamic menu builder for navigation.
 
 **Config:** Available via package defaults
 
+### 12. **laravel-searchable** - Universal Search
+**Status:** ✅ Fully Implemented
+
+Powerful search across all models with relevancy ranking and grouped results.
+
+```php
+// Usage - Automatic via SearchController
+Route: /search?q=query
+```
+
+**Models Using:** `ForumThread`, `ForumPost`, `News`, `Gallery`, `User`  
+**Features:**
+- Search across forums, posts, news articles, downloads, and users
+- Grouped results by model type
+- Relevancy-based ranking
+- Clean, attractive search results page
+- Integrated in navigation bar
+- SEO-friendly search URLs
+
+**Implementation:**
+- All searchable models implement `Spatie\Searchable\Searchable` interface
+- Each model defines searchable fields (title, content, name, etc.)
+- Custom `getSearchResult()` method returns formatted results
+- Results grouped and displayed with model-specific metadata
+
+**Route:** `/search`  
+**Controller:** `App\Http\Controllers\SearchController`  
+**View:** `resources/views/search/index.blade.php`
+
 ## Additional Packages
 - laravel-socialite - OAuth authentication
 - socialiteproviders/steam - Steam OAuth
@@ -763,17 +802,37 @@ XP_DAILY_LOGIN=5
 
 ## New Features in Latest Update
 
+### Universal Search (Spatie Searchable)
+- Powerful search across ALL models using Spatie's laravel-searchable package
+- Search forums, posts, news, downloads, and users simultaneously
+- Attractive grouped results by model type
+- Model-specific metadata displayed for each result type
+- Integrated search bar in navigation
+- Dedicated search page at `/search`
+- SEO-friendly implementation with proper meta tags
+
+### Downloads Rename (formerly Gallery/Media)
+- All URLs changed from `/media` to `/downloads` for clarity
+- Navigation updated to say "Downloads" instead of "Gallery"
+- Cleaner, more descriptive naming throughout the application
+- All route names updated: `downloads.index`, `downloads.show`, etc.
+- Sitemap updated to reflect new URLs
+- Admin panel updated with new terminology
+
+### Dynamic Homepage
+- Homepage now displays real data instead of placeholders
+- Latest news articles from the database (5 most recent)
+- Top game deals with savings and discounts (6 hottest deals)
+- Latest downloads with thumbnails and stats (4 most recent)
+- Recent forum threads with activity (5 most active)
+- Live Azuracast radio integration with now playing info
+- Dynamic content updates automatically as new content is added
+
 ### Real-time Notifications
 - Interactive notification dropdown in the navigation bar
 - Database-driven notifications for thread replies and mentions
 - Mark as read/unread functionality
 - Unread count badge
-
-### Full-text Search
-- MySQL full-text search with relevancy ranking
-- Search across threads, posts, news, and users
-- Advanced filtering by forum, user, and date range
-- Fast and accurate results with MATCH AGAINST queries
 
 ### RSS Feed Management
 - Admin interface to add and manage RSS feeds
