@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
             AchievementsBadgesSeeder::class,
             ForumSeeder::class,
             RssFeedSeeder::class,
+            RedditSubredditSeeder::class,
         ]);
     }
 }
