@@ -16,8 +16,9 @@
             
             <!-- Game Filter -->
             @if($games->count() > 0)
-                <form method="GET" action="{{ route('patch-notes.index') }}" class="mt-4 md:mt-0">
-                    <select name="game" onchange="this.form.submit()" 
+                <form method="GET" action="{{ route('patch-notes.index') }}" class="mt-4 md:mt-0 flex gap-2">
+                    <select name="game" 
+                        aria-label="Filter by game"
                         class="px-4 py-2 border dark:border-dark-border-primary border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 dark:bg-dark-bg-tertiary dark:text-dark-text-bright">
                         <option value="">All Games</option>
                         @foreach($games as $game)
@@ -26,6 +27,9 @@
                             </option>
                         @endforeach
                     </select>
+                    <button type="submit" class="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-lg">
+                        Filter
+                    </button>
                 </form>
             @endif
         </div>

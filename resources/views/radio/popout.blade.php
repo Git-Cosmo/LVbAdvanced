@@ -86,6 +86,10 @@
         const volumeControl = document.getElementById('volume-control');
         const volumeDisplay = document.getElementById('volume-display');
 
+        // Icon constants
+        const ICON_PLAY = '<svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z"/></svg>';
+        const ICON_PAUSE = '<svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>';
+
         // Set initial volume
         player.volume = 0.75;
 
@@ -93,10 +97,10 @@
         playBtn.addEventListener('click', () => {
             if (player.paused) {
                 player.play();
-                playBtn.innerHTML = '<svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>';
+                playBtn.innerHTML = ICON_PAUSE;
             } else {
                 player.pause();
-                playBtn.innerHTML = '<svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z"/></svg>';
+                playBtn.innerHTML = ICON_PLAY;
             }
         });
 
@@ -104,7 +108,7 @@
         stopBtn.addEventListener('click', () => {
             player.pause();
             player.currentTime = 0;
-            playBtn.innerHTML = '<svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z"/></svg>';
+            playBtn.innerHTML = ICON_PLAY;
         });
 
         // Volume control

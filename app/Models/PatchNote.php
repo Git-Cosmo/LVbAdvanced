@@ -83,7 +83,7 @@ class PatchNote extends Model implements Searchable
         return new SearchResult(
             $this,
             $this->title,
-            route('patch-notes.show', $this->slug)
+            route('patch-notes.show', $this)
         );
     }
 }

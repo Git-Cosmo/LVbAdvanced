@@ -89,14 +89,14 @@
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-3">
                         <a href="{{ route('patch-notes.show', $patchNote) }}" target="_blank" class="text-blue-600 hover:text-blue-900">View</a>
-                        <form action="{{ route('admin.patch-notes.toggle-publish', $patchNote) }}" method="POST" class="inline-block">
+                        <form action="{{ route('admin.patch-notes.toggle-publish', $patchNote) }}" method="POST" class="inline-block" onsubmit="return confirm('Are you sure you want to {{ $patchNote->is_published ? 'unpublish' : 'publish' }} this patch note?');">
                             @csrf
                             @method('PATCH')
                             <button type="submit" class="text-green-600 hover:text-green-900">
                                 {{ $patchNote->is_published ? 'Unpublish' : 'Publish' }}
                             </button>
                         </form>
-                        <form action="{{ route('admin.patch-notes.toggle-featured', $patchNote) }}" method="POST" class="inline-block">
+                        <form action="{{ route('admin.patch-notes.toggle-featured', $patchNote) }}" method="POST" class="inline-block" onsubmit="return confirm('Are you sure you want to {{ $patchNote->is_featured ? 'unfeature' : 'feature' }} this patch note?');">
                             @csrf
                             @method('PATCH')
                             <button type="submit" class="text-yellow-600 hover:text-yellow-900">
