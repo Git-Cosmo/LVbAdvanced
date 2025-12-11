@@ -212,8 +212,10 @@ class EventsService
      */
     protected function fetchRSSFeed(string $url): array
     {
+        $userAgent = config('app.name', 'Laravel') . ' Events Scraper';
+        
         $response = Http::timeout(30)
-            ->withHeaders(['User-Agent' => 'LVbAdvanced Events Scraper'])
+            ->withHeaders(['User-Agent' => $userAgent])
             ->get($url);
 
         if ($response->failed()) {
@@ -221,7 +223,12 @@ class EventsService
         }
 
         libxml_use_internal_errors(true);
-        $xml = simplexml_load_string($response->body(), \SimpleXMLElement::class, LIBXML_NOCDATA);
+        // Use secure XML loading options to prevent XXE attacks
+        $xml = simplexml_load_string(
+            $response->body(),
+            \SimpleXMLElement::class,
+            LIBXML_NOCDATA | LIBXML_NONET | LIBXML_NOBLANKS
+        );
 
         if (!$xml) {
             $errors = libxml_get_errors();
@@ -269,17 +276,20 @@ class EventsService
 
     /**
      * Parse date string to Carbon instance.
+     * Falls back to current time if parsing fails (for RSS items without proper dates).
      */
     protected function parseDate(?string $value): Carbon
     {
         if (!$value) {
+            // Use current time as fallback for events without dates
+            // This ensures events are still imported but marked as current
             return now();
         }
 
         try {
             return Carbon::parse($value);
         } catch (\Exception $e) {
-            Log::warning('Unable to parse event date', ['value' => $value]);
+            Log::warning('Unable to parse event date, using current time as fallback', ['value' => $value]);
             return now();
         }
     }

@@ -56,8 +56,11 @@ class EventsController extends Controller
         $relatedEvents = Event::published()
             ->where('id', '!=', $event->id)
             ->where(function ($query) use ($event) {
-                $query->where('event_type', $event->event_type)
-                    ->orWhere('game_name', $event->game_name);
+                $query->where('event_type', $event->event_type);
+                // Only match on game_name if both events have non-null game names
+                if ($event->game_name) {
+                    $query->orWhere('game_name', $event->game_name);
+                }
             })
             ->limit(3)
             ->get();

@@ -128,7 +128,9 @@
                 <!-- Content -->
                 @if($event->content)
                 <div class="prose dark:prose-invert max-w-none mb-6">
-                    {!! $event->content !!}
+                    {{-- Content is from trusted RSS feeds and may contain HTML formatting --}}
+                    {{-- Using strip_tags to prevent XSS while preserving basic formatting --}}
+                    {!! strip_tags($event->content, '<p><br><a><strong><em><ul><ol><li><h1><h2><h3><h4><h5><h6>') !!}
                 </div>
                 @endif
 

@@ -88,7 +88,8 @@ class Event extends Model
      */
     public function scopeUpcoming($query)
     {
-        return $query->where('start_date', '>=', now())
+        return $query->whereNotNull('start_date')
+            ->where('start_date', '>=', now())
             ->orderBy('start_date', 'asc');
     }
 
