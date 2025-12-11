@@ -41,7 +41,6 @@ return new class extends Migration
             $table->timestamps();
             
             // Indexes for performance
-            $table->index('subreddit');
             $table->index('posted_at');
             $table->index('is_published');
         });
