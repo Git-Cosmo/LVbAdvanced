@@ -120,6 +120,13 @@
 - ✅ **View Tracking** - Monitor article popularity
 - ✅ **Related Articles** - Automatic related content suggestions
 - ✅ **SEO Optimized** - Full meta tags and structured data for news articles
+- ✅ **Game Patch Notes** - Comprehensive patch notes system with admin management
+  - Track patch notes for multiple games (CS2, GTA V, Fortnite, etc.)
+  - Version tracking and release dates
+  - Featured patch notes highlighting
+  - Filter by game and search functionality
+  - Related patch notes suggestions
+  - SEO-optimized patch note pages
 
 ### Gaming Events System (OpenWebNinja API)
 - ✅ **Real-Time Events API** - Powered by OpenWebNinja Real-Time Events Search API
@@ -268,6 +275,9 @@
     REDDIT_CLIENT_SECRET=your_client_secret
     REDDIT_USERNAME=your_reddit_username
     REDDIT_PASSWORD=your_reddit_password
+    
+    # Icecast streaming (optional)
+    ICECAST_STREAM_URL=http://your-icecast-server.com:8000/stream
    ```
 
 4. **Run migrations**
@@ -322,6 +332,10 @@
    - **Games:**
      - Game Deals: http://localhost:8000/games/deals
      - Game Stores: http://localhost:8000/games/stores
+     - Patch Notes: http://localhost:8000/patch-notes
+   - **Radio:**
+     - Live Radio: http://localhost:8000/radio
+     - Popout Player: http://localhost:8000/radio/popout
     - **StreamerBans:**
       - Browse Streamers: http://localhost:8000/streamerbans
       - Streamer Details: http://localhost:8000/streamerbans/{username}
@@ -332,6 +346,7 @@
    - **Admin:**
      - Admin Panel: http://localhost:8000/admin
      - Admin News: http://localhost:8000/admin/news
+     - Admin Patch Notes: http://localhost:8000/admin/patch-notes
      - Admin RSS: http://localhost:8000/admin/rss
      - Admin Deals: http://localhost:8000/admin/deals
      - Admin Events: http://localhost:8000/admin/events
@@ -383,6 +398,99 @@
 - Total stores tracked
 - Active stores count
 - Total deals available across all stores
+
+## Game Patch Notes System
+
+### Overview
+The patch notes system allows you to track, manage, and display game updates and patch notes for all the games your community plays.
+
+### Features
+
+**Frontend Features:**
+- Browse all patch notes at `/patch-notes`
+- Filter by game (Counter Strike 2, GTA V, Fortnite, etc.)
+- Featured patch notes highlighting
+- Related patch notes suggestions
+- SEO-optimized individual patch note pages
+- View counters for tracking popularity
+- Responsive card-based layout
+
+**Admin Features:**
+- Full CRUD interface at `/admin/patch-notes`
+- Create, edit, and delete patch notes
+- Publish/unpublish control
+- Feature/unfeature toggle
+- Version tracking (e.g., "1.2.3", "Season 5")
+- Rich text content support
+- Source URL attribution
+- Statistics dashboard showing:
+  - Total patch notes
+  - Published count
+  - Featured count
+  - Number of games covered
+
+### Creating Patch Notes
+
+**Via Admin Panel:**
+1. Navigate to **Admin → Patch Notes** (`/admin/patch-notes`)
+2. Click "Create Patch Note"
+3. Fill in the details:
+   - **Game Name** - e.g., "Counter Strike 2", "GTA V"
+   - **Version** (optional) - e.g., "1.2.3", "Season 5"
+   - **Title** - Patch note title
+   - **Description** - Brief summary
+   - **Content** - Full patch notes (supports HTML and markdown)
+   - **Source URL** (optional) - Link to official patch notes
+   - **Release Date** - When the patch was released
+   - **Publish** - Make it visible to users
+   - **Feature** - Highlight on the patch notes page
+4. Click "Create Patch Note"
+
+**Managing Patch Notes:**
+- **View All** - See all patch notes with statistics
+- **Filter** - Filter by game name
+- **Quick Actions** - Publish/unpublish, feature/unfeature from listing page
+- **Edit** - Update any patch note details
+- **Delete** - Remove outdated patch notes
+
+### Accessing Patch Notes
+
+**Frontend:**
+- Main listing: `/patch-notes`
+- Individual patch note: `/patch-notes/{slug}`
+- Filter by game: `/patch-notes?game=Counter%20Strike%202`
+- Available in Games dropdown menu
+
+**Admin:**
+- Management interface: `/admin/patch-notes`
+- Create new: `/admin/patch-notes/create`
+- Edit existing: `/admin/patch-notes/{id}/edit`
+
+### Database Structure
+
+The `patch_notes` table includes:
+- `game_name` - Game this patch belongs to
+- `version` - Version number or identifier
+- `title` - Patch title
+- `slug` - SEO-friendly URL slug (auto-generated)
+- `description` - Brief summary
+- `content` - Full patch notes
+- `source_url` - Official patch notes URL
+- `released_at` - Release date
+- `is_published` - Visibility control
+- `is_featured` - Featured status
+- `views_count` - View counter
+
+### Best Practices
+
+- Use consistent game names across patch notes
+- Include version numbers for easy reference
+- Add source URLs to official patch notes
+- Feature major updates to increase visibility
+- Use clear, descriptive titles
+- Include release dates for historical tracking
+- Organize content with headings and lists
+- Update regularly to keep community informed
 
 ## Gaming Events Workflow (OpenWebNinja API Integration)
 
@@ -631,9 +739,45 @@ OpenWebNinja API → EventsService → Database (normalized) → Frontend Views
 - Models: Event, EventVenue, EventTicketLink, EventInfoLink
 - Controller: EventsController with eager loading for performance
 
-## Azuracast Radio Integration
+## Radio Streaming
 
-### Environment Variables
+FPSociety includes a built-in radio player for streaming audio to your community.
+
+### Icecast Radio Integration
+
+**Quick Setup:**
+
+1. Add your Icecast stream URL to `.env`:
+   ```env
+   ICECAST_STREAM_URL=http://your-icecast-server.com:8000/stream
+   ```
+
+2. Access the radio player at `/radio`
+
+**Features:**
+- 🎵 **Full-featured audio player** with play/pause/stop controls
+- 🔊 **Volume control** with visual feedback
+- 🪟 **Popout window** - Open radio in a separate window for continuous playback
+- 📱 **Responsive design** - Works on desktop and mobile
+- 🎨 **Attractive UI** - Animated "Now Playing" display with gradient effects
+- 🔗 **Easy access** - Available in main navigation menu
+
+**Accessing the Radio:**
+- Main player: `http://localhost:8000/radio`
+- Popout player: `http://localhost:8000/radio/popout`
+- Navigation: Click "Radio" in the top menu
+
+**Popout Window:**
+The popout window allows users to:
+- Keep the radio playing while browsing other pages
+- Control playback independently from the main site
+- Minimize to system tray while listening
+
+### Azuracast Radio Integration
+
+For advanced radio features with AzuraCast:
+
+**Environment Variables:**
 Add the following to `.env`:
 ```env
 AZURACAST_BASE_URL=https://radio.example.com
@@ -641,12 +785,12 @@ AZURACAST_API_KEY=your_azuracast_api_key
 AZURACAST_STATION_ID=1
 ```
 
-### How it Works
+**How it Works:**
 - **Now playing + history**: `GET /api/nowplaying/{station_id}` returns `now_playing`, `playing_next`, `song_history`, and `is_online`.
 - **Requestable songs**: `GET /api/station/{station_id}/requests` lists songs users can request.
 - **Submit a request**: `POST /api/station/{station_id}/request/{request_id}` returns `200` on success with a message payload (errors surface in the response body).
 
-### Laravel Service Usage
+**Laravel Service Usage:**
 ```php
 $radio = app(\App\Services\AzuracastService::class);
 
@@ -655,7 +799,7 @@ $requestable = $radio->requestableSongs();   // list of songs that can be reques
 $log = $radio->requestSong($requestId, auth()->id()); // logs success/failure for the user
 ```
 
-### Request Logging
+**Request Logging**
 All attempts to request a song are stored in `azuracast_requests` with:
 - `user_id` (nullable), `request_id`, `requested_at`
 - `status` (`success`, `failed`, or `pending` during processing)
