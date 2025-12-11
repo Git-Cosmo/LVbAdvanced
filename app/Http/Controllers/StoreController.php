@@ -38,30 +38,23 @@ class StoreController extends Controller
 
         $stores = $storesQuery->paginate(24)->withQueryString();
 
-        // Calculate stats from the full dataset (not just current page)
-        $baseStatsQuery = CheapSharkStore::query();
-        if ($search) {
-            $baseStatsQuery->where('name', 'like', '%' . $search . '%');
-        }
+        // Calculate stats from the full dataset using a single optimized query with conditional aggregation
+        $statsQuery = CheapSharkStore::query()
+            ->selectRaw('COUNT(*) as total_stores')
+            ->selectRaw('SUM(CASE WHEN is_active = 1 THEN 1 ELSE 0 END) as active_stores')
+            ->when($search, fn($q) => $q->where('name', 'like', '%' . $search . '%'))
+            ->when($filterActive, fn($q) => $q->where('is_active', true));
 
-        // Calculate total stores and active stores in one query
-        $totalStores = (clone $baseStatsQuery)->count();
-        $activeStores = (clone $baseStatsQuery)->where('is_active', true)->count();
+        $stats = $statsQuery->first();
+        $totalStores = $stats->total_stores ?? 0;
+        $activeStores = $stats->active_stores ?? 0;
 
-        // Calculate total deals using a join and sum aggregate
-        $totalDeals = (clone $baseStatsQuery)
+        // Calculate total deals with a separate query (join needed)
+        $totalDeals = CheapSharkStore::query()
+            ->when($search, fn($q) => $q->where('name', 'like', '%' . $search . '%'))
+            ->when($filterActive, fn($q) => $q->where('is_active', true))
             ->leftJoin('cheap_shark_deals', 'cheap_shark_stores.id', '=', 'cheap_shark_deals.store_id')
             ->count('cheap_shark_deals.id');
-
-        // Apply the active filter after stats calculation if needed
-        if ($filterActive) {
-            $totalStores = $activeStores;
-            $totalDeals = CheapSharkStore::query()
-                ->where('is_active', true)
-                ->when($search, fn($q) => $q->where('name', 'like', '%' . $search . '%'))
-                ->leftJoin('cheap_shark_deals', 'cheap_shark_stores.id', '=', 'cheap_shark_deals.store_id')
-                ->count('cheap_shark_deals.id');
-        }
 
         return view('stores.index', [
             'stores' => $stores,
