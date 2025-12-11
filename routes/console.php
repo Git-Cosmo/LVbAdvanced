@@ -44,3 +44,8 @@ Schedule::job(new ImportEventsJob())
 Schedule::command('reddit:scrape')
     ->withoutOverlapping()
     ->everyTwoHours();
+
+// StreamerBans scraping daily (update existing streamers)
+Schedule::command('streamerbans:scrape --update --limit=100')
+    ->withoutOverlapping()
+    ->daily();
