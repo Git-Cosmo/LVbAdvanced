@@ -33,6 +33,9 @@
         <meta name="{{ $name }}" content="{{ $content }}">
     @endforeach
     
+    <!-- Canonical URL -->
+    <link rel="canonical" href="{{ $canonicalUrl ?? url()->current() }}">
+    
     <!-- Structured Data -->
     <script type="application/ld+json">
         {!! json_encode($seoData['structured']) !!}
@@ -47,6 +50,11 @@
     @vite(['resources/css/app.css', 'resources/css/forum.css', 'resources/js/app.js', 'resources/js/forum.js', 'resources/js/mentions.js'])
 </head>
 <body class="dark:bg-dark-bg-primary bg-light-bg-primary dark:text-dark-text-primary text-light-text-primary min-h-screen">
+    <!-- Skip to main content for accessibility -->
+    <a href="#main-content" class="skip-to-content">
+        Skip to main content
+    </a>
+    
     <!-- Top Navigation Bar -->
     <header class="sticky top-0 z-50 dark:bg-dark-bg-secondary/95 bg-light-bg-secondary/95 navbar-blur dark:border-b dark:border-dark-border-primary border-light-border-primary shadow-sm">
         <div class="container mx-auto px-4">
@@ -337,7 +345,7 @@
     </header>
 
     <!-- Main Content -->
-    <main class="container mx-auto px-4 py-8">
+    <main id="main-content" class="container mx-auto px-4 py-8">
         @yield('content')
     </main>
 

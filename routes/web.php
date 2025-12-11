@@ -27,7 +27,7 @@ Route::get('/status', StatusController::class)->name('status');
 Route::get('/terms', [\App\Http\Controllers\StaticPageController::class, 'terms'])->name('terms');
 Route::get('/privacy', [\App\Http\Controllers\StaticPageController::class, 'privacy'])->name('privacy');
 Route::get('/contact', [\App\Http\Controllers\StaticPageController::class, 'contact'])->name('contact');
-Route::post('/contact', [\App\Http\Controllers\StaticPageController::class, 'sendContact'])->name('contact.send');
+Route::post('/contact', [\App\Http\Controllers\StaticPageController::class, 'sendContact'])->middleware('throttle:3,10')->name('contact.send');
 
 // Games Routes
 Route::prefix('games')->name('games.')->group(function () {
@@ -47,13 +47,13 @@ Route::get('/search', [\App\Http\Controllers\SearchController::class, 'index'])-
 // Authentication Routes
 Route::middleware('guest')->group(function () {
     Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
-    Route::post('/login', [LoginController::class, 'login']);
+    Route::post('/login', [LoginController::class, 'login'])->middleware('throttle:5,1');
     
     Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
-    Route::post('/register', [RegisterController::class, 'register']);
+    Route::post('/register', [RegisterController::class, 'register'])->middleware('throttle:3,1');
     
     Route::get('/forgot-password', [PasswordResetController::class, 'showLinkRequestForm'])->name('password.request');
-    Route::post('/forgot-password', [PasswordResetController::class, 'sendResetLinkEmail'])->name('password.email');
+    Route::post('/forgot-password', [PasswordResetController::class, 'sendResetLinkEmail'])->middleware('throttle:3,10')->name('password.email');
     Route::get('/reset-password/{token}', [PasswordResetController::class, 'showResetForm'])->name('password.reset');
     Route::post('/reset-password', [PasswordResetController::class, 'reset'])->name('password.update');
     
