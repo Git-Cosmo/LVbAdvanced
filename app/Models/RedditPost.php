@@ -100,4 +100,20 @@ class RedditPost extends Model
     {
         return 'https://reddit.com' . $this->permalink;
     }
+
+    /**
+     * Extract YouTube video ID from URL.
+     */
+    public function getYoutubeVideoId(): ?string
+    {
+        if (!$this->url) {
+            return null;
+        }
+
+        if (preg_match('/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\?\/]+)/', $this->url, $matches)) {
+            return $matches[1];
+        }
+
+        return null;
+    }
 }

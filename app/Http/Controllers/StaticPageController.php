@@ -65,11 +65,10 @@ class StaticPageController extends Controller
             'message' => 'required|string|max:5000',
         ]);
 
-        // Log the contact form submission
+        // Log the contact form submission (without PII)
         \Illuminate\Support\Facades\Log::info('Contact form submission', [
-            'name' => $validated['name'],
-            'email' => $validated['email'],
             'subject' => $validated['subject'],
+            'timestamp' => now()->toDateTimeString(),
         ]);
 
         // In a production environment, you would send an email here

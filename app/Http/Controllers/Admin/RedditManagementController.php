@@ -26,8 +26,7 @@ class RedditManagementController extends Controller
             'aitah_posts' => RedditPost::where('subreddit', 'AITAH')->count(),
         ];
 
-        $recentPosts = RedditPost::with('subreddit')
-            ->orderBy('created_at', 'desc')
+        $recentPosts = RedditPost::orderBy('created_at', 'desc')
             ->take(20)
             ->get();
 

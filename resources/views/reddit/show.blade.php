@@ -85,15 +85,9 @@
                 <div class="bg-black">
                     <div class="aspect-video flex items-center justify-center">
                         @if(str_contains($post->url, 'youtube.com') || str_contains($post->url, 'youtu.be'))
-                            @php
-                                $videoId = null;
-                                if (preg_match('/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\?\/]+)/', $post->url, $matches)) {
-                                    $videoId = $matches[1];
-                                }
-                            @endphp
-                            @if($videoId)
+                            @if($post->getYoutubeVideoId())
                                 <iframe class="w-full h-full" 
-                                        src="https://www.youtube.com/embed/{{ $videoId }}" 
+                                        src="https://www.youtube.com/embed/{{ $post->getYoutubeVideoId() }}" 
                                         frameborder="0" 
                                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
                                         allowfullscreen>
