@@ -30,7 +30,9 @@ Route::prefix('games')->name('games.')->group(function () {
 });
 
 // Legacy deals routes (for backward compatibility)
-Route::get('/deals', [DealController::class, 'index'])->name('deals.index');
+Route::get('/deals', function () {
+    return redirect()->route('games.deals');
+})->name('deals.index');
 Route::get('/game/{slug}', [DealController::class, 'show'])->name('deals.show');
 
 // Universal Search Route
