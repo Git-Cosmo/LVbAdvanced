@@ -115,6 +115,42 @@
                         </div>
                     </div>
                     @endif
+
+                    @if($event->venue)
+                    <div class="flex items-center">
+                        <svg class="w-5 h-5 mr-2 dark:text-dark-text-secondary text-light-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                        </svg>
+                        <div>
+                            <p class="text-sm dark:text-dark-text-tertiary text-light-text-tertiary">Venue</p>
+                            <p class="dark:text-dark-text-bright text-light-text-bright">{{ $event->venue }}</p>
+                        </div>
+                    </div>
+                    @endif
+
+                    @if($event->city && $event->country)
+                    <div class="flex items-center">
+                        <svg class="w-5 h-5 mr-2 dark:text-dark-text-secondary text-light-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <div>
+                            <p class="text-sm dark:text-dark-text-tertiary text-light-text-tertiary">City / Country</p>
+                            <p class="dark:text-dark-text-bright text-light-text-bright">{{ $event->city }}, {{ $event->country }}</p>
+                        </div>
+                    </div>
+                    @endif
+
+                    @if($event->organizer)
+                    <div class="flex items-center">
+                        <svg class="w-5 h-5 mr-2 dark:text-dark-text-secondary text-light-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                        </svg>
+                        <div>
+                            <p class="text-sm dark:text-dark-text-tertiary text-light-text-tertiary">Organizer</p>
+                            <p class="dark:text-dark-text-bright text-light-text-bright">{{ $event->organizer }}</p>
+                        </div>
+                    </div>
+                    @endif
                 </div>
 
                 <!-- Description -->
@@ -128,9 +164,32 @@
                 <!-- Content -->
                 @if($event->content)
                 <div class="prose dark:prose-invert max-w-none mb-6">
-                    {{-- Content is from trusted RSS feeds and may contain HTML formatting --}}
+                    {{-- Content is from trusted sources and may contain HTML formatting --}}
                     {{-- Using strip_tags to prevent XSS while preserving basic formatting --}}
                     {!! strip_tags($event->content, '<p><br><a><strong><em><ul><ol><li><h1><h2><h3><h4><h5><h6>') !!}
+                </div>
+                @endif
+
+                <!-- Ticket Information -->
+                @if($event->ticket_info || $event->ticket_url)
+                <div class="mb-6 p-4 dark:bg-dark-bg-tertiary bg-light-bg-tertiary rounded-lg border dark:border-dark-border-primary border-light-border-primary">
+                    <h3 class="text-lg font-bold dark:text-dark-text-bright text-light-text-bright mb-2 flex items-center">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z"></path>
+                        </svg>
+                        Ticket Information
+                    </h3>
+                    @if($event->ticket_info)
+                    <p class="dark:text-dark-text-primary text-light-text-primary mb-3">{{ $event->ticket_info }}</p>
+                    @endif
+                    @if($event->ticket_url)
+                    <a href="{{ $event->ticket_url }}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-lg transition-colors">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z"></path>
+                        </svg>
+                        Get Tickets
+                    </a>
+                    @endif
                 </div>
                 @endif
 
@@ -141,7 +200,7 @@
                         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
                         </svg>
-                        View Original Article
+                        Visit Official Website
                     </a>
                 </div>
                 @endif

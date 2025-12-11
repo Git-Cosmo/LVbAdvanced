@@ -116,19 +116,19 @@
 - ✅ **SEO Optimized** - Full meta tags and structured data for news articles
 
 ### Gaming Events System
-- ✅ **Events Calendar** - Dedicated page for gaming events, releases, tournaments, expos, and updates
-- ✅ **Automated Scraper** - Fetch events from GameSpot and IGN RSS feeds (no API keys required)
-- ✅ **Event Types** - Categorized as releases, tournaments, expos, updates, and general events
+- ✅ **Real Gaming Events** - Major gaming conventions, expos, and tournaments (PAX, GDC, Gamescom, E3, Tokyo Game Show, etc.)
+- ✅ **Comprehensive Event Data** - Venue names, cities, countries, dates, organizers, and ticket information
+- ✅ **Event Types** - Categorized as expos, tournaments, releases, updates, and general events
 - ✅ **Event Status** - Track upcoming, ongoing, and past events
-- ✅ **Featured Events** - Highlight important events on the events page
-- ✅ **Event Details** - Support for start/end dates, location, platform, and game information
+- ✅ **Featured Events** - Highlight major events like PAX, GDC, Gamescom on the events page
+- ✅ **Detailed Event Information** - Start/end dates, location, venue, ticket URLs, ticket pricing info
 - ✅ **Automatic Deduplication** - Prevent duplicate events from multiple sources
 - ✅ **Admin Management** - Feature, publish/unpublish, and delete events from admin panel
-- ✅ **Scheduled Import** - Hourly automatic import of new events via scheduler
-- ✅ **Manual Import** - Trigger event import manually via admin panel or CLI command
-- ✅ **Rich Event Pages** - Detailed event pages with related events
+- ✅ **Seeded Major Events** - Pre-populated with 10+ major gaming events for 2026
+- ✅ **Manual Import** - Trigger event import manually via admin panel or CLI command (`php artisan events:import`)
+- ✅ **Rich Event Pages** - Detailed event pages with venue, organizer, ticket info, and related events
 - ✅ **Filter & Sort** - Filter by event type and status (upcoming, ongoing, past)
-- ✅ **Source Attribution** - Track event sources (GameSpot, IGN, etc.)
+- ✅ **Ticket Integration** - Direct links to purchase tickets with pricing information
 
 ### Frontend
 - ✅ **TailwindCSS** - Modern, responsive design
@@ -288,18 +288,32 @@
    ```bash
    php artisan events:import
    ```
-2. The command is scheduled hourly via `routes/console.php` (runs alongside RSS and CheapShark syncs).
-3. Events are automatically scraped from:
-   - **GameSpot RSS Feed** - Latest gaming news and event announcements
-   - **IGN RSS Feed** - Gaming news and event coverage
+2. The system automatically seeds major gaming events including:
+   - **Super MAGFest** (January, USA) - Music and Gaming Festival
+   - **Taipei Game Show** (January, Taiwan) - Asia's premier gaming event
+   - **PAX East** (March, Boston) - Gaming fan convention
+   - **GDC** (March, San Francisco) - Game Developers Conference
+   - **E3** (June, Los Angeles) - Electronic Entertainment Expo
+   - **gamescom** (August, Cologne) - World's largest gaming event
+   - **PAX West** (September, Seattle) - Original PAX event
+   - **Tokyo Game Show** (September, Japan) - Major Japanese gaming expo
+   - **PAX Australia** (October, Melbourne) - PAX Down Under
+   - Plus additional events like Reboot Develop Blue
+3. Each event includes:
+   - **Venue Details** - Exact venue name and location
+   - **Dates** - Start and end dates
+   - **Organizer** - Who runs the event
+   - **Ticket Information** - Pricing details and ticket purchase links
+   - **City & Country** - Full location details
+   - **Official Website** - Links to event websites
 4. Manual imports are available in the admin panel at **Admin → Events Management**.
 5. Frontend routes:
    - Events listing: `/events` (filter by type and status)
-   - Event detail: `/events/{slug}`
+   - Event detail: `/events/{slug}` (full event information with ticket links)
 6. Event types include:
+   - **Expos** - Gaming conventions and trade shows
+   - **Tournaments** - Esports competitions
    - **Releases** - Game launches and release dates
-   - **Tournaments** - Esports competitions and gaming tournaments
-   - **Expos** - Gaming conventions and trade shows (E3, Gamescom, PAX)
    - **Updates** - Game patches, DLC, and expansions
    - **General** - Other gaming-related events
 7. Events can be filtered by status:
@@ -311,7 +325,7 @@
    - Publish/unpublish events to control visibility
    - Delete events that are no longer relevant
    - View event statistics (total, upcoming, ongoing, featured)
-9. No API keys required - all data is scraped from public RSS feeds
+9. No API keys required - major events are seeded directly into the system
 
 ## Azuracast Radio Integration
 
