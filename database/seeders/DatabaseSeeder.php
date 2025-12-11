@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
             RolesAndPermissionsSeeder::class,
             AchievementsBadgesSeeder::class,
             ForumSeeder::class,
+            RssFeedSeeder::class,
         ]);
     }
 }

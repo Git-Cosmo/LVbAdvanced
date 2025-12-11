@@ -144,7 +144,7 @@
                 $currentTitle = $currentSong['title'] ?? 'Nothing playing right now';
                 $currentArtist = $currentSong['artist'] ?? 'Waiting for the DJ';
                 $currentAlbum = $currentSong['album'] ?? null;
-                $currentArtwork = $currentSong['artwork_url'] ?? $currentSong['artwork'] ?? null;
+                $currentArtwork = $currentSong['art'] ?? $currentSong['artwork'] ?? null;
 
                 $nextSong = ($upNext['song'] ?? []);
                 $nextTitle = $nextSong['title'] ?? 'Queue is empty';
@@ -157,7 +157,7 @@
                     <div class="flex items-center gap-4">
                         <div class="w-20 h-20 bg-gradient-to-br from-accent-purple to-accent-blue rounded-2xl flex items-center justify-center overflow-hidden">
                             @if($currentArtwork)
-                                <img src="{{ $currentArtwork }}" alt="Now playing artwork" class="w-full h-full object-cover" loading="lazy">
+                                <img src="{{ $currentArtwork }}" alt="Now playing artwork" class="w-full h-full" loading="lazy">
                             @else
                                 <span class="text-xs uppercase tracking-wider text-white">AZ</span>
                             @endif

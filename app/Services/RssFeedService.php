@@ -5,8 +5,10 @@ namespace App\Services;
 use App\Models\News;
 use App\Models\RssFeed;
 use App\Models\RssImportedItem;
+use App\Models\User;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
-use SimplePie\SimplePie;
 
 class RssFeedService
 {
@@ -23,20 +25,12 @@ class RssFeedService
         ];
 
         try {
-            $simplePie = new SimplePie();
-            $simplePie->set_feed_url($feed->url);
-            $simplePie->init();
-            $simplePie->handle_content_type();
-
-            if ($simplePie->error()) {
-                throw new \Exception($simplePie->error());
-            }
-
-            $items = $simplePie->get_items();
+            $items = $this->fetchFeedItems($feed);
 
             foreach ($items as $item) {
                 try {
-                    $guid = $item->get_id() ?: $item->get_link();
+                    $guid = $this->getElementText($item, 'guid') ?: $this->getElementText($item, 'link');
+                    $guid = $guid ?: sha1($this->getElementText($item, 'title') . $this->getElementText($item, 'pubDate'));
                     
                     // Check if already imported
                     if (RssImportedItem::where('guid', $guid)->where('rss_feed_id', $feed->id)->exists()) {
@@ -82,36 +76,121 @@ class RssFeedService
     }
 
     /**
+     * Fetch raw items using Laravel HTTP and SimpleXML.
+     */
+    protected function fetchFeedItems(RssFeed $feed): array
+    {
+        $response = Http::timeout(30)
+            ->withHeaders(['User-Agent' => 'LVbAdvanced RSS Importer'])
+            ->get($feed->url);
+
+        if ($response->failed()) {
+            throw new \Exception(sprintf('HTTP %s fetching %s', $response->status(), $feed->url));
+        }
+
+        libxml_use_internal_errors(true);
+        $xml = simplexml_load_string($response->body(), \SimpleXMLElement::class, LIBXML_NOCDATA);
+
+        if (!$xml) {
+            $errors = libxml_get_errors();
+            $messages = array_map(fn($error) => trim($error->message), $errors);
+            libxml_clear_errors();
+            throw new \Exception('Unable to parse RSS feed XML: ' . implode('; ', array_filter($messages)));
+        }
+
+        $items = [];
+
+        if (isset($xml->channel->item)) {
+            foreach ($xml->channel->item as $item) {
+                $items[] = $item;
+            }
+        } elseif (isset($xml->item)) {
+            foreach ($xml->item as $item) {
+                $items[] = $item;
+            }
+        }
+
+        libxml_clear_errors();
+        return $items;
+    }
+
+    protected function getElementText(\SimpleXMLElement $item, string $key): ?string
+    {
+        if (strpos($key, ':') === false) {
+            return isset($item->{$key}) ? trim((string) $item->{$key}) : null;
+        }
+
+        [$prefix, $local] = explode(':', $key, 2);
+        $namespaces = $item->getNamespaces(true);
+
+        if (!isset($namespaces[$prefix])) {
+            return null;
+        }
+
+        $child = $item->children($namespaces[$prefix])->{$local};
+
+        return $child ? trim((string) $child) : null;
+    }
+
+    protected function parseDate(?string $value): Carbon
+    {
+        if (!$value) {
+            return now();
+        }
+
+        try {
+            return Carbon::parse($value);
+        } catch (\Exception $e) {
+            Log::warning('Unable to parse RSS publish date', ['value' => $value]);
+            return now();
+        }
+    }
+
+    protected function resolveImageUrl(\SimpleXMLElement $item): ?string
+    {
+        if (isset($item->enclosure)) {
+            $url = (string) $item->enclosure['url'];
+            if ($url && filter_var($url, FILTER_VALIDATE_URL)) {
+                return $url;
+            }
+        }
+
+        $media = $item->children('http://search.yahoo.com/mrss/');
+        if (isset($media->content)) {
+            $attributes = $media->content->attributes();
+            if (isset($attributes['url'])) {
+                $url = (string) $attributes['url'];
+                if ($url && filter_var($url, FILTER_VALIDATE_URL)) {
+                    return $url;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * Create a news article from an RSS item.
      */
     protected function createNewsFromItem(RssFeed $feed, $item): News
     {
-        $title = $item->get_title();
-        $content = $item->get_content() ?: $item->get_description();
-        $link = $item->get_link();
-        $date = $item->get_date('Y-m-d H:i:s');
+        $title = $this->getElementText($item, 'title') ?: 'Untitled';
+        $content = $this->getElementText($item, 'content:encoded') ?: $this->getElementText($item, 'description') ?: '';
+        $link = $this->getElementText($item, 'link') ?: '';
+        $date = $this->parseDate($this->getElementText($item, 'pubDate'));
 
         // Extract image if available - note: storing external URLs without downloading
         // Images may break if source removes them. Consider downloading locally in production.
-        $image = null;
-        $enclosure = $item->get_enclosure();
-        if ($enclosure && $enclosure->get_thumbnail()) {
-            $imageUrl = $enclosure->get_thumbnail();
-            // Basic validation that URL is accessible
-            if (filter_var($imageUrl, FILTER_VALIDATE_URL)) {
-                $image = $imageUrl;
-            }
-        }
+        $image = $this->resolveImageUrl($item);
 
         // Create excerpt from content
         $excerpt = strip_tags($content);
-        $excerpt = substr($excerpt, 0, 400);
-        if (strlen(strip_tags($content)) > 400) {
-            $excerpt .= '...';
+        if (strlen($excerpt) > 400) {
+            $excerpt = substr($excerpt, 0, 400) . '...';
         }
 
         // Get first admin user; abort if none found
-        $adminUser = \App\Models\User::role('Administrator')->first();
+        $adminUser = User::role('Administrator')->first();
         if (!$adminUser) {
             Log::error('RSS import failed: No admin user found to assign as news author.', [
                 'feed_id' => $feed->id,
@@ -134,7 +213,7 @@ class RssFeedService
             'source_url' => $link,
             'is_published' => true,
             'is_featured' => false,
-            'published_at' => $date ?: now(),
+            'published_at' => $date,
             'views_count' => 0,
         ]);
 

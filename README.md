@@ -714,7 +714,6 @@ Dynamic menu builder for navigation.
 - socialiteproviders/discord - Discord OAuth
 - socialiteproviders/battlenet - Battle.net OAuth
 - pragmarx/google2fa-laravel - Two-Factor Authentication
-- simplepie/simplepie - RSS feed parsing and import
 
 ## Gaming Community Features
 
