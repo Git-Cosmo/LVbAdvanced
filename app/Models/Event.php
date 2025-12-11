@@ -26,6 +26,7 @@ class Event extends Model
         'start_date',
         'end_date',
         'location',
+        'is_virtual',
         'venue',
         'city',
         'country',
@@ -42,6 +43,7 @@ class Event extends Model
     protected $casts = [
         'start_date' => 'datetime',
         'end_date' => 'datetime',
+        'is_virtual' => 'boolean',
         'is_featured' => 'boolean',
         'is_published' => 'boolean',
         'views_count' => 'integer',

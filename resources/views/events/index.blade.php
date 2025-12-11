@@ -117,7 +117,7 @@
             </div>
             @endif
             <div class="p-4">
-                <div class="flex items-center gap-2 mb-2">
+                <div class="flex flex-wrap items-center gap-2 mb-2">
                     <span class="px-2 py-1 text-xs font-semibold rounded-full 
                         {{ $event->event_type === 'release' ? 'bg-green-500/20 text-green-400' : '' }}
                         {{ $event->event_type === 'tournament' ? 'bg-purple-500/20 text-purple-400' : '' }}
@@ -132,6 +132,11 @@
                         {{ $event->status === 'ongoing' ? 'bg-green-500/20 text-green-400' : '' }}
                         {{ $event->status === 'past' ? 'bg-gray-500/20 text-gray-400' : '' }}">
                         {{ ucfirst($event->status) }}
+                    </span>
+                    @endif
+                    @if($event->is_virtual)
+                    <span class="px-2 py-1 text-xs font-semibold rounded-full bg-purple-500/20 text-purple-400">
+                        Virtual
                     </span>
                     @endif
                 </div>

@@ -30,15 +30,15 @@ class EventsManagementController extends Controller
     }
 
     /**
-     * Manually trigger events import.
+     * Manually trigger events import from OpenWebNinja API.
      */
     public function import(EventsService $eventsService): RedirectResponse
     {
         try {
-            $results = $eventsService->scrapeEvents();
+            $results = $eventsService->importEvents();
 
             $message = sprintf(
-                'Events imported successfully! Success: %d, Skipped: %d, Errors: %d',
+                'Events imported successfully from OpenWebNinja API! Success: %d, Skipped: %d, Errors: %d',
                 $results['success'],
                 $results['skipped'],
                 $results['errors']

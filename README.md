@@ -115,20 +115,23 @@
 - ✅ **Related Articles** - Automatic related content suggestions
 - ✅ **SEO Optimized** - Full meta tags and structured data for news articles
 
-### Gaming Events System
-- ✅ **Real Gaming Events** - Major gaming conventions, expos, and tournaments (PAX, GDC, Gamescom, E3, Tokyo Game Show, etc.)
-- ✅ **Comprehensive Event Data** - Venue names, cities, countries, dates, organizers, and ticket information
-- ✅ **Event Types** - Categorized as expos, tournaments, releases, updates, and general events
-- ✅ **Event Status** - Track upcoming, ongoing, and past events
-- ✅ **Featured Events** - Highlight major events like PAX, GDC, Gamescom on the events page
-- ✅ **Detailed Event Information** - Start/end dates, location, venue, ticket URLs, ticket pricing info
-- ✅ **Automatic Deduplication** - Prevent duplicate events from multiple sources
+### Gaming Events System (OpenWebNinja API)
+- ✅ **Real-Time Events API** - Powered by OpenWebNinja Real-Time Events Search API
+- ✅ **Comprehensive Event Data** - Venue names, cities, countries, dates, and ticket information
+- ✅ **Virtual & In-Person Events** - Support for both virtual and physical events with clear indicators
+- ✅ **Event Types** - Automatically categorized as expos, tournaments, releases, updates, and general events
+- ✅ **Event Status** - Track upcoming, ongoing, and past events with automatic status calculation
+- ✅ **Featured Events** - Highlight important events on the events page
+- ✅ **Detailed Event Information** - Start/end dates, location, venue, ticket URLs, virtual/in-person indicator
+- ✅ **Automatic Deduplication** - Prevent duplicate events using unique external identifiers
 - ✅ **Admin Management** - Feature, publish/unpublish, and delete events from admin panel
-- ✅ **Seeded Major Events** - Pre-populated with 10+ major gaming events for 2026
+- ✅ **Hourly Scheduled Imports** - Automatic event updates every hour via Laravel scheduler
 - ✅ **Manual Import** - Trigger event import manually via admin panel or CLI command (`php artisan events:import`)
-- ✅ **Rich Event Pages** - Detailed event pages with venue, organizer, ticket info, and related events
-- ✅ **Filter & Sort** - Filter by event type and status (upcoming, ongoing, past)
-- ✅ **Ticket Integration** - Direct links to purchase tickets with pricing information
+- ✅ **Rich Event Pages** - Detailed event pages with venue, virtual indicator, ticket info, and related events
+- ✅ **Filter & Sort** - Filter by event type (expos, tournaments, releases, updates) and status (upcoming, ongoing, past)
+- ✅ **Ticket Integration** - Direct links to purchase tickets when available
+- ✅ **DRY & SMART Database** - Efficient MySQL storage with normalized schema and deduplication
+- ✅ **Error Handling** - Comprehensive logging and error handling for API failures
 
 ### Frontend
 - ✅ **TailwindCSS** - Modern, responsive design
@@ -200,7 +203,7 @@
    php artisan key:generate
    ```
    
-   Update `.env` with your database and mail configuration:
+   Update `.env` with your database, mail, and API configuration:
    ```env
    DB_CONNECTION=mysql
    DB_HOST=127.0.0.1
@@ -215,6 +218,9 @@
    MAIL_USERNAME=null
    MAIL_PASSWORD=null
    MAIL_FROM_ADDRESS="hello@example.com"
+   
+   # OpenWebNinja API for events (required for events feature)
+   OPEN_WEB_NINJA_API_KEY=your_api_key_here
    ```
 
 4. **Run migrations**
@@ -282,50 +288,130 @@
    - Deals listing: `/deals` (search + store filter)
    - Game detail with all offers: `/game/{slug}`
 
-## Gaming Events Workflow
+## Gaming Events Workflow (OpenWebNinja API Integration)
 
-1. Run a manual import anytime:
-   ```bash
-   php artisan events:import
+### Overview
+The gaming events system now integrates with **OpenWebNinja Real-Time Events API** to automatically fetch and display real-world gaming events including conventions, tournaments, expos, game launches, and more.
+
+### Configuration
+
+1. **Get your API key** from [OpenWebNinja](https://www.openwebninja.com/api/real-time-events-search/)
+2. Add to your `.env` file:
+   ```env
+   OPEN_WEB_NINJA_API_KEY=your_api_key_here
    ```
-2. The system automatically seeds major gaming events including:
-   - **Super MAGFest** (January, USA) - Music and Gaming Festival
-   - **Taipei Game Show** (January, Taiwan) - Asia's premier gaming event
-   - **PAX East** (March, Boston) - Gaming fan convention
-   - **GDC** (March, San Francisco) - Game Developers Conference
-   - **E3** (June, Los Angeles) - Electronic Entertainment Expo
-   - **gamescom** (August, Cologne) - World's largest gaming event
-   - **PAX West** (September, Seattle) - Original PAX event
-   - **Tokyo Game Show** (September, Japan) - Major Japanese gaming expo
-   - **PAX Australia** (October, Melbourne) - PAX Down Under
-   - Plus additional events like Reboot Develop Blue
-3. Each event includes:
-   - **Venue Details** - Exact venue name and location
-   - **Dates** - Start and end dates
-   - **Organizer** - Who runs the event
-   - **Ticket Information** - Pricing details and ticket purchase links
-   - **City & Country** - Full location details
-   - **Official Website** - Links to event websites
-4. Manual imports are available in the admin panel at **Admin → Events Management**.
-5. Frontend routes:
-   - Events listing: `/events` (filter by type and status)
-   - Event detail: `/events/{slug}` (full event information with ticket links)
-6. Event types include:
-   - **Expos** - Gaming conventions and trade shows
-   - **Tournaments** - Esports competitions
-   - **Releases** - Game launches and release dates
-   - **Updates** - Game patches, DLC, and expansions
-   - **General** - Other gaming-related events
-7. Events can be filtered by status:
-   - **Upcoming** - Future events that haven't started yet
-   - **Ongoing** - Currently active events
-   - **Past** - Completed events
-8. Admin controls:
-   - Feature/unfeature events to highlight them on the events page
-   - Publish/unpublish events to control visibility
-   - Delete events that are no longer relevant
-   - View event statistics (total, upcoming, ongoing, featured)
-9. No API keys required - major events are seeded directly into the system
+
+### Import Events
+
+Run a manual import anytime:
+```bash
+php artisan events:import
+```
+
+The command is scheduled to run hourly via `routes/console.php` (ensure your scheduler runs `php artisan schedule:run`).
+
+### Event Data
+
+Events imported from OpenWebNinja API include:
+- **Event Title & Description** - Full event information
+- **Dates** - Start and end dates/times
+- **Location Details** - Venue name, city, country, full address
+- **Virtual/In-Person** - Events marked as virtual or physical
+- **Ticket Information** - Links to purchase tickets
+- **Event Type** - Automatically categorized as expo, tournament, release, update, or general
+- **Source Attribution** - All events credited to OpenWebNinja
+- **Automatic Deduplication** - Prevents duplicate imports using unique identifiers
+
+### API Parameters
+
+The system searches for events using multiple queries:
+- Gaming conventions
+- Esports tournaments
+- Game developer conferences
+- Video game expos
+- Gaming festivals
+- Game launches
+- General gaming events
+
+You can customize search parameters in `app/Services/EventsService.php`.
+
+### Database Schema
+
+Events are stored efficiently in MySQL with the following structure:
+
+**`events` table:**
+- Core fields: `title`, `slug`, `description`, `content`, `image`
+- Date fields: `start_date`, `end_date`
+- Location fields: `location`, `venue`, `city`, `country`, `is_virtual`
+- Source tracking: `source`, `source_url`, `external_id`
+- Classification: `event_type`, `game_name`, `platform`
+- Management: `is_featured`, `is_published`, `views_count`
+
+**`event_imported_items` table:**
+- Tracks imports: `source`, `external_id`, `event_id`
+- Prevents duplicates with unique constraint on `source` + `external_id`
+
+### Frontend Features
+
+**Events listing** (`/events`):
+- Filter by type: All, Releases, Tournaments, Expos, Updates
+- Filter by status: Upcoming, Ongoing, Past, All
+- Virtual event indicator badge
+- Featured events showcase
+- Pagination support
+
+**Event detail page** (`/events/{slug}`):
+- Full event information with all details
+- Virtual/In-Person event indicator with icon
+- Related events suggestions
+- Source attribution
+- Ticket links (when available)
+- View count tracking
+
+### Admin Controls
+
+Admin panel at **Admin → Events Management** (`/admin/events`):
+- View all imported events
+- Statistics dashboard (total, upcoming, ongoing, featured)
+- Manual import trigger
+- Feature/unfeature events
+- Publish/unpublish events
+- Delete events
+- Event filtering and pagination
+
+### Event Types
+
+Events are automatically categorized based on content:
+- **Expos** - Gaming conventions, trade shows, conferences
+- **Tournaments** - Esports competitions, championships
+- **Releases** - Game launches, debuts, premieres
+- **Updates** - Game patches, DLC, expansions
+- **General** - Other gaming-related events
+
+### Event Status
+
+Events are automatically tracked by status:
+- **Upcoming** - Future events (start date is in the future)
+- **Ongoing** - Currently active (started but not ended)
+- **Past** - Completed events (end date has passed)
+
+### API Integration Details
+
+**Endpoint:** `https://api.openwebninja.com/realtime-events-data`
+
+**Authentication:** API key sent via `x-api-key` HTTP header
+
+**Rate Limiting:** Respects API rate limits with proper error handling
+
+**Error Handling:** Comprehensive logging for debugging issues
+
+### Development Notes
+
+- Events are DRY (Don't Repeat Yourself) - no duplication in storage
+- SMART storage using normalized database structure
+- All API responses properly validated and sanitized
+- Failed imports logged for troubleshooting
+- Service-based architecture for easy maintenance
 
 ## Azuracast Radio Integration
 

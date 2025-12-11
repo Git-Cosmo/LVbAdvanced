@@ -17,9 +17,9 @@ class ImportEventsJob implements ShouldQueue
     public function handle(EventsService $eventsService): void
     {
         try {
-            Log::info('Starting scheduled events import');
+            Log::info('Starting scheduled events import from OpenWebNinja API');
             
-            $results = $eventsService->scrapeEvents();
+            $results = $eventsService->importEvents();
             
             Log::info('Events import completed', [
                 'success' => $results['success'],

@@ -26,9 +26,9 @@ class ImportEvents extends Command
      */
     public function handle(EventsService $eventsService)
     {
-        $this->info('Starting events import...');
+        $this->info('Starting events import from OpenWebNinja API...');
 
-        $results = $eventsService->scrapeEvents();
+        $results = $eventsService->importEvents();
 
         $this->line('');
         $this->info('Import Summary:');
