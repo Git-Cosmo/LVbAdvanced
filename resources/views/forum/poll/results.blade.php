@@ -93,7 +93,7 @@
                         </svg>
                         <span class="font-medium">You have voted in this poll</span>
                     </div>
-                @elseif($poll->isActive())
+                @elseif($poll->isActive() && $poll->thread)
                     <a href="{{ route('forum.thread.show', $poll->thread->slug) }}" 
                        class="px-6 py-2 bg-gradient-to-r from-accent-blue to-accent-purple text-white rounded-lg hover:shadow-lg hover:scale-105 transition-all font-medium">
                         Vote Now
