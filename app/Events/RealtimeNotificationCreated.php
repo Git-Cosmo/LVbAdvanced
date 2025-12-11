@@ -15,11 +15,8 @@ class RealtimeNotificationCreated implements ShouldBroadcastNow
 
     public function broadcastOn(): array
     {
-        $privateChannel = str_replace('\\', '.', $this->notification->notifiable_type)
-            .'.'.$this->notification->notifiable_id;
-
         return [
-            new PrivateChannel($privateChannel),
+            new PrivateChannel($this->userChannelName()),
             new Channel('global-notifications'),
         ];
     }
@@ -42,5 +39,11 @@ class RealtimeNotificationCreated implements ShouldBroadcastNow
             'read_at' => $this->notification->read_at,
             'created_at' => $this->notification->created_at?->diffForHumans(),
         ];
+    }
+
+    private function userChannelName(): string
+    {
+        return str_replace('\\', '.', $this->notification->notifiable_type)
+            .'.'.$this->notification->notifiable_id;
     }
 }

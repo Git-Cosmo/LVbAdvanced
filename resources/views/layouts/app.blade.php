@@ -278,12 +278,7 @@
                 <a href="{{ route('downloads.index') }}" class="text-sm dark:text-dark-text-secondary text-light-text-secondary dark:hover:text-dark-text-accent hover:text-light-text-accent transition-colors">Downloads</a>
                 <div class="flex-1"></div>
                 @php
-                    $countryCode = request()->header('CF-IPCountry') ?? request()->server('HTTP_CF_IPCOUNTRY') ?? optional(optional(auth()->user())->profile)->location;
-                    $countryCode = $countryCode ? strtoupper(substr($countryCode, 0, 2)) : null;
-                    $flagEmoji = $countryCode && strlen($countryCode) === 2
-                        ? mb_chr(ord($countryCode[0]) + 127397) . mb_chr(ord($countryCode[1]) + 127397)
-                        : '🌐';
-                    $countryLabel = $countryCode && strlen($countryCode) === 2 ? $countryCode : 'Worldwide';
+                    [$flagEmoji, $countryLabel] = \App\Helpers\CountryHelper::getUserCountryInfo();
                 @endphp
                 <div class="flex items-center space-x-2 text-sm dark:text-dark-text-tertiary text-light-text-tertiary">
                     <span class="text-lg leading-none">{{ $flagEmoji }}</span>
@@ -374,7 +369,7 @@
                 notifications: [],
                 unreadCount: 0,
                 authenticated: Boolean(window.App?.userId),
-                maxNotifications: 15,
+                MAX_NOTIFICATIONS: 15,
                 
                 async toggleNotifications() {
                     this.open = !this.open;
@@ -467,11 +462,13 @@
                         Object.assign(existing, payload);
                         if (!payload.read_at && !wasUnread) {
                             this.unreadCount += 1;
+                        } else if (payload.read_at && wasUnread) {
+                            this.unreadCount = Math.max(0, this.unreadCount - 1);
                         }
                     } else {
                         this.notifications.unshift(payload);
-                        if (this.notifications.length > this.maxNotifications) {
-                            this.notifications = this.notifications.slice(0, this.maxNotifications);
+                        if (this.notifications.length > this.MAX_NOTIFICATIONS) {
+                            this.notifications = this.notifications.slice(0, this.MAX_NOTIFICATIONS);
                         }
                         if (!payload.read_at) {
                             this.unreadCount += 1;

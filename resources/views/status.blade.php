@@ -54,6 +54,7 @@
 </div>
 
 <script>
-    setTimeout(() => window.location.reload(), 5 * 60 * 1000);
+    const STATUS_REFRESH_INTERVAL_MS = {{ 5 * 60 * 1000 }};
+    setTimeout(() => window.location.reload(), STATUS_REFRESH_INTERVAL_MS);
 </script>
 @endsection

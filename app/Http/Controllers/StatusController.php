@@ -27,7 +27,7 @@ class StatusController extends Controller
         // Redis check
         $checks->push($this->checkService('Redis', function () {
             if (config('database.redis.client') === 'phpredis' && ! class_exists(\Redis::class)) {
-                throw new \RuntimeException('phpredis extension missing');
+                throw new \RuntimeException('The phpredis PHP extension is not installed. Please install it or change REDIS_CLIENT to predis in your configuration.');
             }
 
             Redis::connection()->ping();
