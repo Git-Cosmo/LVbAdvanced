@@ -33,11 +33,15 @@ class OpenWebNinjaService
     ): array {
         try {
             if (empty($this->apiKey)) {
-                Log::error('OpenWebNinja API key not configured');
+                Log::error('OpenWebNinja API key not configured', [
+                    'config_value' => config('services.openwebninja.api_key'),
+                    'env_value' => env('OPEN_WEB_NINJA_API_KEY'),
+                    'help' => 'Add OPEN_WEB_NINJA_API_KEY to your .env file. See EVENTS_SETUP.md for detailed instructions.',
+                ]);
 
                 return [
                     'success' => false,
-                    'error' => 'API key not configured',
+                    'error' => 'API key not configured. Please add OPEN_WEB_NINJA_API_KEY to your .env file. See EVENTS_SETUP.md for setup instructions.',
                     'data' => null,
                 ];
             }
@@ -70,9 +74,16 @@ class OpenWebNinjaService
             $statusCode = $response->status();
             $errorMessage = $response->json('message') ?? $response->body();
 
+            // Provide helpful error message for common issues
+            if ($statusCode === 403) {
+                $errorMessage = 'Authentication failed. Please verify your OPEN_WEB_NINJA_API_KEY is correctly set in your .env file. See EVENTS_SETUP.md for help.';
+            }
+
             Log::error('OpenWebNinja API error', [
                 'status' => $statusCode,
                 'message' => $errorMessage,
+                'api_key_configured' => !empty($this->apiKey),
+                'api_key_length' => $this->apiKey ? strlen($this->apiKey) : 0,
             ]);
 
             return [

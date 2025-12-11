@@ -298,13 +298,25 @@
 ### Overview
 The gaming events system now integrates with **OpenWebNinja Real-Time Events API** to automatically fetch and display real-world gaming events including conventions, tournaments, expos, game launches, and more.
 
-### Configuration
+### Quick Setup
+
+**For detailed setup instructions and troubleshooting, see [EVENTS_SETUP.md](EVENTS_SETUP.md)**
 
 1. **Get your API key** from [OpenWebNinja](https://www.openwebninja.com/api/real-time-events-search/)
-2. Add to your `.env` file:
+2. Copy `.env.example` to `.env` if you haven't already:
+   ```bash
+   cp .env.example .env
+   ```
+3. Add your API key to `.env`:
    ```env
    OPEN_WEB_NINJA_API_KEY=your_api_key_here
    ```
+4. Clear configuration cache:
+   ```bash
+   php artisan config:clear
+   ```
+
+**⚠️ Common Issue:** If you get a "Missing Authentication Token" error, your API key is not configured correctly. See [EVENTS_SETUP.md](EVENTS_SETUP.md) for troubleshooting.
 
 ### Import Events
 
