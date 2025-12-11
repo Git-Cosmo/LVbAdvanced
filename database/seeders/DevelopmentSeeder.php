@@ -43,6 +43,7 @@ class DevelopmentSeeder extends Seeder
 
         // Create 100 threads with posts
         $this->command->info('Creating 100 threads with posts...');
+        $threadsData = [];
         foreach (range(1, 100) as $i) {
             $thread = ForumThread::factory()->create([
                 'forum_id' => $forums[array_rand($forums)]->id,
@@ -56,8 +57,13 @@ class DevelopmentSeeder extends Seeder
                 'user_id' => $users->random()->id,
             ]);
 
-            // Update thread post count
-            $thread->update(['posts_count' => $postCount + 1]);
+            // Store for bulk update later
+            $threadsData[] = ['id' => $thread->id, 'posts_count' => $postCount + 1];
+        }
+
+        // Bulk update thread post counts
+        foreach ($threadsData as $data) {
+            ForumThread::where('id', $data['id'])->update(['posts_count' => $data['posts_count']]);
         }
 
         // Create 20 news articles
