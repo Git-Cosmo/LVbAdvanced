@@ -12,6 +12,14 @@ services:
       - ./scripts:/var/www/scripts
     networks:
       - main_network
+  redis:
+    image: redis:7-alpine
+    container_name: fpsociety-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    networks:
+      - main_network
 
 networks:
   main_network:

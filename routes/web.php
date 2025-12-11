@@ -16,9 +16,11 @@ use App\Http\Controllers\MediaController;
 use App\Http\Controllers\PortalController;
 use App\Http\Controllers\Admin\CheapSharkSyncController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\StatusController;
 
 // Public Portal Routes
 Route::get('/', [PortalController::class, 'home'])->name('home');
+Route::get('/status', StatusController::class)->name('status');
 Route::get('/deals', [DealController::class, 'index'])->name('deals.index');
 Route::get('/game/{slug}', [DealController::class, 'show'])->name('deals.show');
 
@@ -154,6 +156,7 @@ Route::prefix('forum')->name('forum.')->group(function () {
 // Admin Routes
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/schedule-monitor', [\App\Http\Controllers\Admin\ScheduleMonitorController::class, 'index'])->name('schedule-monitor.index');
     
     // User Management
     Route::prefix('users')->name('users.')->group(function () {

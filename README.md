@@ -318,6 +318,21 @@ The gaming events system now integrates with **OpenWebNinja Real-Time Events API
 
 **⚠️ Common Issue:** If you get a "Missing Authentication Token" error, your API key is not configured correctly. See [EVENTS_SETUP.md](EVENTS_SETUP.md) for troubleshooting.
 
+### Realtime, Notifications & Monitoring
+
+1. **Redis**: A Redis service is included in `docker-compose.yml`. Ensure it is running (`docker compose up -d redis`) and that `REDIS_HOST=redis` is set in `.env`.
+2. **Laravel Reverb (WebSockets)**:
+   - Set `BROADCAST_CONNECTION=reverb` and populate `REVERB_APP_ID/KEY/SECRET` along with `REVERB_HOST/PORT/SCHEME`.
+   - Frontend uses Vite envs (`VITE_REVERB_*`) to connect; defaults match the `.env.example`.
+   - Reverb is started via Supervisor inside the container (`php artisan reverb:start`).
+3. **Notifications**:
+   - Notifications now broadcast over WebSockets with a global `global-notifications` channel (guests can listen) and user private channels.
+   - Navbar dropdown updates in real time and allows marking notifications as read.
+4. **Schedule Monitoring**:
+   - The Spatie Schedule Monitor package is installed with migrations; run `php artisan schedule-monitor:sync` after deploys to register tasks.
+   - Admin dashboard: `/admin/schedule-monitor` (requires admin middleware).
+5. **Status Page**: Visit `/status` for a live service overview (DB, cache, Redis, Reverb) with auto-refresh every 5 minutes.
+
 ### Import Events
 
 Run a manual import anytime:
