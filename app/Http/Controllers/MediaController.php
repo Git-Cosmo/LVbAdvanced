@@ -18,7 +18,7 @@ class MediaController extends Controller
     }
 
     /**
-     * Show gallery index
+     * Show downloads index
      */
     public function index()
     {
@@ -29,15 +29,15 @@ class MediaController extends Controller
         return view('media.gallery.index', [
             'galleries' => $galleries,
             'page' => (object) [
-                'title' => 'Gaming Gallery - FPSociety',
-                'meta_title' => 'Game Mods, Maps, Skins Gallery | FPSociety',
+                'title' => 'Downloads - FPSociety',
+                'meta_title' => 'Game Mods, Maps, Skins Downloads | FPSociety',
                 'meta_description' => 'Browse and download custom game content: Counter Strike 2 maps, GTA V mods, Fortnite skins, and more gaming resources.',
             ],
         ]);
     }
 
     /**
-     * Show single gallery
+     * Show single download
      */
     public function show($id)
     {
@@ -47,7 +47,7 @@ class MediaController extends Controller
         return view('media.gallery.show', [
             'gallery' => $gallery,
             'page' => (object) [
-                'title' => $gallery->title . ' - FPSociety Gallery',
+                'title' => $gallery->title . ' - FPSociety Downloads',
                 'meta_title' => $gallery->title . ' | FPSociety Gaming Resources',
                 'meta_description' => $gallery->description ?? 'Download ' . $gallery->title . ' for ' . $gallery->game,
             ],
@@ -100,7 +100,7 @@ class MediaController extends Controller
             }
         }
 
-        return redirect()->route('media.show', $gallery)->with('success', 'Content uploaded successfully!');
+        return redirect()->route('downloads.show', $gallery)->with('success', 'Content uploaded successfully!');
     }
 
     /**
@@ -129,7 +129,7 @@ class MediaController extends Controller
 
         $gallery->delete();
 
-        return redirect()->route('media.index')->with('success', 'Gallery deleted successfully');
+        return redirect()->route('downloads.index')->with('success', 'Download deleted successfully');
     }
 
     /**
@@ -146,6 +146,6 @@ class MediaController extends Controller
             'content' => $validated['content'],
         ]);
 
-        return redirect()->route('media.show', $gallery)->with('success', 'Comment posted successfully');
+        return redirect()->route('downloads.show', $gallery)->with('success', 'Comment posted successfully');
     }
 }

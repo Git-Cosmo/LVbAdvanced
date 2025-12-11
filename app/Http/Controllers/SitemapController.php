@@ -29,7 +29,7 @@ class SitemapController extends Controller
         // Add static pages
         $staticPages = [
             ['url' => route('forum.index'), 'priority' => 0.9, 'frequency' => Url::CHANGE_FREQUENCY_HOURLY],
-            ['url' => route('media.index'), 'priority' => 0.8, 'frequency' => Url::CHANGE_FREQUENCY_DAILY],
+            ['url' => route('downloads.index'), 'priority' => 0.8, 'frequency' => Url::CHANGE_FREQUENCY_DAILY],
             ['url' => route('activity.whats-new'), 'priority' => 0.7, 'frequency' => Url::CHANGE_FREQUENCY_HOURLY],
             ['url' => route('leaderboard.index'), 'priority' => 0.7, 'frequency' => Url::CHANGE_FREQUENCY_DAILY],
         ];
@@ -85,13 +85,13 @@ class SitemapController extends Controller
                 }
             });
 
-        // Add galleries
+        // Add downloads (galleries)
         Gallery::orderBy('updated_at', 'desc')
             ->limit(500)
             ->chunk(100, function ($galleries) use ($sitemap) {
                 foreach ($galleries as $gallery) {
                     $sitemap->add(
-                        Url::create(route('media.show', $gallery))
+                        Url::create(route('downloads.show', $gallery))
                             ->setLastModificationDate($gallery->updated_at)
                             ->setChangeFrequency(Url::CHANGE_FREQUENCY_WEEKLY)
                             ->setPriority(0.6)

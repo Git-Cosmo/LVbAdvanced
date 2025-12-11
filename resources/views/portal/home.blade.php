@@ -199,34 +199,131 @@
 
             <!-- Latest News -->
             <div class="dark:bg-dark-bg-secondary bg-light-bg-secondary rounded-lg shadow-md p-6">
-                <h3 class="text-xl font-bold dark:text-dark-text-bright text-light-text-bright mb-4 border-b dark:border-dark-border-primary border-light-border-primary pb-2">
-                    Gaming News & Updates
-                </h3>
+                <div class="flex items-center justify-between mb-4 border-b dark:border-dark-border-primary border-light-border-primary pb-2">
+                    <h3 class="text-xl font-bold dark:text-dark-text-bright text-light-text-bright">
+                        Gaming News & Updates
+                    </h3>
+                    <a href="{{ route('news.index') }}" class="text-sm text-accent-blue hover:text-accent-purple transition-colors">
+                        View All →
+                    </a>
+                </div>
                 <div class="space-y-4">
-                    <article class="border-b dark:border-dark-border-primary border-light-border-primary pb-4 last:border-0">
-                        <h4 class="font-semibold dark:text-dark-text-primary text-light-text-primary mb-2">
-                            🎮 Welcome to FPSociety!
-                        </h4>
-                        <p class="dark:text-dark-text-secondary text-light-text-secondary text-sm mb-2">
-                            Join thousands of gamers in our community! Download custom CS2 maps, GTA V mods, Fortnite skins, and more. Participate in tournaments, earn XP, and climb the leaderboards!
-                        </p>
-                        <span class="text-xs dark:text-dark-text-tertiary text-light-text-tertiary">
-                            Posted on {{ now()->format('M d, Y') }}
-                        </span>
-                    </article>
-                    <article class="border-b dark:border-dark-border-primary border-light-border-primary pb-4 last:border-0">
-                        <h4 class="font-semibold dark:text-dark-text-primary text-light-text-primary mb-2">
-                            🏆 New Gamification System Live
-                        </h4>
-                        <p class="dark:text-dark-text-secondary text-light-text-secondary text-sm mb-2">
-                            Earn XP, unlock achievements, and compete on seasonal leaderboards. Build your reputation and become a legend in the FPSociety community!
-                        </p>
-                        <span class="text-xs dark:text-dark-text-tertiary text-light-text-tertiary">
-                            Posted on {{ now()->subDays(2)->format('M d, Y') }}
-                        </span>
-                    </article>
+                    @forelse($latestNews as $news)
+                        <article class="border-b dark:border-dark-border-primary border-light-border-primary pb-4 last:border-0">
+                            <h4 class="font-semibold dark:text-dark-text-primary text-light-text-primary mb-2">
+                                <a href="{{ route('news.show', $news) }}" class="hover:text-accent-blue transition-colors">
+                                    {{ $news->title }}
+                                </a>
+                            </h4>
+                            <p class="dark:text-dark-text-secondary text-light-text-secondary text-sm mb-2 line-clamp-2">
+                                {{ $news->excerpt ?? Str::limit(strip_tags($news->content), 150) }}
+                            </p>
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs dark:text-dark-text-tertiary text-light-text-tertiary">
+                                    Posted on {{ $news->published_at->format('M d, Y') }}
+                                </span>
+                                @if($news->views_count > 0)
+                                    <span class="text-xs dark:text-dark-text-tertiary text-light-text-tertiary">
+                                        {{ $news->views_count }} views
+                                    </span>
+                                @endif
+                            </div>
+                        </article>
+                    @empty
+                        <article class="text-center py-8">
+                            <p class="dark:text-dark-text-secondary text-light-text-secondary">
+                                No news articles yet. Check back soon!
+                            </p>
+                        </article>
+                    @endforelse
                 </div>
             </div>
+
+            <!-- Latest Downloads -->
+            <div class="dark:bg-dark-bg-secondary bg-light-bg-secondary rounded-lg shadow-md p-6">
+                <div class="flex items-center justify-between mb-4 border-b dark:border-dark-border-primary border-light-border-primary pb-2">
+                    <h3 class="text-xl font-bold dark:text-dark-text-bright text-light-text-bright">
+                        Latest Downloads
+                    </h3>
+                    <a href="{{ route('downloads.index') }}" class="text-sm text-accent-blue hover:text-accent-purple transition-colors">
+                        View All →
+                    </a>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    @forelse($latestDownloads as $download)
+                        <a href="{{ route('downloads.show', $download) }}" class="block dark:bg-dark-bg-tertiary bg-light-bg-tertiary rounded-lg overflow-hidden hover:shadow-lg transition-shadow">
+                            <div class="relative h-32 dark:bg-dark-bg-elevated bg-light-bg-elevated">
+                                @if($download->galleryMedia->first())
+                                    <img src="{{ $download->galleryMedia->first()->url }}" alt="{{ $download->title }}" class="w-full h-full object-cover">
+                                @else
+                                    <div class="w-full h-full flex items-center justify-center">
+                                        <svg class="w-12 h-12 dark:text-dark-text-tertiary text-light-text-tertiary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10"/>
+                                        </svg>
+                                    </div>
+                                @endif
+                                <div class="absolute top-2 right-2 px-2 py-1 bg-accent-blue rounded text-white text-xs font-semibold">
+                                    {{ $download->game }}
+                                </div>
+                            </div>
+                            <div class="p-3">
+                                <h4 class="font-semibold dark:text-dark-text-primary text-light-text-primary text-sm line-clamp-1 mb-1">
+                                    {{ $download->title }}
+                                </h4>
+                                <div class="flex items-center justify-between text-xs dark:text-dark-text-tertiary text-light-text-tertiary">
+                                    <span>⬇ {{ $download->downloads }}</span>
+                                    <span>{{ $download->created_at->diffForHumans() }}</span>
+                                </div>
+                            </div>
+                        </a>
+                    @empty
+                        <div class="col-span-2 text-center py-8">
+                            <p class="dark:text-dark-text-secondary text-light-text-secondary">
+                                No downloads yet. Be the first to upload!
+                            </p>
+                        </div>
+                    @endforelse
+                </div>
+            </div>
+
+            <!-- Top Deals -->
+            @if($latestDeals->count() > 0)
+            <div class="dark:bg-dark-bg-secondary bg-light-bg-secondary rounded-lg shadow-md p-6">
+                <div class="flex items-center justify-between mb-4 border-b dark:border-dark-border-primary border-light-border-primary pb-2">
+                    <h3 class="text-xl font-bold dark:text-dark-text-bright text-light-text-bright">
+                        🔥 Hot Game Deals
+                    </h3>
+                    <a href="{{ route('deals.index') }}" class="text-sm text-accent-blue hover:text-accent-purple transition-colors">
+                        View All →
+                    </a>
+                </div>
+                <div class="space-y-3">
+                    @foreach($latestDeals->take(3) as $deal)
+                        <div class="flex items-center gap-3 p-3 dark:bg-dark-bg-tertiary bg-light-bg-tertiary rounded-lg">
+                            @if($deal->game && $deal->game->thumb)
+                                <img src="{{ $deal->game->thumb }}" alt="{{ $deal->game->title ?? 'Game' }}" class="w-16 h-16 object-cover rounded">
+                            @endif
+                            <div class="flex-1 min-w-0">
+                                <h4 class="font-semibold dark:text-dark-text-primary text-light-text-primary text-sm line-clamp-1">
+                                    {{ $deal->game->title ?? 'Unknown Game' }}
+                                </h4>
+                                <div class="flex items-center gap-2 mt-1">
+                                    <span class="text-xs line-through dark:text-dark-text-tertiary text-light-text-tertiary">
+                                        ${{ number_format($deal->normal_price, 2) }}
+                                    </span>
+                                    <span class="text-sm font-bold text-accent-green">
+                                        ${{ number_format($deal->sale_price, 2) }}
+                                    </span>
+                                    <span class="px-2 py-0.5 bg-accent-red text-white text-xs font-bold rounded">
+                                        -{{ round($deal->savings) }}%
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+            @endif
 
             <!-- Features Overview -->
             <div class="dark:bg-dark-bg-secondary bg-light-bg-secondary rounded-lg shadow-md p-6">
@@ -306,18 +403,38 @@
             </div>
         </div>
 
-        <!-- Recent Activity Block -->
+        <!-- Recent Forum Activity Block -->
         <div class="dark:bg-dark-bg-secondary bg-light-bg-secondary rounded-lg shadow-md p-6">
-            <h3 class="text-lg font-bold dark:text-dark-text-bright text-light-text-bright mb-4 border-b dark:border-dark-border-primary border-light-border-primary pb-2">
-                Recent Activity
-            </h3>
+            <div class="flex items-center justify-between mb-4 border-b dark:border-dark-border-primary border-light-border-primary pb-2">
+                <h3 class="text-lg font-bold dark:text-dark-text-bright text-light-text-bright">
+                    Recent Threads
+                </h3>
+                <a href="{{ route('forum.index') }}" class="text-xs text-accent-blue hover:text-accent-purple transition-colors">
+                    View All →
+                </a>
+            </div>
             <div class="space-y-3 text-sm">
-                <div class="border-b dark:border-dark-border-primary border-light-border-primary pb-3 last:border-0">
-                    <p class="dark:text-dark-text-secondary text-light-text-secondary">
-                        Welcome to the portal! Start exploring the forums.
-                    </p>
-                    <span class="text-xs dark:text-dark-text-tertiary text-light-text-tertiary">Just now</span>
-                </div>
+                @forelse($recentThreads as $thread)
+                    <div class="border-b dark:border-dark-border-primary border-light-border-primary pb-3 last:border-0">
+                        <a href="{{ route('forum.thread.show', $thread->slug) }}" class="dark:text-dark-text-primary text-light-text-primary hover:text-accent-blue transition-colors line-clamp-2 font-medium">
+                            {{ $thread->title }}
+                        </a>
+                        <div class="flex items-center justify-between mt-1">
+                            <span class="text-xs dark:text-dark-text-tertiary text-light-text-tertiary">
+                                by {{ $thread->user->name }}
+                            </span>
+                            <span class="text-xs dark:text-dark-text-tertiary text-light-text-tertiary">
+                                {{ $thread->last_post_at?->diffForHumans() ?? $thread->created_at->diffForHumans() }}
+                            </span>
+                        </div>
+                    </div>
+                @empty
+                    <div class="text-center py-4">
+                        <p class="dark:text-dark-text-secondary text-light-text-secondary">
+                            No recent threads yet.
+                        </p>
+                    </div>
+                @endforelse
             </div>
         </div>
 

@@ -11,7 +11,7 @@
         </p>
     </div>
 
-    <form action="{{ route('media.store') }}" method="POST" enctype="multipart/form-data" class="dark:bg-dark-bg-secondary bg-light-bg-secondary rounded-lg shadow-md p-6">
+    <form action="{{ route('downloads.store') }}" method="POST" enctype="multipart/form-data" class="dark:bg-dark-bg-secondary bg-light-bg-secondary rounded-lg shadow-md p-6">
         @csrf
 
         <!-- Title -->
@@ -126,7 +126,7 @@
 
         <!-- Action Buttons -->
         <div class="flex items-center justify-between pt-4 border-t dark:border-dark-border-primary border-light-border-primary">
-            <a href="{{ route('media.index') }}" class="px-6 py-2 dark:bg-dark-bg-tertiary bg-light-bg-tertiary dark:text-dark-text-primary text-light-text-primary rounded-lg font-medium hover:shadow-lg transition-all">
+            <a href="{{ route('downloads.index') }}" class="px-6 py-2 dark:bg-dark-bg-tertiary bg-light-bg-tertiary dark:text-dark-text-primary text-light-text-primary rounded-lg font-medium hover:shadow-lg transition-all">
                 Cancel
             </a>
             <button type="submit" class="px-6 py-2 bg-gradient-to-r from-accent-blue to-accent-purple text-white rounded-lg font-medium hover:shadow-lg hover:scale-105 transition-all">

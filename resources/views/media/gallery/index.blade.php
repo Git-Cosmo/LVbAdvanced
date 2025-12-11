@@ -6,14 +6,14 @@
         <div class="flex items-center justify-between">
             <div>
                 <h1 class="text-3xl font-bold dark:text-dark-text-bright text-light-text-bright mb-2">
-                    Gaming Gallery
+                    Downloads
                 </h1>
                 <p class="dark:text-dark-text-secondary text-light-text-secondary">
                     Download custom maps, mods, skins, and resources for Counter Strike 2, GTA V, Fortnite, and more
                 </p>
             </div>
             @auth
-                <a href="{{ route('media.create') }}" class="px-6 py-3 bg-gradient-to-r from-accent-blue to-accent-purple text-white rounded-lg font-medium hover:shadow-lg hover:scale-105 transition-all">
+                <a href="{{ route('downloads.create') }}" class="px-6 py-3 bg-gradient-to-r from-accent-blue to-accent-purple text-white rounded-lg font-medium hover:shadow-lg hover:scale-105 transition-all">
                     Upload Content
                 </a>
             @endauth
@@ -59,7 +59,7 @@
                 </div>
                 <div class="p-4">
                     <h3 class="text-lg font-bold dark:text-dark-text-bright text-light-text-bright mb-2">
-                        <a href="{{ route('media.show', $gallery) }}" class="hover:text-accent-blue transition-colors">
+                        <a href="{{ route('downloads.show', $gallery) }}" class="hover:text-accent-blue transition-colors">
                             {{ $gallery->title }}
                         </a>
                     </h3>

@@ -7,8 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Searchable\Searchable;
+use Spatie\Searchable\SearchResult;
 
-class ForumPost extends Model
+class ForumPost extends Model implements Searchable
 {
     use SoftDeletes;
 
@@ -89,5 +91,19 @@ class ForumPost extends Model
     public function reports(): MorphMany
     {
         return $this->morphMany(ForumReport::class, 'reportable');
+    }
+
+    /**
+     * Get the search result for this model.
+     */
+    public function getSearchResult(): SearchResult
+    {
+        $url = route('forum.thread.show', $this->thread->slug) . '#post-' . $this->id;
+        
+        return new SearchResult(
+            $this,
+            strip_tags($this->content_html ?? $this->content),
+            $url
+        );
     }
 }
