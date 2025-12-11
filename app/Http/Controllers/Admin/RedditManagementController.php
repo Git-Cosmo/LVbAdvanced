@@ -7,7 +7,6 @@ use App\Models\RedditPost;
 use App\Models\RedditSubreddit;
 use App\Services\RedditScraperService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Artisan;
 use Illuminate\View\View;
 
 class RedditManagementController extends Controller
@@ -36,13 +35,27 @@ class RedditManagementController extends Controller
     /**
      * Trigger manual Reddit scrape.
      */
-    public function scrape(Request $request)
+    public function scrape(Request $request, RedditScraperService $scraper)
     {
         try {
-            Artisan::call('reddit:scrape');
+            // Run the scraper directly instead of via Artisan
+            $results = $scraper->scrapeAll();
             
-            return back()->with('success', 'Reddit scrape completed successfully!');
+            $total = array_sum($results);
+            $details = [];
+            foreach ($results as $sub => $count) {
+                $details[] = "r/{$sub}: {$count} posts";
+            }
+            
+            $message = "Successfully scraped {$total} total posts. " . implode(', ', $details);
+            
+            return back()->with('success', $message);
         } catch (\Exception $e) {
+            \Log::error('Reddit scrape failed: ' . $e->getMessage(), [
+                'exception' => $e,
+                'trace' => $e->getTraceAsString()
+            ]);
+            
             return back()->with('error', 'Failed to scrape Reddit: ' . $e->getMessage());
         }
     }
