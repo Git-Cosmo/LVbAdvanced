@@ -316,10 +316,9 @@
                 <div>
                     <h3 class="text-lg font-bold dark:text-dark-text-bright text-light-text-bright mb-4">Quick Links</h3>
                     <ul class="space-y-2 text-sm">
-                        <li><a href="#" class="dark:text-dark-text-secondary text-light-text-secondary dark:hover:text-dark-text-accent hover:text-light-text-accent transition-colors">Terms of Service</a></li>
-                        <li><a href="#" class="dark:text-dark-text-secondary text-light-text-secondary dark:hover:text-dark-text-accent hover:text-light-text-accent transition-colors">Privacy Policy</a></li>
-                        <li><a href="#" class="dark:text-dark-text-secondary text-light-text-secondary dark:hover:text-dark-text-accent hover:text-light-text-accent transition-colors">Contact Us</a></li>
-                        <li><a href="#" class="dark:text-dark-text-secondary text-light-text-secondary dark:hover:text-dark-text-accent hover:text-light-text-accent transition-colors">FAQ</a></li>
+                        <li><a href="{{ route('terms') }}" class="dark:text-dark-text-secondary text-light-text-secondary dark:hover:text-dark-text-accent hover:text-light-text-accent transition-colors">Terms of Service</a></li>
+                        <li><a href="{{ route('privacy') }}" class="dark:text-dark-text-secondary text-light-text-secondary dark:hover:text-dark-text-accent hover:text-light-text-accent transition-colors">Privacy Policy</a></li>
+                        <li><a href="{{ route('contact') }}" class="dark:text-dark-text-secondary text-light-text-secondary dark:hover:text-dark-text-accent hover:text-light-text-accent transition-colors">Contact Us</a></li>
                     </ul>
                 </div>
                 
@@ -327,10 +326,10 @@
                 <div>
                     <h3 class="text-lg font-bold dark:text-dark-text-bright text-light-text-bright mb-4">Community</h3>
                     <ul class="space-y-2 text-sm">
-                        <li><a href="#" class="dark:text-dark-text-secondary text-light-text-secondary dark:hover:text-dark-text-accent hover:text-light-text-accent transition-colors">Forum Rules</a></li>
-                        <li><a href="#" class="dark:text-dark-text-secondary text-light-text-secondary dark:hover:text-dark-text-accent hover:text-light-text-accent transition-colors">Member List</a></li>
-                        <li><a href="#" class="dark:text-dark-text-secondary text-light-text-secondary dark:hover:text-dark-text-accent hover:text-light-text-accent transition-colors">Staff</a></li>
-                        <li><a href="#" class="dark:text-dark-text-secondary text-light-text-secondary dark:hover:text-dark-text-accent hover:text-light-text-accent transition-colors">Advertise</a></li>
+                        <li><a href="{{ route('forum.index') }}" class="dark:text-dark-text-secondary text-light-text-secondary dark:hover:text-dark-text-accent hover:text-light-text-accent transition-colors">Forums</a></li>
+                        <li><a href="{{ route('clips.index') }}" class="dark:text-dark-text-secondary text-light-text-secondary dark:hover:text-dark-text-accent hover:text-light-text-accent transition-colors">Clips</a></li>
+                        <li><a href="{{ route('aitah.index') }}" class="dark:text-dark-text-secondary text-light-text-secondary dark:hover:text-dark-text-accent hover:text-light-text-accent transition-colors">AITAH</a></li>
+                        <li><a href="{{ route('news.index') }}" class="dark:text-dark-text-secondary text-light-text-secondary dark:hover:text-dark-text-accent hover:text-light-text-accent transition-colors">News</a></li>
                     </ul>
                 </div>
                 
