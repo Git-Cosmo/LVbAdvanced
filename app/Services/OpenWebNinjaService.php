@@ -9,11 +9,11 @@ class OpenWebNinjaService
 {
     protected string $baseUrl = 'https://api.openwebninja.com';
 
-    protected string $apiKey;
+    protected ?string $apiKey;
 
     public function __construct()
     {
-        $this->apiKey = config('services.openwebninja.api_key', env('OPEN_WEB_NINJA_API_KEY', ''));
+        $this->apiKey = config('services.openwebninja.api_key') ?? env('OPEN_WEB_NINJA_API_KEY');
     }
 
     /**
