@@ -39,17 +39,29 @@ class StoreController extends Controller
         $stores = $storesQuery->paginate(24)->withQueryString();
 
         // Calculate stats from the full dataset (not just current page)
-        $statsQuery = CheapSharkStore::query();
+        $baseStatsQuery = CheapSharkStore::query();
         if ($search) {
-            $statsQuery->where('name', 'like', '%' . $search . '%');
-        }
-        if ($filterActive) {
-            $statsQuery->where('is_active', true);
+            $baseStatsQuery->where('name', 'like', '%' . $search . '%');
         }
 
-        $totalStores = $statsQuery->count();
-        $activeStores = $statsQuery->where('is_active', true)->count();
-        $totalDeals = $statsQuery->withCount('deals')->get()->sum('deals_count');
+        // Calculate total stores and active stores in one query
+        $totalStores = (clone $baseStatsQuery)->count();
+        $activeStores = (clone $baseStatsQuery)->where('is_active', true)->count();
+
+        // Calculate total deals using a join and sum aggregate
+        $totalDeals = (clone $baseStatsQuery)
+            ->leftJoin('cheap_shark_deals', 'cheap_shark_stores.id', '=', 'cheap_shark_deals.store_id')
+            ->count('cheap_shark_deals.id');
+
+        // Apply the active filter after stats calculation if needed
+        if ($filterActive) {
+            $totalStores = $activeStores;
+            $totalDeals = CheapSharkStore::query()
+                ->where('is_active', true)
+                ->when($search, fn($q) => $q->where('name', 'like', '%' . $search . '%'))
+                ->leftJoin('cheap_shark_deals', 'cheap_shark_stores.id', '=', 'cheap_shark_deals.store_id')
+                ->count('cheap_shark_deals.id');
+        }
 
         return view('stores.index', [
             'stores' => $stores,
