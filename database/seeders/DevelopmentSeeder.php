@@ -86,7 +86,8 @@ class DevelopmentSeeder extends Seeder
         foreach (range(0, 14) as $i) {
             Gallery::factory()->create([
                 'user_id' => $randomGalleryUserIds[$i],
-                'is_published' => true,
+                'is_approved' => true,
+                'is_featured' => $i < 3, // Make first 3 featured
             ]);
         }
 

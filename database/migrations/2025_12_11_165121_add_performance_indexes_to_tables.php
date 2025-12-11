@@ -33,7 +33,8 @@ return new class extends Migration
         // Downloads indexes
         Schema::table('galleries', function (Blueprint $table) {
             $table->index(['user_id', 'created_at'], 'idx_galleries_user');
-            $table->index(['is_published', 'created_at'], 'idx_galleries_published');
+            $table->index(['is_approved', 'created_at'], 'idx_galleries_approved');
+            $table->index(['is_featured', 'created_at'], 'idx_galleries_featured');
         });
 
         // User profiles indexes
@@ -67,7 +68,8 @@ return new class extends Migration
 
         Schema::table('galleries', function (Blueprint $table) {
             $table->dropIndex('idx_galleries_user');
-            $table->dropIndex('idx_galleries_published');
+            $table->dropIndex('idx_galleries_approved');
+            $table->dropIndex('idx_galleries_featured');
         });
 
         Schema::table('user_profiles', function (Blueprint $table) {
