@@ -175,6 +175,16 @@
                                 </a>
                             </div>
                         </div>
+                        
+                        <!-- StreamerBans Link -->
+                        <a href="{{ route('streamerbans.index') }}" class="px-4 py-2 rounded-lg dark:text-dark-text-primary text-light-text-primary dark:hover:bg-dark-bg-tertiary hover:bg-light-bg-tertiary dark:hover:text-dark-text-accent hover:text-light-text-accent transition-all font-medium">
+                            <div class="flex items-center space-x-2">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/>
+                                </svg>
+                                <span>Bans</span>
+                            </div>
+                        </a>
                     </nav>
                 </div>
 
@@ -360,6 +370,7 @@
                         <li><a href="{{ route('forum.index') }}" class="dark:text-dark-text-secondary text-light-text-secondary dark:hover:text-dark-text-accent hover:text-light-text-accent transition-colors">Forums</a></li>
                         <li><a href="{{ route('clips.index') }}" class="dark:text-dark-text-secondary text-light-text-secondary dark:hover:text-dark-text-accent hover:text-light-text-accent transition-colors">Clips</a></li>
                         <li><a href="{{ route('aitah.index') }}" class="dark:text-dark-text-secondary text-light-text-secondary dark:hover:text-dark-text-accent hover:text-light-text-accent transition-colors">AITAH</a></li>
+                        <li><a href="{{ route('streamerbans.index') }}" class="dark:text-dark-text-secondary text-light-text-secondary dark:hover:text-dark-text-accent hover:text-light-text-accent transition-colors">Streamer Bans</a></li>
                         <li><a href="{{ route('news.index') }}" class="dark:text-dark-text-secondary text-light-text-secondary dark:hover:text-dark-text-accent hover:text-light-text-accent transition-colors">News</a></li>
                     </ul>
                 </div>

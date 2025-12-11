@@ -289,6 +289,16 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
         Route::delete('/post/{post}', [\App\Http\Controllers\Admin\RedditManagementController::class, 'deletePost'])->name('post.delete');
     });
     
+    // StreamerBans Management
+    Route::prefix('streamerbans')->name('streamerbans.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Admin\StreamerBansManagementController::class, 'index'])->name('index');
+        Route::post('/scrape', [\App\Http\Controllers\Admin\StreamerBansManagementController::class, 'scrape'])->name('scrape');
+        Route::post('/scrape-streamer', [\App\Http\Controllers\Admin\StreamerBansManagementController::class, 'scrapeStreamer'])->name('scrape-streamer');
+        Route::post('/{streamerBan}/toggle-publish', [\App\Http\Controllers\Admin\StreamerBansManagementController::class, 'togglePublish'])->name('toggle-publish');
+        Route::post('/{streamerBan}/toggle-feature', [\App\Http\Controllers\Admin\StreamerBansManagementController::class, 'toggleFeature'])->name('toggle-feature');
+        Route::delete('/{streamerBan}', [\App\Http\Controllers\Admin\StreamerBansManagementController::class, 'deleteStreamer'])->name('delete');
+    });
+    
     // Events Management
     Route::prefix('events')->name('events.')->group(function () {
         Route::get('/', [\App\Http\Controllers\Admin\EventsManagementController::class, 'index'])->name('index');
@@ -320,6 +330,10 @@ Route::prefix('news')->name('news.')->group(function () {
 Route::get('/clips', [\App\Http\Controllers\RedditController::class, 'clips'])->name('clips.index');
 Route::get('/aitah', [\App\Http\Controllers\RedditController::class, 'aitah'])->name('aitah.index');
 Route::get('/reddit/{post}', [\App\Http\Controllers\RedditController::class, 'show'])->name('reddit.show');
+
+// StreamerBans Routes
+Route::get('/streamerbans', [\App\Http\Controllers\StreamerBansController::class, 'index'])->name('streamerbans.index');
+Route::get('/streamerbans/{streamerBan}', [\App\Http\Controllers\StreamerBansController::class, 'show'])->name('streamerbans.show');
 
 // Events Routes
 Route::prefix('events')->name('events.')->group(function () {

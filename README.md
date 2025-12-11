@@ -322,6 +322,9 @@
    - **Games:**
      - Game Deals: http://localhost:8000/games/deals
      - Game Stores: http://localhost:8000/games/stores
+    - **StreamerBans:**
+      - Browse Streamers: http://localhost:8000/streamerbans
+      - Streamer Details: http://localhost:8000/streamerbans/{username}
     - **Static Pages:**
       - Terms of Service: http://localhost:8000/terms
       - Privacy Policy: http://localhost:8000/privacy
@@ -333,6 +336,7 @@
      - Admin Deals: http://localhost:8000/admin/deals
      - Admin Events: http://localhost:8000/admin/events
       - Admin Reddit: http://localhost:8000/admin/reddit
+      - Admin StreamerBans: http://localhost:8000/admin/streamerbans
      - Credentials: admin@example.com / password
 
 ## CheapShark Deals & Stores Workflow
@@ -1352,4 +1356,139 @@ Each subreddit can be configured independently:
 - name, display_name, is_enabled
 - content_type, scrape_limit
 - last_scraped_at
+
+## StreamerBans Integration
+
+### Overview
+The StreamerBans integration automatically scrapes ban data from streamerbans.com, tracking streamer ban statistics, history, and details. This provides comprehensive insights into streamer moderation patterns across platforms.
+
+### Quick Setup
+
+1. **Run initial scrape**:
+   ```bash
+   # Scrape all streamers from the main page
+   php artisan streamerbans:scrape
+   
+   # Scrape a specific streamer
+   php artisan streamerbans:scrape ninja
+   
+   # Update existing streamers (refresh their data)
+   php artisan streamerbans:scrape --update --limit=50
+   ```
+
+2. **Database migration** (included in standard migrations):
+   ```bash
+   php artisan migrate
+   ```
+
+### Features
+
+**Content Pages:**
+- `/streamerbans` - Browse all streamers with ban data
+- `/streamerbans/{username}` - Detailed streamer page with full ban history
+
+**Admin Management** (`/admin/streamerbans`):
+- View statistics (total streamers, published count, total bans tracked)
+- Manual scrape triggers:
+  - Scrape all streamers from streamerbans.com
+  - Update existing streamer data (oldest first)
+  - Scrape specific streamer by username
+- Publish/unpublish streamers
+- Feature streamers
+- Delete streamers
+- View top 10 most banned streamers
+- Track recently scraped streamers
+
+**Automatic Scraping:**
+- Runs daily via Laravel scheduler
+- Updates 100 oldest streamer records per day
+- Configurable via scheduled task in `routes/console.php`
+- Automatic deduplication using streamer usernames
+- Updates existing records with new ban data
+
+**Data Tracked:**
+- **Total Bans** - Complete count of bans for each streamer
+- **Last Ban** - Date or time of most recent ban
+- **Longest Ban** - Duration of the longest ban received
+- **Ban History** - Full timeline of all bans (dates, durations, reasons)
+- **Avatar** - Streamer profile image
+- **Views Count** - Track page view statistics
+
+**Frontend Features:**
+- Search functionality (search by username)
+- Multiple sorting options:
+  - Most Bans (default)
+  - Recently Updated
+  - Alphabetical
+- Responsive grid layout with cards
+- Featured streamer badges
+- Related streamers suggestions
+- Direct links to streamerbans.com profiles
+- SEO-optimized pages with metadata
+
+### Database Schema
+
+**`streamerbans` table** - Stores all streamer ban data:
+- Basic info: username, slug, profile_url, avatar_url
+- Ban statistics: total_bans, last_ban, longest_ban
+- Ban history: ban_history (JSON array with detailed records)
+- Metadata: last_scraped_at, is_published, is_featured, views_count
+- Indexes: username, total_bans, is_published, last_scraped_at
+
+### Configuration
+
+The scraper is designed to:
+- **Be respectful**: 1-second delay between requests to avoid overwhelming servers
+- **Be robust**: Multiple HTML parsing strategies to handle different page structures
+- **Be smart**: Updates existing records instead of creating duplicates
+- **Be efficient**: Prioritizes oldest records for updates
+
+### Scraping Behavior
+
+**HTML Parsing Strategy:**
+The scraper uses multiple fallback methods to extract data:
+1. Searches for links matching `/user/` pattern
+2. Looks for specific HTML elements (tables, lists, stat cards)
+3. Uses XPath for text pattern matching (e.g., "Total Bans: 5")
+4. Extracts ban history from tables or list items
+5. Handles missing data gracefully
+
+**Rate Limiting:**
+- 1 second delay between each streamer page request
+- Respects server resources
+- Configurable batch processing for updates
+
+### Usage Examples
+
+**Manual Operations:**
+```bash
+# Initial import of all streamers
+php artisan streamerbans:scrape
+
+# Update specific streamer
+php artisan streamerbans:scrape amouranth
+
+# Refresh 100 oldest records
+php artisan streamerbans:scrape --update --limit=100
+```
+
+**Scheduled Updates:**
+The system automatically runs daily via Laravel scheduler:
+```php
+Schedule::command('streamerbans:scrape --update --limit=100')
+    ->withoutOverlapping()
+    ->daily();
+```
+
+**Accessing the Data:**
+- Public page: `http://localhost:8000/streamerbans`
+- Individual streamer: `http://localhost:8000/streamerbans/{username}`
+- Admin panel: `http://localhost:8000/admin/streamerbans`
+
+### Notes
+
+- **Legal Compliance**: This scraper is designed for educational and informational purposes. Always respect website terms of service.
+- **Data Accuracy**: Ban data is scraped from publicly available information on streamerbans.com. For official records, refer to the original source.
+- **Performance**: The scraper processes requests sequentially with delays to be respectful to the source server.
+- **Error Handling**: Failed scrapes are logged for debugging. Check Laravel logs for any issues.
 

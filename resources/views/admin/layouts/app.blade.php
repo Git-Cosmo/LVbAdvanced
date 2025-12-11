@@ -100,6 +100,13 @@
                     </svg>
                     Reddit Management
                 </a>
+
+                <a href="{{ route('admin.streamerbans.index') }}" class="flex items-center px-6 py-3 {{ request()->routeIs('admin.streamerbans.*') ? 'bg-gradient-to-r from-accent-blue to-accent-purple text-white' : 'dark:text-dark-text-primary text-light-text-primary dark:hover:bg-dark-bg-tertiary hover:bg-light-bg-tertiary' }} transition-colors">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/>
+                    </svg>
+                    StreamerBans
+                </a>
                 
                 <div class="mt-6 px-6 py-3 text-xs uppercase dark:text-dark-text-tertiary text-light-text-tertiary font-semibold">Gamification</div>
                 
