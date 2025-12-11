@@ -43,7 +43,7 @@
             @php
                 $game = $deal->game;
                 $store = $deal->store;
-                $storeLogo = $store?->logo ? 'https://www.cheapshark.com/' . ltrim($store->logo, '/') : null;
+                $storeLogo = \App\Helpers\CheapSharkHelper::logoUrl($store?->logo);
             @endphp
             <div class="dark:bg-dark-bg-secondary bg-light-bg-secondary rounded-lg shadow-md p-4 flex gap-4">
                 <div class="w-20 h-20 rounded-lg overflow-hidden bg-dark-bg-tertiary flex-shrink-0">

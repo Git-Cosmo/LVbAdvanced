@@ -38,4 +38,14 @@ class CheapSharkStore extends Model
             'game_id'
         )->distinct();
     }
+
+    /**
+     * Scope to apply common filters (search and active status)
+     */
+    public function scopeApplyFilters($query, ?string $search, ?bool $filterActive)
+    {
+        return $query
+            ->when($search, fn($q) => $q->where('name', 'like', '%' . $search . '%'))
+            ->when($filterActive, fn($q) => $q->where('is_active', true));
+    }
 }
