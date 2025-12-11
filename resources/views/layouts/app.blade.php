@@ -74,7 +74,7 @@
                     </a>
 
                     <!-- Main Navigation -->
-                    <nav class="hidden lg:flex items-center space-x-1">
+                    <nav aria-label="Main navigation" class="hidden lg:flex items-center space-x-1">
                         <a href="/" class="px-4 py-2 rounded-lg dark:text-dark-text-primary text-light-text-primary dark:hover:bg-dark-bg-tertiary hover:bg-light-bg-tertiary dark:hover:text-dark-text-accent hover:text-light-text-accent transition-all font-medium">
                             <div class="flex items-center space-x-2">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -93,13 +93,16 @@
                         </a>
                         
                         <!-- Universal Search Bar -->
-                        <form action="{{ route('search') }}" method="GET" class="relative ml-4">
+                        <form action="{{ route('search') }}" method="GET" class="relative ml-4" role="search" aria-label="Search site">
+                            <label for="universal-search" class="sr-only">Search</label>
                             <input type="text" 
+                                   id="universal-search"
                                    name="q" 
                                    placeholder="Search everything..." 
+                                   aria-label="Search query"
                                    class="px-4 py-2 pl-10 w-64 rounded-lg dark:bg-dark-bg-tertiary bg-light-bg-tertiary dark:text-dark-text-primary text-light-text-primary focus:outline-none focus:ring-2 focus:ring-accent-blue">
-                            <button type="submit" class="absolute left-3 top-1/2 transform -translate-y-1/2">
-                                <svg class="w-4 h-4 dark:text-dark-text-tertiary text-light-text-tertiary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <button type="submit" class="absolute left-3 top-1/2 transform -translate-y-1/2" aria-label="Submit search">
+                                <svg class="w-4 h-4 dark:text-dark-text-tertiary text-light-text-tertiary" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                                 </svg>
                             </button>
@@ -116,7 +119,12 @@
                         
                         <!-- Games Dropdown -->
                         <div x-data="{ open: false }" @click.away="open = false" class="relative">
-                            <button @click="open = !open" class="px-4 py-2 rounded-lg dark:text-dark-text-primary text-light-text-primary dark:hover:bg-dark-bg-tertiary hover:bg-light-bg-tertiary dark:hover:text-dark-text-accent hover:text-light-text-accent transition-all font-medium">
+                            <button @click="open = !open" 
+                                    aria-label="Games menu"
+                                    aria-expanded="false"
+                                    aria-haspopup="true"
+                                    :aria-expanded="open.toString()"
+                                    class="px-4 py-2 rounded-lg dark:text-dark-text-primary text-light-text-primary dark:hover:bg-dark-bg-tertiary hover:bg-light-bg-tertiary dark:hover:text-dark-text-accent hover:text-light-text-accent transition-all font-medium">
                                 <div class="flex items-center space-x-2">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V6m0 2v8m0 0v2m0-2c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
