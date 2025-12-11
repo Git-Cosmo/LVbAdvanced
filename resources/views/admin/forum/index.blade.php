@@ -112,7 +112,7 @@
                         @elseif($forum->is_active)
                         <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Active</span>
                         @else
-                        <span class="px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">Inactive</span>
+                        <span class="px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 dark:text-dark-text-bright text-light-text-bright">Inactive</span>
                         @endif
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">

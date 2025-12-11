@@ -35,10 +35,7 @@ class LoginController extends Controller
             // Award XP for daily login and check streaks
             $this->gamificationService->awardActionXP(Auth::user(), 'daily_login');
 
-            if (Auth::user()->hasRole('Administrator')) {
-                return redirect()->intended(route('admin.dashboard'));
-            }
-
+            // Redirect all users (including admins) to home page
             return redirect()->intended(route('home'));
         }
 

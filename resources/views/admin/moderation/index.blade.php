@@ -24,47 +24,47 @@
         </div>
     @endif
     
-    <div class="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
-        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-            <thead class="bg-gray-50 dark:bg-gray-900">
+    <div class="dark:bg-dark-bg-secondary bg-light-bg-secondary dark:bg-gray-800 rounded-lg shadow overflow-hidden">
+        <table class="min-w-full divide-y dark:divide-dark-border-primary divide-light-border-primary dark:divide-gray-700">
+            <thead class="dark:bg-dark-bg-tertiary bg-light-bg-tertiary dark:bg-gray-900">
                 <tr>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                    <th class="px-6 py-3 text-left text-xs font-medium dark:text-dark-text-secondary text-light-text-secondary dark:text-gray-400 uppercase tracking-wider">
                         Content
                     </th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                    <th class="px-6 py-3 text-left text-xs font-medium dark:text-dark-text-secondary text-light-text-secondary dark:text-gray-400 uppercase tracking-wider">
                         Reporter
                     </th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                    <th class="px-6 py-3 text-left text-xs font-medium dark:text-dark-text-secondary text-light-text-secondary dark:text-gray-400 uppercase tracking-wider">
                         Reason
                     </th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                    <th class="px-6 py-3 text-left text-xs font-medium dark:text-dark-text-secondary text-light-text-secondary dark:text-gray-400 uppercase tracking-wider">
                         Status
                     </th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                    <th class="px-6 py-3 text-left text-xs font-medium dark:text-dark-text-secondary text-light-text-secondary dark:text-gray-400 uppercase tracking-wider">
                         Date
                     </th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                    <th class="px-6 py-3 text-left text-xs font-medium dark:text-dark-text-secondary text-light-text-secondary dark:text-gray-400 uppercase tracking-wider">
                         Actions
                     </th>
                 </tr>
             </thead>
-            <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+            <tbody class="dark:bg-dark-bg-secondary bg-light-bg-secondary dark:bg-gray-800 divide-y dark:divide-dark-border-primary divide-light-border-primary dark:divide-gray-700">
                 @forelse($reports as $report)
                     <tr class="{{ $report->status === 'pending' ? 'bg-red-50 dark:bg-red-900/20' : '' }}">
                         <td class="px-6 py-4">
-                            <div class="text-sm font-medium text-gray-900 dark:text-white">
+                            <div class="text-sm font-medium dark:text-dark-text-bright text-light-text-bright dark:text-white">
                                 {{ class_basename($report->reportable_type) }}
                                 @if($report->reportable)
-                                    <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                                    <div class="text-xs dark:text-dark-text-secondary text-light-text-secondary dark:text-gray-400 mt-1">
                                         {{ Str::limit($report->reportable->content ?? $report->reportable->title ?? 'N/A', 50) }}
                                     </div>
                                 @endif
                             </div>
                         </td>
-                        <td class="px-6 py-4 text-sm text-gray-900 dark:text-white">
+                        <td class="px-6 py-4 text-sm dark:text-dark-text-bright text-light-text-bright dark:text-white">
                             {{ $report->reporter->name }}
                         </td>
-                        <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-300">
+                        <td class="px-6 py-4 text-sm dark:text-dark-text-secondary text-light-text-secondary dark:text-gray-300">
                             {{ Str::limit($report->reason, 50) }}
                         </td>
                         <td class="px-6 py-4">
@@ -78,7 +78,7 @@
                                 </span>
                             @endif
                         </td>
-                        <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                        <td class="px-6 py-4 text-sm dark:text-dark-text-secondary text-light-text-secondary dark:text-gray-400">
                             {{ $report->created_at->format('M d, Y') }}
                         </td>
                         <td class="px-6 py-4 text-sm">
@@ -90,7 +90,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="6" class="px-6 py-12 text-center text-gray-500 dark:text-gray-400">
+                        <td colspan="6" class="px-6 py-12 text-center dark:text-dark-text-secondary text-light-text-secondary dark:text-gray-400">
                             No reports found
                         </td>
                     </tr>

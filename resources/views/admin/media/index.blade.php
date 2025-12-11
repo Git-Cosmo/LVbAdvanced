@@ -15,7 +15,7 @@
                 <div class="flex items-center justify-between p-4 dark:bg-dark-bg-tertiary rounded">
                     <div>
                         <h3 class="font-semibold">{{ $gallery->title }}</h3>
-                        <p class="text-sm text-gray-500">{{ $gallery->game }} - by {{ $gallery->user->name }}</p>
+                        <p class="text-sm dark:text-dark-text-secondary text-light-text-secondary">{{ $gallery->game }} - by {{ $gallery->user->name }}</p>
                     </div>
                 </div>
             @empty
