@@ -39,8 +39,8 @@ return new class extends Migration
             $table->index(['source', 'external_id']); // For deduplication
         });
 
-        // Create events_imported_items table for tracking scraped data
-        Schema::create('events_imported_items', function (Blueprint $table) {
+        // Create event_imported_items table for tracking scraped data
+        Schema::create('event_imported_items', function (Blueprint $table) {
             $table->id();
             $table->string('source'); // Source identifier
             $table->string('external_id'); // External unique identifier
@@ -56,6 +56,7 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::dropIfExists('event_imported_items');
         Schema::dropIfExists('events');
     }
 };
