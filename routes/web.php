@@ -14,6 +14,7 @@ use App\Http\Controllers\Forum\ProfileController;
 use App\Http\Controllers\Forum\ThreadController;
 use App\Http\Controllers\MediaController;
 use App\Http\Controllers\PortalController;
+use App\Http\Controllers\StoreController;
 use App\Http\Controllers\Admin\CheapSharkSyncController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\StatusController;
@@ -21,6 +22,14 @@ use App\Http\Controllers\StatusController;
 // Public Portal Routes
 Route::get('/', [PortalController::class, 'home'])->name('home');
 Route::get('/status', StatusController::class)->name('status');
+
+// Games Routes
+Route::prefix('games')->name('games.')->group(function () {
+    Route::get('/deals', [DealController::class, 'index'])->name('deals');
+    Route::get('/stores', [StoreController::class, 'index'])->name('stores');
+});
+
+// Legacy deals routes (for backward compatibility)
 Route::get('/deals', [DealController::class, 'index'])->name('deals.index');
 Route::get('/game/{slug}', [DealController::class, 'show'])->name('deals.show');
 
