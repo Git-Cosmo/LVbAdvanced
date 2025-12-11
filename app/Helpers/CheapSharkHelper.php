@@ -5,11 +5,14 @@ namespace App\Helpers;
 class CheapSharkHelper
 {
     /**
-     * Get the base URL for CheapShark.
+     * Get the base URL for CheapShark (website, not API).
      */
     public static function baseUrl(): string
     {
-        return rtrim(config('services.cheapshark.base_url', 'https://www.cheapshark.com'), '/');
+        // Use the website base URL for images and redirects, not the API URL
+        $apiUrl = config('services.cheapshark.base_url', 'https://www.cheapshark.com/api/1.0');
+        // Extract the base domain from the API URL
+        return rtrim(preg_replace('#/api/.*$#', '', $apiUrl), '/');
     }
 
     /**

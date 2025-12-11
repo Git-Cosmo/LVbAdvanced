@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\CheapSharkHelper;
 use App\Models\CheapSharkStore;
 use Illuminate\Http\Request;
 
@@ -37,6 +38,12 @@ class StoreController extends Controller
         }
 
         $stores = $storesQuery->paginate(24)->withQueryString();
+
+        // Transform stores to include logo URLs using helper
+        $stores->getCollection()->transform(function ($store) {
+            $store->logo_url = CheapSharkHelper::logoUrl($store->logo);
+            return $store;
+        });
 
         // Calculate stats from the full dataset using a single optimized query with conditional aggregation
         $statsQuery = CheapSharkStore::query()

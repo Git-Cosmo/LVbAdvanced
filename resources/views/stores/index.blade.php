@@ -31,8 +31,8 @@
                 </select>
             </div>
             <div class="flex items-end">
-                <label class="flex items-center space-x-2 cursor-pointer">
-                    <input type="checkbox" name="active" value="1" @checked($filterActive) class="w-5 h-5 rounded dark:bg-dark-bg-tertiary bg-light-bg-tertiary focus:ring-2 focus:ring-accent-blue">
+                <label for="filter-active" class="flex items-center space-x-2 cursor-pointer">
+                    <input type="checkbox" id="filter-active" name="active" value="1" @checked($filterActive) class="w-5 h-5 rounded dark:bg-dark-bg-tertiary bg-light-bg-tertiary focus:ring-2 focus:ring-accent-blue">
                     <span class="text-sm dark:text-dark-text-primary text-light-text-primary">Active only</span>
                 </label>
             </div>
@@ -90,14 +90,11 @@
     <!-- Stores Grid -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
         @forelse($stores as $store)
-            @php
-                $storeLogo = \App\Helpers\CheapSharkHelper::logoUrl($store->logo);
-            @endphp
             <div class="dark:bg-dark-bg-secondary bg-light-bg-secondary rounded-lg shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden group">
                 <!-- Store Header -->
                 <div class="relative h-32 bg-gradient-to-br from-accent-blue/20 to-accent-purple/20 flex items-center justify-center p-4">
-                    @if($storeLogo)
-                        <img src="{{ $storeLogo }}" alt="{{ $store->name }}" class="max-w-full max-h-full object-contain filter group-hover:scale-110 transition-transform duration-300">
+                    @if($store->logo_url)
+                        <img src="{{ $store->logo_url }}" alt="{{ $store->name }}" class="max-w-full max-h-full object-contain filter group-hover:scale-110 transition-transform duration-300">
                     @else
                         <div class="w-16 h-16 rounded-full bg-gradient-to-br from-accent-blue to-accent-purple flex items-center justify-center">
                             <span class="text-2xl font-bold text-white">{{ substr($store->name, 0, 1) }}</span>
