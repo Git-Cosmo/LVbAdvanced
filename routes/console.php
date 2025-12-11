@@ -4,6 +4,8 @@ use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Schedule;
 use App\Services\CheapSharkService;
+use App\Jobs\ImportRssFeedsJob;
+use App\Jobs\SyncCheapSharkJob;
 
 Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
@@ -16,5 +18,6 @@ Artisan::command('cheapshark:sync {--runType=manual}', function (CheapSharkServi
     $this->info($log->message ?? 'Sync finished with status: ' . $log->status);
 })->purpose('Sync CheapShark stores, games, and deals');
 
-// NOTE: To enable scheduled tasks, ensure that `php artisan schedule:run` is configured to run every minute in your system's cron or task scheduler.
-Schedule::command('cheapshark:sync --runType=scheduled')->hourly();
+// NOTE: To enable scheduled automation, ensure that `php artisan schedule:run` is configured to run every minute in your system's cron or task scheduler.
+Schedule::job(new SyncCheapSharkJob())->withoutOverlapping()->hourly();
+Schedule::job(new ImportRssFeedsJob())->withoutOverlapping()->hourly();
