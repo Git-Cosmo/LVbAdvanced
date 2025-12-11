@@ -17,8 +17,8 @@
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             @foreach($featuredEvents as $featuredEvent)
             <a href="{{ route('events.show', $featuredEvent) }}" class="block dark:bg-dark-bg-secondary bg-light-bg-secondary rounded-lg overflow-hidden hover:shadow-xl transition-shadow">
-                @if($featuredEvent->image)
-                <img src="{{ $featuredEvent->image }}" alt="{{ $featuredEvent->title }}" class="w-full h-48 object-cover">
+                @if($featuredEvent->thumbnail)
+                <img src="{{ $featuredEvent->thumbnail }}" alt="{{ $featuredEvent->name }}" class="w-full h-48 object-cover">
                 @else
                 <div class="w-full h-48 bg-gradient-to-br from-accent-blue to-accent-purple flex items-center justify-center">
                     <svg class="w-16 h-16 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -35,13 +35,13 @@
                             Featured
                         </span>
                     </div>
-                    <h3 class="text-lg font-bold dark:text-dark-text-bright text-light-text-bright mb-2">{{ $featuredEvent->title }}</h3>
-                    @if($featuredEvent->start_date)
+                    <h3 class="text-lg font-bold dark:text-dark-text-bright text-light-text-bright mb-2">{{ $featuredEvent->name }}</h3>
+                    @if($featuredEvent->start_time)
                     <p class="text-sm dark:text-dark-text-secondary text-light-text-secondary">
                         <svg class="inline w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                         </svg>
-                        {{ $featuredEvent->start_date->format('M d, Y') }}
+                        {{ $featuredEvent->start_time->format('M d, Y') }}
                     </p>
                     @endif
                 </div>
@@ -107,8 +107,8 @@
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         @foreach($events as $event)
         <a href="{{ route('events.show', $event) }}" class="block dark:bg-dark-bg-secondary bg-light-bg-secondary rounded-lg overflow-hidden hover:shadow-xl transition-shadow">
-            @if($event->image)
-            <img src="{{ $event->image }}" alt="{{ $event->title }}" class="w-full h-48 object-cover">
+            @if($event->thumbnail)
+            <img src="{{ $event->thumbnail }}" alt="{{ $event->name }}" class="w-full h-48 object-cover">
             @else
             <div class="w-full h-48 bg-gradient-to-br from-gray-700 to-gray-800 flex items-center justify-center">
                 <svg class="w-16 h-16 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -140,18 +140,18 @@
                     </span>
                     @endif
                 </div>
-                <h3 class="text-lg font-bold dark:text-dark-text-bright text-light-text-bright mb-2 line-clamp-2">{{ $event->title }}</h3>
+                <h3 class="text-lg font-bold dark:text-dark-text-bright text-light-text-bright mb-2 line-clamp-2">{{ $event->name }}</h3>
                 @if($event->description)
                 <p class="text-sm dark:text-dark-text-secondary text-light-text-secondary mb-3 line-clamp-2">{{ $event->description }}</p>
                 @endif
-                @if($event->start_date)
+                @if($event->start_time)
                 <p class="text-sm dark:text-dark-text-secondary text-light-text-secondary">
                     <svg class="inline w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                     </svg>
-                    {{ $event->start_date->format('M d, Y') }}
-                    @if($event->end_date && !$event->start_date->isSameDay($event->end_date))
-                        - {{ $event->end_date->format('M d, Y') }}
+                    {{ $event->start_time->format('M d, Y') }}
+                    @if($event->end_time && !$event->start_time->isSameDay($event->end_time))
+                        - {{ $event->end_time->format('M d, Y') }}
                     @endif
                 </p>
                 @endif
