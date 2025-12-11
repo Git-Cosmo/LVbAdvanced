@@ -38,11 +38,27 @@ class StoreController extends Controller
 
         $stores = $storesQuery->paginate(24)->withQueryString();
 
+        // Calculate stats from the full dataset (not just current page)
+        $statsQuery = CheapSharkStore::query();
+        if ($search) {
+            $statsQuery->where('name', 'like', '%' . $search . '%');
+        }
+        if ($filterActive) {
+            $statsQuery->where('is_active', true);
+        }
+
+        $totalStores = $statsQuery->count();
+        $activeStores = $statsQuery->where('is_active', true)->count();
+        $totalDeals = $statsQuery->withCount('deals')->get()->sum('deals_count');
+
         return view('stores.index', [
             'stores' => $stores,
             'search' => $search,
             'sortBy' => $sortBy,
             'filterActive' => $filterActive,
+            'totalStores' => $totalStores,
+            'activeStores' => $activeStores,
+            'totalDeals' => $totalDeals,
         ]);
     }
 }

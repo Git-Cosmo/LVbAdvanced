@@ -9,7 +9,7 @@
                 <p class="text-sm uppercase tracking-wide text-accent-blue font-semibold mb-2">Game Stores</p>
                 <h1 class="text-2xl font-bold dark:text-dark-text-bright text-light-text-bright">Browse All Gaming Stores</h1>
                 <p class="dark:text-dark-text-secondary text-light-text-secondary text-sm mt-1">
-                    Discover deals from {{ $stores->total() }} stores tracked by CheapShark
+                    Discover deals from {{ number_format($totalStores) }} stores tracked by CheapShark
                 </p>
             </div>
             <a href="{{ route('games.deals') }}" class="px-4 py-2 rounded-lg bg-gradient-to-r from-accent-blue to-accent-purple text-white text-sm font-semibold shadow hover:shadow-lg transition">
@@ -55,7 +55,7 @@
                 </div>
                 <div>
                     <p class="text-sm dark:text-dark-text-secondary text-light-text-secondary">Total Stores</p>
-                    <p class="text-2xl font-bold dark:text-dark-text-bright text-light-text-bright">{{ $stores->total() }}</p>
+                    <p class="text-2xl font-bold dark:text-dark-text-bright text-light-text-bright">{{ number_format($totalStores) }}</p>
                 </div>
             </div>
         </div>
@@ -68,7 +68,7 @@
                 </div>
                 <div>
                     <p class="text-sm dark:text-dark-text-secondary text-light-text-secondary">Active Stores</p>
-                    <p class="text-2xl font-bold dark:text-dark-text-bright text-light-text-bright">{{ $stores->where('is_active', true)->count() }}</p>
+                    <p class="text-2xl font-bold dark:text-dark-text-bright text-light-text-bright">{{ number_format($activeStores) }}</p>
                 </div>
             </div>
         </div>
@@ -81,7 +81,7 @@
                 </div>
                 <div>
                     <p class="text-sm dark:text-dark-text-secondary text-light-text-secondary">Total Deals</p>
-                    <p class="text-2xl font-bold dark:text-dark-text-bright text-light-text-bright">{{ $stores->sum('deals_count') }}</p>
+                    <p class="text-2xl font-bold dark:text-dark-text-bright text-light-text-bright">{{ number_format($totalDeals) }}</p>
                 </div>
             </div>
         </div>
