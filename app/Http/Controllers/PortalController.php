@@ -13,7 +13,17 @@ class PortalController extends Controller
 {
     public function home(AzuracastService $azuracast): View
     {
-        $payload = $azuracast->nowPlaying();
+        try {
+            $payload = $azuracast->nowPlaying();
+        } catch (\Exception $e) {
+            // Gracefully handle AzuraCast connection failures
+            $payload = [
+                'now_playing' => null,
+                'playing_next' => null,
+                'song_history' => [],
+                'is_online' => false,
+            ];
+        }
 
         // Get real data for homepage
         $latestNews = News::published()
