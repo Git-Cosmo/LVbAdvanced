@@ -18,6 +18,9 @@ Artisan::command('cheapshark:sync {--runType=manual}', function (CheapSharkServi
     $this->info($log->message ?? 'Sync finished with status: ' . $log->status);
 })->purpose('Sync CheapShark stores, games, and deals');
 
+use App\Jobs\ImportEventsJob;
+
 // NOTE: To enable scheduled automation, ensure that `php artisan schedule:run` is configured to run every minute in your system's cron or task scheduler.
 Schedule::job(new SyncCheapSharkJob())->withoutOverlapping()->hourly();
 Schedule::job(new ImportRssFeedsJob())->withoutOverlapping()->hourly();
+Schedule::job(new ImportEventsJob())->withoutOverlapping()->hourly();
