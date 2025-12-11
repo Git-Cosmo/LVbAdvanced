@@ -11,7 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // Add full-text index on forum_threads (title only - content is in forum_posts)
+        // Add full-text index on forum_threads (title only).
+        // Note: The 'content' column is not included in this index because 'content' is stored in the forum_posts table, not in forum_threads.
         DB::statement('ALTER TABLE forum_threads ADD FULLTEXT ft_forum_threads_search (title)');
         
         // Note: forum_posts already has a fulltext index on content created in its migration

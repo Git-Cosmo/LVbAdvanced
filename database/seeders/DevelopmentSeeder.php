@@ -61,14 +61,19 @@ class DevelopmentSeeder extends Seeder
             $threadsData[] = ['id' => $thread->id, 'posts_count' => $postCount + 1];
         }
 
-        // Bulk update thread post counts using DB transaction
-        \DB::transaction(function () use ($threadsData) {
-            foreach ($threadsData as $data) {
-                \DB::table('forum_threads')
-                    ->where('id', $data['id'])
-                    ->update(['posts_count' => $data['posts_count']]);
-            }
-        });
+        // Bulk update thread post counts using DB transaction with optimized CASE statement
+        if (!empty($threadsData)) {
+            \DB::transaction(function () use ($threadsData) {
+                $ids = array_column($threadsData, 'id');
+                $cases = '';
+                foreach ($threadsData as $data) {
+                    $cases .= "WHEN {$data['id']} THEN {$data['posts_count']} ";
+                }
+                $idsList = implode(',', $ids);
+                $sql = "UPDATE forum_threads SET posts_count = CASE id {$cases}END WHERE id IN ({$idsList})";
+                \DB::statement($sql);
+            });
+        }
 
         // Create 20 news articles
         $this->command->info('Creating 20 news articles...');

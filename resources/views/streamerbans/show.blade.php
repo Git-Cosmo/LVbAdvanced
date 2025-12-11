@@ -124,11 +124,11 @@
                             <div class="space-y-6">
                                 @foreach($streamerBan->ban_history as $index => $ban)
                                     <div class="relative pl-12">
-                                        <!-- Timeline dot -->
+                                        <!-- Timeline dot - color based on event type -->
                                         <div class="absolute left-0 w-8 h-8 rounded-full flex items-center justify-center
-                                                    @if($index === 0) bg-accent-red
-                                                    @elseif($index < 3) bg-accent-orange
-                                                    @else bg-accent-blue
+                                                    @if(isset($ban['activity']) && (stripos($ban['activity'], 'banned') !== false || stripos($ban['activity'], 'timeout') !== false)) bg-accent-red
+                                                    @elseif(isset($ban['activity']) && stripos($ban['activity'], 'unbanned') !== false) bg-accent-blue
+                                                    @else bg-accent-orange
                                                     @endif
                                                     shadow-lg">
                                             @if(isset($ban['activity']) && (stripos($ban['activity'], 'banned') !== false || stripos($ban['activity'], 'timeout') !== false))

@@ -13,7 +13,7 @@ trait Cacheable
      * @param int $ttl Time to live in seconds (default: 1 hour)
      * @param callable $callback Query callback
      * @param array $tags Optional cache tags for easier clearing
-     * @return mixed
+     * @return mixed The result returned by the callback
      */
     protected function cacheQuery(string $key, int $ttl = 3600, callable $callback, array $tags = [])
     {

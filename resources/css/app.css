@@ -163,14 +163,14 @@
     
     /* Better mobile typography */
     body {
-        font-size: 16px; /* Prevents zoom on iOS */
+        font-size: 16px; /* Prevents zoom on iOS Safari: iOS automatically zooms input fields with font-size less than 16px. See: https://webkit.org/blog/5610/input-font-size-on-ios/ */
     }
     
     /* Improve mobile forms */
     input,
     textarea,
     select {
-        font-size: 16px; /* Prevents zoom on iOS */
+        font-size: 16px; /* Prevents zoom on iOS Safari: iOS automatically zooms input fields with font-size less than 16px. See: https://webkit.org/blog/5610/input-font-size-on-ios/ */
         min-height: 44px;
     }
     
