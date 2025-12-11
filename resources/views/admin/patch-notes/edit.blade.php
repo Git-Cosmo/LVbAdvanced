@@ -7,7 +7,7 @@
 <div class="max-w-4xl">
     <form action="{{ route('admin.patch-notes.update', $patchNote) }}" method="POST">
         @csrf
-        @method('PUT')
+        @method('PATCH')
         
         <div class="dark:bg-dark-bg-secondary bg-light-bg-secondary rounded-lg shadow p-6 mb-6">
             <h3 class="text-lg font-semibold mb-4">Patch Note Details</h3>

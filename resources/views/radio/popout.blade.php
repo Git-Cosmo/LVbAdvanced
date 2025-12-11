@@ -29,9 +29,20 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"/>
                     </svg>
                 </div>
-                <p class="text-sm dark:text-dark-text-secondary text-light-text-secondary text-center mb-4" id="now-playing">
-                    FPSociety Radio Stream
-                </p>
+                @if($nowPlaying && isset($nowPlaying['now_playing']['song']))
+                    <div class="text-center mb-4 px-4">
+                        <p class="font-semibold dark:text-dark-text-bright text-light-text-bright text-sm mb-1">
+                            {{ $nowPlaying['now_playing']['song']['title'] ?? 'Unknown Track' }}
+                        </p>
+                        <p class="text-xs dark:text-dark-text-secondary text-light-text-secondary">
+                            {{ $nowPlaying['now_playing']['song']['artist'] ?? 'Unknown Artist' }}
+                        </p>
+                    </div>
+                @else
+                    <p class="text-sm dark:text-dark-text-secondary text-light-text-secondary text-center mb-4" id="now-playing">
+                        FPSociety Radio Stream
+                    </p>
+                @endif
             </div>
 
             <!-- Player Controls -->

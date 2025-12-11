@@ -152,27 +152,74 @@
             @endphp
 
             <!-- Live Radio Now Playing -->
-            <div class="dark:bg-dark-bg-secondary bg-light-bg-secondary rounded-lg shadow-md p-6 border border-transparent dark:border-dark-border-primary border-light-border-primary">
-                <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
-                    <div class="flex items-center gap-4">
-                        <div class="w-20 h-20 bg-gradient-to-br from-accent-purple to-accent-blue rounded-2xl flex items-center justify-center overflow-hidden">
-                            @if($currentArtwork)
-                                <img src="{{ $currentArtwork }}" alt="Now playing artwork" class="w-full h-full" loading="lazy">
-                            @else
-                                <span class="text-xs uppercase tracking-wider text-white">AZ</span>
-                            @endif
+            <div class="dark:bg-dark-bg-secondary bg-light-bg-secondary rounded-lg shadow-md overflow-hidden border border-transparent dark:border-dark-border-primary border-light-border-primary">
+                <!-- Header with controls -->
+                <div class="bg-gradient-to-r from-accent-blue to-accent-purple p-4">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <div class="w-12 h-12 bg-white/10 backdrop-blur rounded-full flex items-center justify-center">
+                                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <p class="text-xs uppercase tracking-wide text-white/80">Live Radio</p>
+                                <p class="text-white font-semibold">FPSociety Radio</p>
+                            </div>
                         </div>
-                        <div>
-                            <p class="text-xs uppercase tracking-wide dark:text-dark-text-tertiary text-light-text-tertiary">Now Playing</p>
-                            <h3 class="text-2xl font-semibold dark:text-dark-text-bright text-light-text-bright">{{ $currentTitle }}</h3>
-                            <p class="text-sm dark:text-dark-text-secondary text-light-text-secondary">{{ $currentArtist }}@if($currentAlbum) · {{ $currentAlbum }}@endif</p>
-                        </div>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <span class="px-3 py-1 text-xs font-semibold uppercase tracking-wider rounded-full {{ $stationOnline ? 'bg-emerald-500/20 text-emerald-300' : 'bg-rose-500/20 text-rose-300' }}">
-                            {{ $stationOnline ? 'On Air' : 'Offline' }}
+                        <span class="px-3 py-1 text-xs font-semibold uppercase tracking-wider rounded-full {{ $stationOnline ? 'bg-emerald-500/30 text-white' : 'bg-rose-500/30 text-white' }}">
+                            {{ $stationOnline ? '● On Air' : '○ Offline' }}
                         </span>
                     </div>
+                </div>
+
+                <!-- Now Playing Info -->
+                <div class="p-6">
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="w-16 h-16 bg-gradient-to-br from-accent-purple to-accent-blue rounded-lg flex items-center justify-center overflow-hidden flex-shrink-0">
+                            @if($currentArtwork)
+                                <img src="{{ $currentArtwork }}" alt="Now playing artwork" class="w-full h-full object-cover" loading="lazy">
+                            @else
+                                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"/>
+                                </svg>
+                            @endif
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <p class="text-xs uppercase tracking-wide dark:text-dark-text-tertiary text-light-text-tertiary mb-1">Now Playing</p>
+                            <h3 class="text-lg font-semibold dark:text-dark-text-bright text-light-text-bright truncate">{{ $currentTitle }}</h3>
+                            <p class="text-sm dark:text-dark-text-secondary text-light-text-secondary truncate">{{ $currentArtist }}@if($currentAlbum) · {{ $currentAlbum }}@endif</p>
+                        </div>
+                    </div>
+
+                    <!-- Player Controls -->
+                    @if(config('services.icecast.stream_url'))
+                        <div class="space-y-3">
+                            <audio id="home-radio-player" preload="none" class="hidden">
+                                <source src="{{ config('services.icecast.stream_url') }}" type="audio/mpeg">
+                            </audio>
+                            
+                            <div class="flex items-center gap-3">
+                                <button id="home-play-btn" class="bg-gradient-to-r from-accent-blue to-accent-purple hover:from-accent-blue/80 hover:to-accent-purple/80 text-white rounded-full w-10 h-10 flex items-center justify-center shadow-lg transition-all flex-shrink-0">
+                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z"/>
+                                    </svg>
+                                </button>
+                                
+                                <div class="flex-1 flex items-center gap-2">
+                                    <svg class="w-4 h-4 dark:text-dark-text-tertiary text-light-text-tertiary flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M9.383 3.076A1 1 0 0110 4v12a1 1 0 01-1.707.707L4.586 13H2a1 1 0 01-1-1V8a1 1 0 011-1h2.586l3.707-3.707a1 1 0 011.09-.217zM14.657 2.929a1 1 0 011.414 0A9.972 9.972 0 0119 10a9.972 9.972 0 01-2.929 7.071 1 1 0 01-1.414-1.414A7.971 7.971 0 0017 10c0-2.21-.894-4.208-2.343-5.657a1 1 0 010-1.414zm-2.829 2.828a1 1 0 011.415 0A5.983 5.983 0 0115 10a5.984 5.984 0 01-1.757 4.243 1 1 0 01-1.415-1.415A3.984 3.984 0 0013 10a3.983 3.983 0 00-1.172-2.828 1 1 0 010-1.415z" clip-rule="evenodd"/>
+                                    </svg>
+                                    <input type="range" id="home-volume-control" min="0" max="100" value="75" class="flex-1 h-2 bg-gray-200 dark:bg-dark-bg-tertiary rounded-lg appearance-none cursor-pointer">
+                                    <span id="home-volume-display" class="text-xs dark:text-dark-text-secondary text-light-text-secondary w-8 flex-shrink-0">75%</span>
+                                </div>
+
+                                <button onclick="window.open('{{ route('radio.popout') }}', 'RadioPopout', 'width=400,height=500,resizable=yes,scrollbars=no')" class="text-xs px-3 py-1.5 dark:bg-dark-bg-tertiary bg-light-bg-tertiary dark:text-dark-text-primary text-light-text-primary rounded-lg hover:bg-accent-blue hover:text-white transition-colors flex-shrink-0">
+                                    Popout
+                                </button>
+                            </div>
+                        </div>
+                    @endif
                 </div>
                 <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="space-y-2 p-4 bg-gradient-to-b from-black/5 to-transparent rounded-2xl">
@@ -457,4 +504,43 @@
         </div>
     </aside>
 </div>
+
+@if(config('services.icecast.stream_url'))
+<script>
+    // Home radio player controls
+    const homePlayer = document.getElementById('home-radio-player');
+    const homePlayBtn = document.getElementById('home-play-btn');
+    const homeVolumeControl = document.getElementById('home-volume-control');
+    const homeVolumeDisplay = document.getElementById('home-volume-display');
+
+    if (homePlayer && homePlayBtn) {
+        // Icon constants
+        const ICON_PLAY = '<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z"/></svg>';
+        const ICON_PAUSE = '<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>';
+
+        // Set initial volume
+        homePlayer.volume = 0.75;
+
+        // Play/Pause button
+        homePlayBtn.addEventListener('click', () => {
+            if (homePlayer.paused) {
+                homePlayer.play();
+                homePlayBtn.innerHTML = ICON_PAUSE;
+            } else {
+                homePlayer.pause();
+                homePlayBtn.innerHTML = ICON_PLAY;
+            }
+        });
+
+        // Volume control
+        if (homeVolumeControl && homeVolumeDisplay) {
+            homeVolumeControl.addEventListener('input', (e) => {
+                const volume = e.target.value / 100;
+                homePlayer.volume = volume;
+                homeVolumeDisplay.textContent = e.target.value + '%';
+            });
+        }
+    }
+</script>
+@endif
 @endsection
