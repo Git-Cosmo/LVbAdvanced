@@ -45,18 +45,19 @@ class EventsService
             try {
                 // Search for upcoming events
                 $apiResult = $this->openWebNinja->searchEvents($query, 'month');
-                
-                if (!$apiResult['success']) {
+
+                if (! $apiResult['success']) {
                     $results['errors']++;
-                    $results['messages'][] = "Failed to fetch events for '{$query}': " . ($apiResult['error'] ?? 'Unknown error');
+                    $results['messages'][] = "Failed to fetch events for '{$query}': ".($apiResult['error'] ?? 'Unknown error');
+
                     continue;
                 }
 
                 $eventsData = $apiResult['data']['events'] ?? [];
-                
+
                 foreach ($eventsData as $eventData) {
                     $importResult = $this->processEvent($eventData, $query);
-                    
+
                     if ($importResult['success']) {
                         $results['success']++;
                         $results['messages'][] = $importResult['message'];
@@ -143,8 +144,8 @@ class EventsService
         $title = $eventData['title'] ?? '';
         $startDate = $eventData['start_date'] ?? '';
         $venue = $eventData['venue']['name'] ?? '';
-        
-        return md5($title . $startDate . $venue);
+
+        return md5($title.$startDate.$venue);
     }
 
     /**
@@ -156,30 +157,30 @@ class EventsService
         $description = $eventData['description'] ?? '';
         $startDate = isset($eventData['start_date']) ? Carbon::parse($eventData['start_date']) : null;
         $endDate = isset($eventData['end_date']) ? Carbon::parse($eventData['end_date']) : null;
-        
+
         // Extract location data
         $venue = $eventData['venue']['name'] ?? null;
         $address = $eventData['venue']['address'] ?? null;
         $city = $eventData['venue']['city'] ?? null;
         $country = $eventData['venue']['country'] ?? null;
-        
+
         // Build location string
         $locationParts = array_filter([$address, $city, $country]);
-        $location = !empty($locationParts) ? implode(', ', $locationParts) : null;
-        
+        $location = ! empty($locationParts) ? implode(', ', $locationParts) : null;
+
         // Is virtual event?
         $isVirtual = $eventData['is_virtual'] ?? false;
-        
+
         // Extract links
         $sourceUrl = $eventData['link'] ?? null;
         $ticketUrl = $eventData['ticket_url'] ?? null;
-        
+
         // Determine event type based on title and description
         $eventType = $this->determineEventType($title, $description, $searchQuery);
-        
+
         // Extract thumbnail/image
         $image = $eventData['thumbnail'] ?? null;
-        
+
         return [
             'title' => $title,
             'description' => Str::limit($description, 500),
@@ -213,24 +214,24 @@ class EventsService
      */
     protected function determineEventType(string $title, string $description, string $searchQuery): string
     {
-        $combined = strtolower($title . ' ' . $description . ' ' . $searchQuery);
-        
+        $combined = strtolower($title.' '.$description.' '.$searchQuery);
+
         if (Str::contains($combined, ['tournament', 'championship', 'competition', 'esports'])) {
             return 'tournament';
         }
-        
+
         if (Str::contains($combined, ['expo', 'convention', 'conference', 'show'])) {
             return 'expo';
         }
-        
+
         if (Str::contains($combined, ['launch', 'release', 'debut', 'premiere'])) {
             return 'release';
         }
-        
+
         if (Str::contains($combined, ['update', 'patch', 'dlc', 'expansion'])) {
             return 'update';
         }
-        
+
         return 'general';
     }
 }

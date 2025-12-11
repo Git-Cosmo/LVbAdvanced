@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\Event;
 use App\Services\EventsService;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class EventsManagementController extends Controller
@@ -48,7 +47,7 @@ class EventsManagementController extends Controller
                 ->with('success', $message);
         } catch (\Exception $e) {
             return redirect()->route('admin.events.index')
-                ->with('error', 'Failed to import events: ' . $e->getMessage());
+                ->with('error', 'Failed to import events: '.$e->getMessage());
         }
     }
 
@@ -57,7 +56,7 @@ class EventsManagementController extends Controller
      */
     public function toggleFeatured(Event $event): RedirectResponse
     {
-        $event->update(['is_featured' => !$event->is_featured]);
+        $event->update(['is_featured' => ! $event->is_featured]);
 
         return redirect()->route('admin.events.index')
             ->with('success', 'Event featured status updated!');
@@ -68,7 +67,7 @@ class EventsManagementController extends Controller
      */
     public function togglePublished(Event $event): RedirectResponse
     {
-        $event->update(['is_published' => !$event->is_published]);
+        $event->update(['is_published' => ! $event->is_published]);
 
         return redirect()->route('admin.events.index')
             ->with('success', 'Event published status updated!');

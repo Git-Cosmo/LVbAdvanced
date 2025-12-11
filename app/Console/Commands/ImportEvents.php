@@ -40,7 +40,7 @@ class ImportEvents extends Command
             $this->warn('Some errors occurred during import. Check the logs for details or run this command with -v for verbose output.');
         }
 
-        if (!empty($results['messages']) && $this->output->isVerbose()) {
+        if (! empty($results['messages']) && $this->output->isVerbose()) {
             $this->line('');
             $this->line('Details:');
             foreach ($results['messages'] as $message) {

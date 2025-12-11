@@ -18,9 +18,9 @@ class ImportEventsJob implements ShouldQueue
     {
         try {
             Log::info('Starting scheduled events import from OpenWebNinja API');
-            
+
             $results = $eventsService->importEvents();
-            
+
             Log::info('Events import completed', [
                 'success' => $results['success'],
                 'skipped' => $results['skipped'],
@@ -31,7 +31,7 @@ class ImportEventsJob implements ShouldQueue
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
             ]);
-            
+
             throw $e;
         }
     }

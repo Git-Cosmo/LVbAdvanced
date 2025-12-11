@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Log;
 class OpenWebNinjaService
 {
     protected string $baseUrl = 'https://api.openwebninja.com';
+
     protected string $apiKey;
 
     public function __construct()
@@ -18,10 +19,10 @@ class OpenWebNinjaService
     /**
      * Search for real-time events using OpenWebNinja API.
      *
-     * @param string $query Search keyword (required)
-     * @param string|null $date Date filter (any, today, tomorrow, week, weekend, next_week, month, next_month)
-     * @param bool $isVirtual Filter virtual events only
-     * @param int $start Pagination start index
+     * @param  string  $query  Search keyword (required)
+     * @param  string|null  $date  Date filter (any, today, tomorrow, week, weekend, next_week, month, next_month)
+     * @param  bool  $isVirtual  Filter virtual events only
+     * @param  int  $start  Pagination start index
      * @return array Response containing events data and status
      */
     public function searchEvents(
@@ -33,6 +34,7 @@ class OpenWebNinjaService
         try {
             if (empty($this->apiKey)) {
                 Log::error('OpenWebNinja API key not configured');
+
                 return [
                     'success' => false,
                     'error' => 'API key not configured',
@@ -54,8 +56,8 @@ class OpenWebNinjaService
             $response = Http::withHeaders([
                 'x-api-key' => $this->apiKey,
             ])
-            ->timeout(30)
-            ->get("{$this->baseUrl}/realtime-events-data", $params);
+                ->timeout(30)
+                ->get("{$this->baseUrl}/realtime-events-data", $params);
 
             if ($response->successful()) {
                 return [
@@ -67,7 +69,7 @@ class OpenWebNinjaService
 
             $statusCode = $response->status();
             $errorMessage = $response->json('message') ?? $response->body();
-            
+
             Log::error('OpenWebNinja API error', [
                 'status' => $statusCode,
                 'message' => $errorMessage,
@@ -95,9 +97,9 @@ class OpenWebNinjaService
     /**
      * Search for multiple event types in parallel.
      *
-     * @param array $queries Array of search queries
-     * @param string|null $date Date filter
-     * @param bool $isVirtual Filter virtual events
+     * @param  array  $queries  Array of search queries
+     * @param  string|null  $date  Date filter
+     * @param  bool  $isVirtual  Filter virtual events
      * @return array Combined results from all queries
      */
     public function searchMultipleEvents(
@@ -110,16 +112,16 @@ class OpenWebNinjaService
 
         foreach ($queries as $query) {
             $result = $this->searchEvents($query, $date, $isVirtual);
-            
+
             if ($result['success'] && isset($result['data']['events'])) {
                 $allEvents = array_merge($allEvents, $result['data']['events']);
             } else {
-                $errors[] = "Failed to fetch events for query '{$query}': " . ($result['error'] ?? 'Unknown error');
+                $errors[] = "Failed to fetch events for query '{$query}': ".($result['error'] ?? 'Unknown error');
             }
         }
 
         return [
-            'success' => !empty($allEvents) || empty($errors),
+            'success' => ! empty($allEvents) || empty($errors),
             'events' => $allEvents,
             'errors' => $errors,
         ];
