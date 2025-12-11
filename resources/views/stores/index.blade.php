@@ -91,7 +91,7 @@
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
         @forelse($stores as $store)
             @php
-                $storeLogo = $store->logo ? 'https://www.cheapshark.com/' . ltrim($store->logo, '/') : null;
+                $storeLogo = \App\Helpers\CheapSharkHelper::logoUrl($store->logo);
             @endphp
             <div class="dark:bg-dark-bg-secondary bg-light-bg-secondary rounded-lg shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden group">
                 <!-- Store Header -->
