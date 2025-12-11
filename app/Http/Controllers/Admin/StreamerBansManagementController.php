@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\StreamerBan;
 use App\Services\StreamerBansScraperService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
 
 class StreamerBansManagementController extends Controller
@@ -54,7 +55,7 @@ class StreamerBansManagementController extends Controller
             
             return back()->with('success', $message);
         } catch (\Exception $e) {
-            \Log::error('StreamerBans scrape failed: ' . $e->getMessage(), [
+            Log::error('StreamerBans scrape failed: ' . $e->getMessage(), [
                 'exception' => $e,
                 'trace' => $e->getTraceAsString()
             ]);
@@ -81,7 +82,7 @@ class StreamerBansManagementController extends Controller
                 return back()->with('error', "Failed to scrape data for {$validated['username']}");
             }
         } catch (\Exception $e) {
-            \Log::error('StreamerBans scrape failed for ' . $validated['username'] . ': ' . $e->getMessage());
+            Log::error('StreamerBans scrape failed for ' . $validated['username'] . ': ' . $e->getMessage());
             return back()->with('error', 'Failed to scrape streamer: ' . $e->getMessage());
         }
     }

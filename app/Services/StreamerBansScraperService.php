@@ -17,7 +17,7 @@ class StreamerBansScraperService
     {
         $this->client = new Client([
             'timeout' => 30,
-            'verify' => false, // Disable SSL verification if needed
+            'verify' => true, // Keep SSL verification enabled for security
             'headers' => [
                 'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
             ],
@@ -262,8 +262,8 @@ class StreamerBansScraperService
                 $results['failed']++;
             }
 
-            // Be respectful: add a small delay between requests
-            sleep(1);
+            // Be respectful: add a small delay between requests (1 second = 1,000,000 microseconds)
+            usleep(1000000);
         }
 
         Log::info('Scraping complete. Total: ' . $results['total'] . ', Success: ' . $results['success'] . ', Failed: ' . $results['failed']);
@@ -311,8 +311,8 @@ class StreamerBansScraperService
                 $results['failed']++;
             }
 
-            // Be respectful: add a small delay between requests
-            sleep(1);
+            // Be respectful: add a small delay between requests (1 second = 1,000,000 microseconds)
+            usleep(1000000);
         }
 
         return $results;
