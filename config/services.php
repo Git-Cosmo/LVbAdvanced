@@ -64,4 +64,8 @@ return [
         'station_id' => env('AZURACAST_STATION_ID'),
     ],
 
+    'openwebninja' => [
+        'api_key' => env('OPEN_WEB_NINJA_API_KEY'),
+    ],
+
 ];

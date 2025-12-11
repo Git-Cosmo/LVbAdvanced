@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\Event;
 use App\Services\EventsService;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class EventsManagementController extends Controller
@@ -16,7 +15,7 @@ class EventsManagementController extends Controller
      */
     public function index(): View
     {
-        $events = Event::orderBy('start_date', 'desc')
+        $events = Event::orderBy('start_time', 'desc')
             ->paginate(20);
 
         $stats = [
@@ -30,15 +29,15 @@ class EventsManagementController extends Controller
     }
 
     /**
-     * Manually trigger events import.
+     * Manually trigger events import from OpenWebNinja API.
      */
     public function import(EventsService $eventsService): RedirectResponse
     {
         try {
-            $results = $eventsService->scrapeEvents();
+            $results = $eventsService->importEvents();
 
             $message = sprintf(
-                'Events imported successfully! Success: %d, Skipped: %d, Errors: %d',
+                'Events imported successfully from OpenWebNinja API! Success: %d, Skipped: %d, Errors: %d',
                 $results['success'],
                 $results['skipped'],
                 $results['errors']
@@ -48,7 +47,7 @@ class EventsManagementController extends Controller
                 ->with('success', $message);
         } catch (\Exception $e) {
             return redirect()->route('admin.events.index')
-                ->with('error', 'Failed to import events: ' . $e->getMessage());
+                ->with('error', 'Failed to import events: '.$e->getMessage());
         }
     }
 
@@ -57,7 +56,7 @@ class EventsManagementController extends Controller
      */
     public function toggleFeatured(Event $event): RedirectResponse
     {
-        $event->update(['is_featured' => !$event->is_featured]);
+        $event->update(['is_featured' => ! $event->is_featured]);
 
         return redirect()->route('admin.events.index')
             ->with('success', 'Event featured status updated!');
@@ -68,7 +67,7 @@ class EventsManagementController extends Controller
      */
     public function togglePublished(Event $event): RedirectResponse
     {
-        $event->update(['is_published' => !$event->is_published]);
+        $event->update(['is_published' => ! $event->is_published]);
 
         return redirect()->route('admin.events.index')
             ->with('success', 'Event published status updated!');

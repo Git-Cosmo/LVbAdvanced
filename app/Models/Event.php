@@ -3,45 +3,48 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
-use Spatie\Tags\HasTags;
 
 class Event extends Model
 {
-    use HasSlug, HasTags;
+    use HasSlug;
 
     protected $fillable = [
-        'title',
+        'event_id',
+        'name',
         'slug',
+        'link',
         'description',
-        'content',
-        'image',
-        'source',
-        'source_url',
-        'external_id',
+        'language',
+        'date_human_readable',
+        'start_time',
+        'start_time_utc',
+        'start_time_precision_sec',
+        'end_time',
+        'end_time_utc',
+        'end_time_precision_sec',
+        'is_virtual',
+        'thumbnail',
+        'publisher',
+        'publisher_favicon',
+        'publisher_domain',
         'event_type',
-        'game_name',
-        'start_date',
-        'end_date',
-        'location',
-        'venue',
-        'city',
-        'country',
-        'ticket_url',
-        'ticket_info',
-        'organizer',
-        'platform',
-        'tags',
         'is_featured',
         'is_published',
         'views_count',
     ];
 
     protected $casts = [
-        'start_date' => 'datetime',
-        'end_date' => 'datetime',
+        'start_time' => 'datetime',
+        'start_time_utc' => 'datetime',
+        'end_time' => 'datetime',
+        'end_time_utc' => 'datetime',
+        'start_time_precision_sec' => 'integer',
+        'end_time_precision_sec' => 'integer',
+        'is_virtual' => 'boolean',
         'is_featured' => 'boolean',
         'is_published' => 'boolean',
         'views_count' => 'integer',
@@ -53,7 +56,7 @@ class Event extends Model
     public function getSlugOptions(): SlugOptions
     {
         return SlugOptions::create()
-            ->generateSlugsFrom('title')
+            ->generateSlugsFrom('name')
             ->saveSlugsTo('slug')
             ->slugsShouldBeNoLongerThan(100);
     }
@@ -72,6 +75,31 @@ class Event extends Model
     public function importedItems(): HasMany
     {
         return $this->hasMany(EventImportedItem::class);
+    }
+
+    /**
+     * Get ticket links for this event.
+     */
+    public function ticketLinks(): HasMany
+    {
+        return $this->hasMany(EventTicketLink::class);
+    }
+
+    /**
+     * Get info links for this event.
+     */
+    public function infoLinks(): HasMany
+    {
+        return $this->hasMany(EventInfoLink::class);
+    }
+
+    /**
+     * Get venues for this event.
+     */
+    public function venues(): BelongsToMany
+    {
+        return $this->belongsToMany(EventVenue::class, 'event_venue', 'event_id', 'venue_id')
+            ->withTimestamps();
     }
 
     /**
@@ -95,9 +123,9 @@ class Event extends Model
      */
     public function scopeUpcoming($query)
     {
-        return $query->whereNotNull('start_date')
-            ->where('start_date', '>=', now())
-            ->orderBy('start_date', 'asc');
+        return $query->whereNotNull('start_time')
+            ->where('start_time', '>=', now())
+            ->orderBy('start_time', 'asc');
     }
 
     /**
@@ -105,8 +133,8 @@ class Event extends Model
      */
     public function scopePast($query)
     {
-        return $query->where('end_date', '<', now())
-            ->orderBy('start_date', 'desc');
+        return $query->where('end_time', '<', now())
+            ->orderBy('start_time', 'desc');
     }
 
     /**
@@ -114,12 +142,12 @@ class Event extends Model
      */
     public function scopeOngoing($query)
     {
-        return $query->where('start_date', '<=', now())
-            ->where(function($q) {
-                $q->whereNull('end_date')
-                  ->orWhere('end_date', '>=', now());
+        return $query->where('start_time', '<=', now())
+            ->where(function ($q) {
+                $q->whereNull('end_time')
+                    ->orWhere('end_time', '>=', now());
             })
-            ->orderBy('start_date', 'desc');
+            ->orderBy('start_time', 'desc');
     }
 
     /**
@@ -127,7 +155,7 @@ class Event extends Model
      */
     public function isUpcoming(): bool
     {
-        return $this->start_date && $this->start_date->isFuture();
+        return $this->start_time && $this->start_time->isFuture();
     }
 
     /**
@@ -135,12 +163,12 @@ class Event extends Model
      */
     public function isOngoing(): bool
     {
-        if (!$this->start_date) {
+        if (! $this->start_time) {
             return false;
         }
 
-        $hasStarted = $this->start_date->isPast();
-        $hasNotEnded = !$this->end_date || $this->end_date->isFuture();
+        $hasStarted = $this->start_time->isPast();
+        $hasNotEnded = ! $this->end_time || $this->end_time->isFuture();
 
         return $hasStarted && $hasNotEnded;
     }
@@ -150,7 +178,7 @@ class Event extends Model
      */
     public function isPast(): bool
     {
-        return $this->end_date && $this->end_date->isPast();
+        return $this->end_time && $this->end_time->isPast();
     }
 
     /**
@@ -165,6 +193,7 @@ class Event extends Model
         } elseif ($this->isPast()) {
             return 'past';
         }
+
         return 'unknown';
     }
 }

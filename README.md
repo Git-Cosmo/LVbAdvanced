@@ -115,20 +115,28 @@
 - ✅ **Related Articles** - Automatic related content suggestions
 - ✅ **SEO Optimized** - Full meta tags and structured data for news articles
 
-### Gaming Events System
-- ✅ **Real Gaming Events** - Major gaming conventions, expos, and tournaments (PAX, GDC, Gamescom, E3, Tokyo Game Show, etc.)
-- ✅ **Comprehensive Event Data** - Venue names, cities, countries, dates, organizers, and ticket information
-- ✅ **Event Types** - Categorized as expos, tournaments, releases, updates, and general events
-- ✅ **Event Status** - Track upcoming, ongoing, and past events
-- ✅ **Featured Events** - Highlight major events like PAX, GDC, Gamescom on the events page
-- ✅ **Detailed Event Information** - Start/end dates, location, venue, ticket URLs, ticket pricing info
-- ✅ **Automatic Deduplication** - Prevent duplicate events from multiple sources
+### Gaming Events System (OpenWebNinja API)
+- ✅ **Real-Time Events API** - Powered by OpenWebNinja Real-Time Events Search API
+- ✅ **Complete Event Data Storage** - ALL fields from API stored including event_id, name, description, dates, publisher info
+- ✅ **Normalized Venue Data** - Separate venues table with Google Place ID deduplication
+- ✅ **Multiple Ticket Vendors** - Stores all ticket purchase options (Spotify, Ticketmaster, StubHub, etc.) with favicons
+- ✅ **Rich Venue Information** - Full address, coordinates, ratings, phone, website, timezone, venue types
+- ✅ **Google Maps Integration** - Direct links to venue locations with coordinates
+- ✅ **Publisher Attribution** - Event source tracking with publisher name, favicon, and domain
+- ✅ **UTC & Local Times** - Both local and UTC timestamps with precision indicators
+- ✅ **Virtual & In-Person Events** - Support for both formats with clear visual indicators
+- ✅ **Event Types** - Automatically categorized as expos, tournaments, releases, updates, and general events
+- ✅ **Event Status** - Track upcoming, ongoing, and past events with automatic status calculation
+- ✅ **Featured Events** - Highlight important events on the events page
+- ✅ **Automatic Deduplication** - Prevent duplicate events and venues using unique identifiers
 - ✅ **Admin Management** - Feature, publish/unpublish, and delete events from admin panel
-- ✅ **Seeded Major Events** - Pre-populated with 10+ major gaming events for 2026
+- ✅ **Hourly Scheduled Imports** - Automatic event updates every hour via Laravel scheduler
 - ✅ **Manual Import** - Trigger event import manually via admin panel or CLI command (`php artisan events:import`)
-- ✅ **Rich Event Pages** - Detailed event pages with venue, organizer, ticket info, and related events
-- ✅ **Filter & Sort** - Filter by event type and status (upcoming, ongoing, past)
-- ✅ **Ticket Integration** - Direct links to purchase tickets with pricing information
+- ✅ **Rich Event Detail Pages** - Comprehensive display with all data including venue section, ticket sidebar, info links
+- ✅ **Filter & Sort** - Filter by event type (expos, tournaments, releases, updates) and status (upcoming, ongoing, past)
+- ✅ **Related Events** - Smart suggestions based on event type
+- ✅ **DRY & SMART Database** - Normalized schema with venues, ticket links, and info links in separate tables
+- ✅ **Error Handling** - Comprehensive logging and error handling for API failures
 
 ### Frontend
 - ✅ **TailwindCSS** - Modern, responsive design
@@ -200,7 +208,7 @@
    php artisan key:generate
    ```
    
-   Update `.env` with your database and mail configuration:
+   Update `.env` with your database, mail, and API configuration:
    ```env
    DB_CONNECTION=mysql
    DB_HOST=127.0.0.1
@@ -215,6 +223,9 @@
    MAIL_USERNAME=null
    MAIL_PASSWORD=null
    MAIL_FROM_ADDRESS="hello@example.com"
+   
+   # OpenWebNinja API for events (required for events feature)
+   OPEN_WEB_NINJA_API_KEY=your_api_key_here
    ```
 
 4. **Run migrations**
@@ -282,50 +293,231 @@
    - Deals listing: `/deals` (search + store filter)
    - Game detail with all offers: `/game/{slug}`
 
-## Gaming Events Workflow
+## Gaming Events Workflow (OpenWebNinja API Integration)
 
-1. Run a manual import anytime:
+### Overview
+The gaming events system now integrates with **OpenWebNinja Real-Time Events API** to automatically fetch and display real-world gaming events including conventions, tournaments, expos, game launches, and more.
+
+### Quick Setup
+
+**For detailed setup instructions and troubleshooting, see [EVENTS_SETUP.md](EVENTS_SETUP.md)**
+
+1. **Get your API key** from [OpenWebNinja](https://www.openwebninja.com/api/real-time-events-search/)
+2. Copy `.env.example` to `.env` if you haven't already:
    ```bash
-   php artisan events:import
+   cp .env.example .env
    ```
-2. The system automatically seeds major gaming events including:
-   - **Super MAGFest** (January, USA) - Music and Gaming Festival
-   - **Taipei Game Show** (January, Taiwan) - Asia's premier gaming event
-   - **PAX East** (March, Boston) - Gaming fan convention
-   - **GDC** (March, San Francisco) - Game Developers Conference
-   - **E3** (June, Los Angeles) - Electronic Entertainment Expo
-   - **gamescom** (August, Cologne) - World's largest gaming event
-   - **PAX West** (September, Seattle) - Original PAX event
-   - **Tokyo Game Show** (September, Japan) - Major Japanese gaming expo
-   - **PAX Australia** (October, Melbourne) - PAX Down Under
-   - Plus additional events like Reboot Develop Blue
-3. Each event includes:
-   - **Venue Details** - Exact venue name and location
-   - **Dates** - Start and end dates
-   - **Organizer** - Who runs the event
-   - **Ticket Information** - Pricing details and ticket purchase links
-   - **City & Country** - Full location details
-   - **Official Website** - Links to event websites
-4. Manual imports are available in the admin panel at **Admin → Events Management**.
-5. Frontend routes:
-   - Events listing: `/events` (filter by type and status)
-   - Event detail: `/events/{slug}` (full event information with ticket links)
-6. Event types include:
-   - **Expos** - Gaming conventions and trade shows
-   - **Tournaments** - Esports competitions
-   - **Releases** - Game launches and release dates
-   - **Updates** - Game patches, DLC, and expansions
-   - **General** - Other gaming-related events
-7. Events can be filtered by status:
-   - **Upcoming** - Future events that haven't started yet
-   - **Ongoing** - Currently active events
-   - **Past** - Completed events
-8. Admin controls:
-   - Feature/unfeature events to highlight them on the events page
-   - Publish/unpublish events to control visibility
-   - Delete events that are no longer relevant
-   - View event statistics (total, upcoming, ongoing, featured)
-9. No API keys required - major events are seeded directly into the system
+3. Add your API key to `.env`:
+   ```env
+   OPEN_WEB_NINJA_API_KEY=your_api_key_here
+   ```
+4. Clear configuration cache:
+   ```bash
+   php artisan config:clear
+   ```
+
+**⚠️ Common Issue:** If you get a "Missing Authentication Token" error, your API key is not configured correctly. See [EVENTS_SETUP.md](EVENTS_SETUP.md) for troubleshooting.
+
+### Import Events
+
+Run a manual import anytime:
+```bash
+php artisan events:import
+```
+
+The command is scheduled to run hourly via `routes/console.php` (ensure your scheduler runs `php artisan schedule:run`).
+
+### Event Data
+
+Events imported from OpenWebNinja API include comprehensive information:
+
+**Core Event Data:**
+- **Event ID** - Unique identifier from API for deduplication
+- **Name & Description** - Full event information
+- **Link** - Direct link to event page
+- **Language** - Event language code (e.g., "en")
+- **Thumbnail** - Event image/poster
+
+**Date & Time Information:**
+- **Human-readable date** - Formatted date string (e.g., "Fri, Feb 14, 10:00 – 11:30 PM PST")
+- **Start time** - Local and UTC timestamps with precision indicators
+- **End time** - Local and UTC timestamps with precision indicators
+
+**Venue Information (Normalized):**
+- **Venue name** - Name of the event location
+- **Google ID** - Unique Google Place ID for deduplication
+- **Ratings** - Review count and average rating from Google
+- **Contact** - Phone number and website
+- **Address** - Full address with coordinates (latitude/longitude)
+- **Location details** - City, state, country, zipcode, timezone
+- **Venue types** - Primary type and all subtypes (e.g., "Live music venue", "Event venue")
+
+**Ticket & Information Links:**
+- **Multiple ticket vendors** - Links to purchase from various platforms (Spotify, Ticketmaster, StubHub, etc.)
+- **Vendor favicons** - Visual identification of ticket sources
+- **Info links** - Additional sources for event information and reviews
+
+**Publisher Attribution:**
+- **Publisher name** - Source of the event data
+- **Publisher favicon** - Visual branding
+- **Publisher domain** - Website domain
+
+**Classification:**
+- **Event type** - Automatically categorized (expo, tournament, release, update, general)
+- **Virtual/In-Person** - Clear indicator of event format
+- **Automatic Deduplication** - Prevents duplicate imports using API event_id
+
+### API Parameters
+
+The system searches for events using multiple queries:
+- Gaming conventions
+- Esports tournaments
+- Game developer conferences
+- Video game expos
+- Gaming festivals
+- Game launches
+- General gaming events
+
+You can customize search parameters in `app/Services/EventsService.php`.
+
+### Database Schema
+
+Events are stored in a normalized, DRY database structure with the following tables:
+
+**`events` table (main event data):**
+- Core fields: `event_id` (API ID), `name`, `slug`, `link`, `description`, `language`
+- Date/time fields: `date_human_readable`, `start_time`, `start_time_utc`, `start_time_precision_sec`, `end_time`, `end_time_utc`, `end_time_precision_sec`
+- Media: `thumbnail`, `publisher`, `publisher_favicon`, `publisher_domain`
+- Classification: `event_type` (expo, tournament, release, update, general), `is_virtual`
+- Management: `is_featured`, `is_published`, `views_count`
+
+**`event_venues` table (normalized venue data to avoid duplication):**
+- Identification: `google_id` (unique), `name`, `phone_number`, `website`
+- Ratings: `review_count`, `rating`
+- Types: `subtype`, `subtypes` (JSON array)
+- Address: `full_address`, `latitude`, `longitude`, `district`, `street_number`, `street`, `city`, `zipcode`, `state`, `country`, `timezone`, `google_mid`
+- Venues are reused across multiple events via pivot table
+
+**`event_venue` table (pivot):**
+- Many-to-many relationship between events and venues
+- Allows multiple events at the same venue without data duplication
+
+**`event_ticket_links` table:**
+- Stores all ticket purchase options: `event_id`, `source`, `link`, `fav_icon`
+- Each event can have multiple ticket vendors (Spotify, Ticketmaster, etc.)
+
+**`event_info_links` table:**
+- Additional information sources: `event_id`, `source`, `link`
+- Links to articles, reviews, and event information pages
+
+**`event_imported_items` table:**
+- Tracks imports: `source`, `external_id`, `event_id`
+- Prevents duplicates with unique constraint on `source` + `external_id`
+
+### Frontend Features
+
+**Events listing** (`/events`):
+- Filter by type: All, Releases, Tournaments, Expos, Updates
+- Filter by status: Upcoming, Ongoing, Past, All
+- Virtual event indicator badge on each card
+- Featured events showcase section
+- Event thumbnails and human-readable dates
+- Pagination support
+
+**Event detail page** (`/events/{slug}`):
+- **Rich event header**: Thumbnail, event name, badges (type, status, virtual/in-person, featured)
+- **Date display**: Human-readable date and separate local/UTC time sections
+- **Full venue information**:
+  - Venue name with Google ratings and review count
+  - Complete address with Google Maps integration link
+  - Phone number and website links
+  - Venue type and subtypes
+- **Ticket purchasing sidebar**:
+  - Multiple ticket vendor options with source favicons
+  - Direct links to purchase from various platforms (Spotify, Ticketmaster, etc.)
+- **Additional information sidebar**:
+  - Links to event articles and reviews
+  - Publisher attribution with favicon
+- **Related events**: Suggests similar events by type
+- **View count tracking**: Increments on each page view
+
+### Admin Controls
+
+Admin panel at **Admin → Events Management** (`/admin/events`):
+- View all imported events
+- Statistics dashboard (total, upcoming, ongoing, featured)
+- Manual import trigger
+- Feature/unfeature events
+- Publish/unpublish events
+- Delete events
+- Event filtering and pagination
+
+### Event Types
+
+Events are automatically categorized based on content:
+- **Expos** - Gaming conventions, trade shows, conferences
+- **Tournaments** - Esports competitions, championships
+- **Releases** - Game launches, debuts, premieres
+- **Updates** - Game patches, DLC, expansions
+- **General** - Other gaming-related events
+
+### Event Status
+
+Events are automatically tracked by status:
+- **Upcoming** - Future events (start date is in the future)
+- **Ongoing** - Currently active (started but not ended)
+- **Past** - Completed events (end date has passed)
+
+### API Integration Details
+
+**Endpoint:** `https://api.openwebninja.com/realtime-events-data`
+
+**Authentication:** API key sent via `x-api-key` HTTP header
+
+**Rate Limiting:** Respects API rate limits with proper error handling
+
+**Error Handling:** Comprehensive logging for debugging issues
+
+### Data Flow & Architecture
+
+**Import Process:**
+```
+OpenWebNinja API → EventsService → Database (normalized) → Frontend Views
+```
+
+1. **API Request**: EventsService queries OpenWebNinja API with search terms (gaming conventions, esports tournaments, etc.)
+2. **Data Processing**: 
+   - Event records created with all API fields
+   - Venues extracted and deduplicated by `google_id`
+   - Ticket links created for each vendor
+   - Info links created for additional sources
+3. **Storage**: Data stored in normalized tables to avoid duplication
+4. **Display**: Frontend loads events with eager-loaded relationships (venues, ticket links, info links)
+
+**Key Architecture Decisions:**
+
+**DRY (Don't Repeat Yourself):**
+- Venues stored in separate table and reused across events
+- Same venue (identified by Google Place ID) referenced by multiple events
+- No duplicate venue data in database
+
+**SMART Storage:**
+- Normalized database structure with proper foreign keys
+- Indexed fields for optimal query performance (event_id, start_time, google_id, etc.)
+- JSON arrays for venue subtypes (preserves array structure from API)
+- Separate tables for ticket links and info links (one-to-many relationships)
+
+**Error Handling:**
+- API failures logged with full context
+- Missing required fields (event_id) handled gracefully
+- Duplicate imports prevented at database level (unique constraints)
+- All API responses validated before storage
+
+**Service-Based Architecture:**
+- OpenWebNinjaService: API communication and authentication
+- EventsService: Business logic for importing and mapping data
+- Models: Event, EventVenue, EventTicketLink, EventInfoLink
+- Controller: EventsController with eager loading for performance
 
 ## Azuracast Radio Integration
 

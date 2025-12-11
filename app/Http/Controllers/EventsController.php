@@ -22,7 +22,7 @@ class EventsController extends Controller
 
         // Filter by status
         $status = $request->get('status', 'upcoming');
-        
+
         if ($status === 'upcoming') {
             $query->upcoming();
         } elseif ($status === 'ongoing') {
@@ -30,7 +30,7 @@ class EventsController extends Controller
         } elseif ($status === 'past') {
             $query->past();
         } else {
-            $query->orderBy('start_date', 'desc');
+            $query->orderBy('start_time', 'desc');
         }
 
         $events = $query->paginate(12);
@@ -49,19 +49,16 @@ class EventsController extends Controller
      */
     public function show(Event $event): View
     {
+        // Eager load relationships
+        $event->load(['venues', 'ticketLinks', 'infoLinks']);
+
         // Increment views count
         $event->increment('views_count');
 
-        // Get related events (same type or game)
+        // Get related events (same type)
         $relatedEvents = Event::published()
             ->where('id', '!=', $event->id)
-            ->where(function ($query) use ($event) {
-                $query->where('event_type', $event->event_type);
-                // Only match on game_name if both events have non-null game names
-                if ($event->game_name) {
-                    $query->orWhere('game_name', $event->game_name);
-                }
-            })
+            ->where('event_type', $event->event_type)
             ->limit(3)
             ->get();
 
