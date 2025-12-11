@@ -11,9 +11,34 @@ Disallow: /register
 Disallow: /password/
 Disallow: /2fa/
 Disallow: /notifications/
+Disallow: /email/
+
+# Disallow search result pages to prevent duplicate content
+Disallow: /search?
+Disallow: /forum/search?
+
+# Disallow user-specific pages that shouldn't be indexed
+Disallow: /profile/*/edit
+Disallow: /messages/
+
+# Allow crawling of important content
+Allow: /forum/
+Allow: /news/
+Allow: /events/
+Allow: /downloads/
+Allow: /deals/
+Allow: /clips/
+Allow: /streamerbans/
 
 # Sitemap (relative path works for all domains)
 Sitemap: /sitemap.xml
 
 # Crawl rate (optional - adjust based on server capacity)
 Crawl-delay: 1
+
+# Cache friendly
+User-agent: Googlebot
+Crawl-delay: 0
+
+User-agent: Bingbot
+Crawl-delay: 0

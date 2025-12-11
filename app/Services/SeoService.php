@@ -57,18 +57,47 @@ class SeoService
      */
     protected function generateStructuredData(array $meta): array
     {
-        return [
+        $structuredData = [
             '@context' => 'https://schema.org',
-            '@type' => 'WebSite',
+            '@type' => $meta['schema_type'] ?? 'WebSite',
             'name' => 'FPSociety',
-            'url' => config('app.url'),
+            'url' => $meta['url'] ?? url()->current(),
             'description' => $meta['description'],
-            'potentialAction' => [
-                '@type' => 'SearchAction',
-                'target' => config('app.url') . '/forum/search?q={search_term_string}',
-                'query-input' => 'required name=search_term_string',
-            ],
         ];
+
+        // Add search action for website type
+        if (!isset($meta['schema_type']) || $meta['schema_type'] === 'WebSite') {
+            $structuredData['potentialAction'] = [
+                '@type' => 'SearchAction',
+                'target' => [
+                    '@type' => 'EntryPoint',
+                    'urlTemplate' => config('app.url') . '/search?q={search_term_string}',
+                ],
+                'query-input' => 'required name=search_term_string',
+            ];
+        }
+
+        // Add additional properties based on type
+        if (isset($meta['author'])) {
+            $structuredData['author'] = [
+                '@type' => 'Person',
+                'name' => $meta['author'],
+            ];
+        }
+
+        if (isset($meta['datePublished'])) {
+            $structuredData['datePublished'] = $meta['datePublished'];
+        }
+
+        if (isset($meta['dateModified'])) {
+            $structuredData['dateModified'] = $meta['dateModified'];
+        }
+
+        if (isset($meta['image'])) {
+            $structuredData['image'] = $meta['image'];
+        }
+
+        return $structuredData;
     }
 
     /**
@@ -82,5 +111,152 @@ class SeoService
             'keywords' => $game . ', gaming, mods, custom maps, skins, ' . strtolower($title) . ', FPSociety',
             'type' => 'article',
         ]);
+    }
+
+    /**
+     * Generate Article structured data (for news, blog posts, forum threads)
+     */
+    public function generateArticleStructuredData(array $data): array
+    {
+        $defaults = [
+            'headline' => '',
+            'description' => '',
+            'author' => '',
+            'datePublished' => now()->toIso8601String(),
+            'dateModified' => now()->toIso8601String(),
+            'image' => asset('images/og-image.jpg'),
+            'url' => url()->current(),
+        ];
+
+        $article = array_merge($defaults, $data);
+
+        return [
+            '@context' => 'https://schema.org',
+            '@type' => 'Article',
+            'headline' => $article['headline'],
+            'description' => $article['description'],
+            'author' => [
+                '@type' => 'Person',
+                'name' => $article['author'],
+            ],
+            'publisher' => [
+                '@type' => 'Organization',
+                'name' => 'FPSociety',
+                'logo' => [
+                    '@type' => 'ImageObject',
+                    'url' => asset('images/logo.png'),
+                ],
+            ],
+            'datePublished' => $article['datePublished'],
+            'dateModified' => $article['dateModified'],
+            'image' => $article['image'],
+            'url' => $article['url'],
+        ];
+    }
+
+    /**
+     * Generate BreadcrumbList structured data
+     */
+    public function generateBreadcrumbStructuredData(array $items): array
+    {
+        $listItems = [];
+        foreach ($items as $index => $item) {
+            $listItems[] = [
+                '@type' => 'ListItem',
+                'position' => $index + 1,
+                'name' => $item['name'],
+                'item' => $item['url'],
+            ];
+        }
+
+        return [
+            '@context' => 'https://schema.org',
+            '@type' => 'BreadcrumbList',
+            'itemListElement' => $listItems,
+        ];
+    }
+
+    /**
+     * Generate Organization structured data
+     */
+    public function generateOrganizationStructuredData(): array
+    {
+        return [
+            '@context' => 'https://schema.org',
+            '@type' => 'Organization',
+            'name' => 'FPSociety',
+            'url' => config('app.url'),
+            'logo' => asset('images/logo.png'),
+            'description' => 'FPSociety is the ultimate gaming community for Counter Strike 2, GTA V, Fortnite, Call of Duty and more.',
+            'sameAs' => [
+                // Add social media links here when available
+            ],
+        ];
+    }
+
+    /**
+     * Generate VideoObject structured data
+     */
+    public function generateVideoStructuredData(array $data): array
+    {
+        $defaults = [
+            'name' => '',
+            'description' => '',
+            'thumbnailUrl' => '',
+            'uploadDate' => now()->toIso8601String(),
+            'contentUrl' => '',
+            'embedUrl' => '',
+        ];
+
+        $video = array_merge($defaults, $data);
+
+        return [
+            '@context' => 'https://schema.org',
+            '@type' => 'VideoObject',
+            'name' => $video['name'],
+            'description' => $video['description'],
+            'thumbnailUrl' => $video['thumbnailUrl'],
+            'uploadDate' => $video['uploadDate'],
+            'contentUrl' => $video['contentUrl'],
+            'embedUrl' => $video['embedUrl'],
+        ];
+    }
+
+    /**
+     * Generate Event structured data
+     */
+    public function generateEventStructuredData(array $data): array
+    {
+        $defaults = [
+            'name' => '',
+            'description' => '',
+            'startDate' => '',
+            'endDate' => '',
+            'location' => '',
+            'image' => asset('images/og-image.jpg'),
+            'url' => url()->current(),
+        ];
+
+        $event = array_merge($defaults, $data);
+
+        return [
+            '@context' => 'https://schema.org',
+            '@type' => 'Event',
+            'name' => $event['name'],
+            'description' => $event['description'],
+            'startDate' => $event['startDate'],
+            'endDate' => $event['endDate'],
+            'location' => [
+                '@type' => 'VirtualLocation',
+                'url' => $event['location'],
+            ],
+            'image' => $event['image'],
+            'url' => $event['url'],
+            'organizer' => [
+                '@type' => 'Organization',
+                'name' => 'FPSociety',
+                'url' => config('app.url'),
+            ],
+        ];
     }
 }
