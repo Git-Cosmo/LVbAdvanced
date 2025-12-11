@@ -11,11 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // Add full-text index on forum_threads (title, content)
-        DB::statement('ALTER TABLE forum_threads ADD FULLTEXT ft_forum_threads_search (title, content)');
+        // Add full-text index on forum_threads (title only - content is in forum_posts)
+        DB::statement('ALTER TABLE forum_threads ADD FULLTEXT ft_forum_threads_search (title)');
         
-        // Add full-text index on forum_posts (content)
-        DB::statement('ALTER TABLE forum_posts ADD FULLTEXT ft_forum_posts_search (content)');
+        // Note: forum_posts already has a fulltext index on content created in its migration
         
         // Add full-text index on news (title, excerpt, content)
         DB::statement('ALTER TABLE news ADD FULLTEXT ft_news_search (title, excerpt, content)');
@@ -28,7 +27,6 @@ return new class extends Migration
     {
         // Note: Full-text indexes are dropped by dropping the index name
         DB::statement('ALTER TABLE forum_threads DROP INDEX ft_forum_threads_search');
-        DB::statement('ALTER TABLE forum_posts DROP INDEX ft_forum_posts_search');
         DB::statement('ALTER TABLE news DROP INDEX ft_news_search');
     }
 };
