@@ -61,10 +61,14 @@ class DevelopmentSeeder extends Seeder
             $threadsData[] = ['id' => $thread->id, 'posts_count' => $postCount + 1];
         }
 
-        // Bulk update thread post counts
-        foreach ($threadsData as $data) {
-            ForumThread::where('id', $data['id'])->update(['posts_count' => $data['posts_count']]);
-        }
+        // Bulk update thread post counts using DB transaction
+        \DB::transaction(function () use ($threadsData) {
+            foreach ($threadsData as $data) {
+                \DB::table('forum_threads')
+                    ->where('id', $data['id'])
+                    ->update(['posts_count' => $data['posts_count']]);
+            }
+        });
 
         // Create 20 news articles
         $this->command->info('Creating 20 news articles...');

@@ -186,18 +186,25 @@
         max-width: 100%;
         height: auto;
     }
-    
-    /* Better mobile navigation */
-    .mobile-menu {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        z-index: 50;
-        background: var(--color-dark-bg-primary);
-        overflow-y: auto;
-    }
+}
+
+/* Better mobile navigation (theme-aware) */
+.mobile-menu {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 50;
+    overflow-y: auto;
+}
+
+.dark .mobile-menu {
+    background: var(--color-dark-bg-primary);
+}
+
+.light .mobile-menu {
+    background: var(--color-light-bg-primary);
 }
 
 /* Focus styles for accessibility */
