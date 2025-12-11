@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('streamerbans', function (Blueprint $table) {
+        Schema::create('streamer_bans', function (Blueprint $table) {
             $table->id();
             $table->string('username')->unique();
             $table->string('slug')->unique();
@@ -47,6 +47,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('streamerbans');
+        Schema::dropIfExists('streamer_bans');
     }
 };

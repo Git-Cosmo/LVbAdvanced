@@ -31,39 +31,37 @@ class StreamerBansScraperService
     {
         try {
             Log::info('Starting to scrape streamer list from ' . $this->baseUrl . '/streamers');
-            
             $response = $this->client->get($this->baseUrl . '/streamers');
             $html = $response->getBody()->getContents();
-            
+            Log::debug('Streamer list page HTML: ' . substr($html, 0, 2000)); // Log first 2000 chars for debug
             $crawler = new Crawler($html);
             $streamers = [];
 
-            // Try multiple selectors to find streamer links
-            // Common patterns: links containing /user/, streamer names in tables, etc.
-            
-            // Method 1: Find all links that match /user/ pattern
-            $crawler->filter('a[href*="/user/"]')->each(function (Crawler $node) use (&$streamers) {
-                $href = $node->attr('href');
-                if (preg_match('/\/user\/([^\/\?]+)/', $href, $matches)) {
-                    $username = $matches[1];
-                    if (!in_array($username, $streamers)) {
-                        $streamers[] = $username;
+            // New: Use the actual structure from the latest site
+            // The streamer list is in a <ul> with grid classes, each <li> contains an <a href="/user/username">
+            $crawler->filter('ul.grid > li')->each(function (Crawler $li) use (&$streamers) {
+                $a = $li->filter('a[href^="/user/"]');
+                if ($a->count() > 0) {
+                    $href = $a->attr('href');
+                    if (preg_match('/\/user\/([^\/\?]+)/', $href, $matches)) {
+                        $username = $matches[1];
+                        if (!in_array($username, $streamers)) {
+                            $streamers[] = $username;
+                        }
                     }
                 }
             });
 
-            // Method 2: If no streamers found, try looking for table rows or list items
+            // Fallback: If not found, try all a[href^="/user/"]
             if (empty($streamers)) {
-                $crawler->filter('table tr, ul li, .streamer-item')->each(function (Crawler $node) use (&$streamers) {
-                    $node->filter('a')->each(function (Crawler $link) use (&$streamers) {
-                        $href = $link->attr('href');
-                        if (preg_match('/\/user\/([^\/\?]+)/', $href, $matches)) {
-                            $username = $matches[1];
-                            if (!in_array($username, $streamers)) {
-                                $streamers[] = $username;
-                            }
+                $crawler->filter('a[href^="/user/"]')->each(function (Crawler $a) use (&$streamers) {
+                    $href = $a->attr('href');
+                    if (preg_match('/\/user\/([^\/\?]+)/', $href, $matches)) {
+                        $username = $matches[1];
+                        if (!in_array($username, $streamers)) {
+                            $streamers[] = $username;
                         }
-                    });
+                    }
                 });
             }
 
@@ -83,12 +81,11 @@ class StreamerBansScraperService
         try {
             $url = $this->baseUrl . '/user/' . $username;
             Log::info('Scraping streamer page: ' . $url);
-            
             $response = $this->client->get($url);
             $html = $response->getBody()->getContents();
-            
+            Log::debug('Streamer page HTML for ' . $username . ': ' . substr($html, 0, 2000));
             $crawler = new Crawler($html);
-            
+
             $data = [
                 'username' => $username,
                 'profile_url' => $url,
@@ -99,109 +96,51 @@ class StreamerBansScraperService
                 'ban_history' => [],
             ];
 
-            // Extract avatar (common selectors)
+            // Extract avatar: look for the main profile image in the streamer card
             try {
-                $avatar = $crawler->filter('img.avatar, img.profile-image, .user-avatar img, .streamer-avatar img')->first();
-                if ($avatar->count() > 0) {
-                    $data['avatar_url'] = $avatar->attr('src');
+                $img = $crawler->filter('a[href^="/user/"] img, .overflow-hidden img, img[alt]')->first();
+                if ($img->count() > 0) {
+                    $data['avatar_url'] = $img->attr('src');
                 }
             } catch (\Exception $e) {
                 Log::debug('Could not find avatar for ' . $username);
             }
 
-            // Extract total bans (look for text like "Total Bans: 5" or similar)
+            // Extract stats: find all <dt> and <dd> pairs in the stats section
             try {
-                $totalBansText = $crawler->filterXPath('//*[contains(text(), "Total") and contains(text(), "Ban")]')->first();
-                if ($totalBansText->count() > 0) {
-                    $text = $totalBansText->text();
-                    if (preg_match('/(\d+)/', $text, $matches)) {
-                        $data['total_bans'] = (int) $matches[1];
-                    }
-                }
-            } catch (\Exception $e) {
-                Log::debug('Could not find total bans for ' . $username);
-            }
-
-            // Alternative: Look for a stats section or card
-            if ($data['total_bans'] === 0) {
-                try {
-                    $crawler->filter('.stat, .stats-item, .ban-stat, .metric')->each(function (Crawler $node) use (&$data) {
-                        $text = $node->text();
-                        if (stripos($text, 'total') !== false && stripos($text, 'ban') !== false) {
-                            if (preg_match('/(\d+)/', $text, $matches)) {
-                                $data['total_bans'] = (int) $matches[1];
-                            }
+                $crawler->filter('dl.grid > div')->each(function (Crawler $div) use (&$data) {
+                    $dt = $div->filter('dt');
+                    $dd = $div->filter('dd');
+                    if ($dt->count() && $dd->count()) {
+                        $label = trim($dt->text());
+                        $value = trim($dd->text());
+                        if (stripos($label, 'Total Bans') !== false) {
+                            $data['total_bans'] = (int) filter_var($value, FILTER_SANITIZE_NUMBER_INT);
+                        } elseif (stripos($label, 'Last Ban') !== false) {
+                            $data['last_ban'] = $value;
+                        } elseif (stripos($label, 'Longest Ban') !== false) {
+                            $data['longest_ban'] = $value;
                         }
-                    });
-                } catch (\Exception $e) {
-                    Log::debug('Could not find total bans in stats section for ' . $username);
-                }
-            }
-
-            // Extract last ban
-            try {
-                $lastBanText = $crawler->filterXPath('//*[contains(text(), "Last") and contains(text(), "Ban")]')->first();
-                if ($lastBanText->count() > 0) {
-                    $text = $lastBanText->text();
-                    // Extract date pattern or duration
-                    if (preg_match('/(\d{4}-\d{2}-\d{2}|\d+\s+(?:day|hour|minute)s?\s+ago)/', $text, $matches)) {
-                        $data['last_ban'] = $matches[1];
-                    }
-                }
-            } catch (\Exception $e) {
-                Log::debug('Could not find last ban for ' . $username);
-            }
-
-            // Extract longest ban
-            try {
-                $longestBanText = $crawler->filterXPath('//*[contains(text(), "Longest") and contains(text(), "Ban")]')->first();
-                if ($longestBanText->count() > 0) {
-                    $text = $longestBanText->text();
-                    // Extract duration
-                    if (preg_match('/(\d+\s+(?:day|hour|minute)s?)/', $text, $matches)) {
-                        $data['longest_ban'] = $matches[1];
-                    }
-                }
-            } catch (\Exception $e) {
-                Log::debug('Could not find longest ban for ' . $username);
-            }
-
-            // Extract ban history (look for tables, lists, or timeline elements)
-            try {
-                // Method 1: Table rows
-                $crawler->filter('table.ban-history tr, table.bans-table tr, .ban-list tr')->each(function (Crawler $row, $i) use (&$data) {
-                    if ($i === 0) return; // Skip header row
-                    
-                    $cells = $row->filter('td');
-                    if ($cells->count() >= 2) {
-                        $banEntry = [
-                            'date' => trim($cells->eq(0)->text()),
-                            'duration' => trim($cells->eq(1)->text()),
-                            'reason' => $cells->count() > 2 ? trim($cells->eq(2)->text()) : null,
-                        ];
-                        $data['ban_history'][] = $banEntry;
                     }
                 });
+            } catch (\Exception $e) {
+                Log::debug('Could not extract stats for ' . $username);
+            }
 
-                // Method 2: List items
-                if (empty($data['ban_history'])) {
-                    $crawler->filter('ul.ban-history li, .ban-list-item, .ban-entry')->each(function (Crawler $item) use (&$data) {
-                        $text = $item->text();
-                        $banEntry = [
-                            'text' => trim($text),
+            // Extract ban history: look for the Recent Activity table
+            try {
+                $crawler->filter('table tr')->each(function (Crawler $row, $i) use (&$data) {
+                    if ($i === 0) return; // skip header
+                    $cells = $row->filter('td');
+                    if ($cells->count() === 3) {
+                        $activity = trim($cells->eq(1)->text());
+                        $date = trim($cells->eq(2)->text());
+                        $data['ban_history'][] = [
+                            'activity' => $activity,
+                            'date' => $date,
                         ];
-                        
-                        // Try to extract structured data from text
-                        if (preg_match('/(\d{4}-\d{2}-\d{2})/', $text, $dateMatches)) {
-                            $banEntry['date'] = $dateMatches[1];
-                        }
-                        if (preg_match('/(\d+\s+(?:day|hour|minute)s?)/', $text, $durationMatches)) {
-                            $banEntry['duration'] = $durationMatches[1];
-                        }
-                        
-                        $data['ban_history'][] = $banEntry;
-                    });
-                }
+                    }
+                });
             } catch (\Exception $e) {
                 Log::debug('Could not extract ban history for ' . $username);
             }
