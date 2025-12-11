@@ -438,11 +438,6 @@ The portal homepage (`resources/views/portal/home.blade.php`) displays real-time
 - Latest downloads with thumbnails and stats
 - Recent forum threads with activity timestamps
 - Forum statistics and user information
-The portal homepage is a static Blade template (`resources/views/portal/home.blade.php`) that displays:
-- Hero section with call-to-action
-- Feature cards highlighting system capabilities
-- Live statistics (users, forums, threads, posts)
-- Registration/login prompts for guests
 
 ### FPSociety Architecture
 The application is built using standard Laravel architecture with specialized gaming community features:
@@ -804,12 +799,14 @@ XP_DAILY_LOGIN=5
 
 ### Universal Search (Spatie Searchable)
 - Powerful search across ALL models using Spatie's laravel-searchable package
+- Replaces the previous MySQL full-text search with more flexible Spatie Searchable implementation
 - Search forums, posts, news, downloads, and users simultaneously
 - Attractive grouped results by model type
 - Model-specific metadata displayed for each result type
 - Integrated search bar in navigation
 - Dedicated search page at `/search`
 - SEO-friendly implementation with proper meta tags
+- Advanced filtering and relevancy-based ranking
 
 ### Downloads Rename (formerly Gallery/Media)
 - All URLs changed from `/media` to `/downloads` for clarity
