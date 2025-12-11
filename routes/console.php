@@ -21,3 +21,4 @@ Artisan::command('cheapshark:sync {--runType=manual}', function (CheapSharkServi
 // NOTE: To enable scheduled automation, ensure that `php artisan schedule:run` is configured to run every minute in your system's cron or task scheduler.
 Schedule::job(new SyncCheapSharkJob())->withoutOverlapping()->hourly();
 Schedule::job(new ImportRssFeedsJob())->withoutOverlapping()->hourly();
+Schedule::job(new \App\Jobs\ImportEventsJob())->withoutOverlapping()->hourly();

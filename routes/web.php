@@ -257,6 +257,15 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
         Route::post('/update-xp', [\App\Http\Controllers\Admin\GamificationController::class, 'updateXPSettings'])->name('update-xp');
         Route::post('/reset-season', [\App\Http\Controllers\Admin\GamificationController::class, 'resetSeason'])->name('reset-season');
     });
+    
+    // Events Management
+    Route::prefix('events')->name('events.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Admin\EventsManagementController::class, 'index'])->name('index');
+        Route::post('/import', [\App\Http\Controllers\Admin\EventsManagementController::class, 'import'])->name('import');
+        Route::post('/{event}/toggle-featured', [\App\Http\Controllers\Admin\EventsManagementController::class, 'toggleFeatured'])->name('toggle-featured');
+        Route::post('/{event}/toggle-published', [\App\Http\Controllers\Admin\EventsManagementController::class, 'togglePublished'])->name('toggle-published');
+        Route::delete('/{event}', [\App\Http\Controllers\Admin\EventsManagementController::class, 'destroy'])->name('destroy');
+    });
 });
 
 // Public Leaderboard Route
@@ -274,6 +283,12 @@ Route::prefix('activity')->name('activity.')->group(function () {
 Route::prefix('news')->name('news.')->group(function () {
     Route::get('/', [\App\Http\Controllers\NewsController::class, 'index'])->name('index');
     Route::get('/{news}', [\App\Http\Controllers\NewsController::class, 'show'])->name('show');
+});
+
+// Events Routes
+Route::prefix('events')->name('events.')->group(function () {
+    Route::get('/', [\App\Http\Controllers\EventsController::class, 'index'])->name('index');
+    Route::get('/{event}', [\App\Http\Controllers\EventsController::class, 'show'])->name('show');
 });
 
 // Downloads Routes (formerly Media & Gallery)
