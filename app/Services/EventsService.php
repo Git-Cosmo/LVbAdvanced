@@ -214,11 +214,23 @@ class EventsService
     {
         $googleId = $venueData['google_id'] ?? null;
 
-        // Try to find existing venue by google_id
+        // Try to find existing venue by google_id, or fallback to name/address if missing
         if ($googleId) {
             $venue = EventVenue::where('google_id', $googleId)->first();
         } else {
+            // Fallback: try to find by name and full_address (or name + city if full_address missing)
             $venue = null;
+            if (!empty($venueData['name'])) {
+                $venueQuery = EventVenue::query()->where('name', $venueData['name']);
+                
+                if (!empty($venueData['full_address'])) {
+                    $venueQuery->where('full_address', $venueData['full_address']);
+                } elseif (!empty($venueData['city'])) {
+                    $venueQuery->where('city', $venueData['city']);
+                }
+                
+                $venue = $venueQuery->first();
+            }
         }
 
         // Create or update venue
@@ -257,10 +269,18 @@ class EventsService
     protected function processTicketLinks(Event $event, array $ticketLinks): void
     {
         foreach ($ticketLinks as $link) {
+            if (empty($link['link'])) {
+                Log::warning('Skipping EventTicketLink creation: missing or empty link.', [
+                    'event_id' => $event->id,
+                    'ticket_link_data' => $link,
+                ]);
+                continue;
+            }
+            
             EventTicketLink::create([
                 'event_id' => $event->id,
                 'source' => $link['source'] ?? 'Unknown',
-                'link' => $link['link'] ?? '',
+                'link' => $link['link'],
                 'fav_icon' => $link['fav_icon'] ?? null,
             ]);
         }
@@ -272,10 +292,18 @@ class EventsService
     protected function processInfoLinks(Event $event, array $infoLinks): void
     {
         foreach ($infoLinks as $link) {
+            if (empty($link['link'])) {
+                Log::warning('Skipping EventInfoLink creation: missing or empty link.', [
+                    'event_id' => $event->id,
+                    'info_link_data' => $link,
+                ]);
+                continue;
+            }
+            
             EventInfoLink::create([
                 'event_id' => $event->id,
                 'source' => $link['source'] ?? 'Unknown',
-                'link' => $link['link'] ?? '',
+                'link' => $link['link'],
             ]);
         }
     }

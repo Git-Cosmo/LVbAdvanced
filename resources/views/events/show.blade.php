@@ -106,7 +106,7 @@
                             @if($venue->rating)
                             <div class="flex items-center gap-2 mt-1">
                                 <span class="text-yellow-400">★</span>
-                                <span class="dark:text-dark-text-secondary text-light-text-secondary">{{ $venue->rating }} ({{ number_format($venue->review_count) }} reviews)</span>
+                                <span class="dark:text-dark-text-secondary text-light-text-secondary">{{ $venue->rating }} ({{ number_format($venue->review_count ?? 0) }} reviews)</span>
                             </div>
                             @endif
                             @if($venue->subtype)

@@ -47,7 +47,13 @@
             </div>
             <form method="POST" action="{{ route('admin.events.import') }}">
                 @csrf
-                <button type="submit" class="px-4 py-2 rounded-lg bg-primary-600 text-white font-semibold hover:bg-primary-700 shadow" @if(empty(config('services.openwebninja.api_key'))) disabled title="API key required" @endif>
+                <button type="submit" class="px-4 py-2 rounded-lg bg-primary-600 text-white font-semibold hover:bg-primary-700 shadow"
+                    @if(empty(config('services.openwebninja.api_key')))
+                        disabled
+                        aria-disabled="true"
+                        aria-label="API key required to import events"
+                    @endif
+                >
                     Import Events Now
                 </button>
             </form>

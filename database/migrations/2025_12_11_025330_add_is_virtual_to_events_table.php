@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('events', function (Blueprint $table) {
-            $table->boolean('is_virtual')->default(false)->after('location'); // Virtual vs in-person event
+            $table->boolean('is_virtual')->default(false); // Virtual vs in-person event
         });
     }
 
