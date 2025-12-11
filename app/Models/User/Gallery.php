@@ -11,8 +11,10 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
 use Spatie\Tags\HasTags;
+use Spatie\Searchable\Searchable;
+use Spatie\Searchable\SearchResult;
 
-class Gallery extends Model implements HasMediaInterface
+class Gallery extends Model implements HasMediaInterface, Searchable
 {
     use HasTags, HasSlug, InteractsWithMedia;
 
@@ -94,5 +96,17 @@ class Gallery extends Model implements HasMediaInterface
             ->height(600)
             ->optimize()
             ->performOnCollections('gallery-images');
+    }
+
+    /**
+     * Get the search result for this model.
+     */
+    public function getSearchResult(): SearchResult
+    {
+        return new SearchResult(
+            $this,
+            $this->title,
+            route('downloads.show', $this->slug)
+        );
     }
 }

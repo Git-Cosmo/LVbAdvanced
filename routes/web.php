@@ -22,6 +22,9 @@ Route::get('/', [PortalController::class, 'home'])->name('home');
 Route::get('/deals', [DealController::class, 'index'])->name('deals.index');
 Route::get('/game/{slug}', [DealController::class, 'show'])->name('deals.show');
 
+// Universal Search Route
+Route::get('/search', [\App\Http\Controllers\SearchController::class, 'index'])->name('search');
+
 // Authentication Routes
 Route::middleware('guest')->group(function () {
     Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
@@ -273,8 +276,8 @@ Route::prefix('news')->name('news.')->group(function () {
     Route::get('/{news}', [\App\Http\Controllers\NewsController::class, 'show'])->name('show');
 });
 
-// Media & Gallery Routes
-Route::prefix('media')->name('media.')->group(function () {
+// Downloads Routes (formerly Media & Gallery)
+Route::prefix('downloads')->name('downloads.')->group(function () {
     Route::get('/', [MediaController::class, 'index'])->name('index');
     Route::get('/{gallery}', [MediaController::class, 'show'])->name('show');
     Route::get('/download/{mediaId}', [MediaController::class, 'download'])->name('download');

@@ -18,8 +18,10 @@ use Illuminate\Notifications\Notifiable;
 use Spatie\MediaLibrary\HasMedia as HasMediaInterface;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\Permission\Traits\HasRoles;
+use Spatie\Searchable\Searchable;
+use Spatie\Searchable\SearchResult;
 
-class User extends Authenticatable implements MustVerifyEmail, HasMediaInterface
+class User extends Authenticatable implements MustVerifyEmail, HasMediaInterface, Searchable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable, HasRoles, InteractsWithMedia;
@@ -201,5 +203,17 @@ class User extends Authenticatable implements MustVerifyEmail, HasMediaInterface
             ->height(400)
             ->optimize()
             ->performOnCollections('avatar');
+    }
+
+    /**
+     * Get the search result for this model.
+     */
+    public function getSearchResult(): SearchResult
+    {
+        return new SearchResult(
+            $this,
+            $this->name,
+            route('profile.show', $this)
+        );
     }
 }

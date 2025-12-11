@@ -12,8 +12,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
 use Spatie\Tags\HasTags;
+use Spatie\Searchable\Searchable;
+use Spatie\Searchable\SearchResult;
 
-class ForumThread extends Model
+class ForumThread extends Model implements Searchable
 {
     use SoftDeletes, HasSlug, HasTags;
 
@@ -115,6 +117,18 @@ class ForumThread extends Model
     public function getRouteKeyName(): string
     {
         return 'slug';
+    }
+
+    /**
+     * Get the search result for this model.
+     */
+    public function getSearchResult(): SearchResult
+    {
+        return new SearchResult(
+            $this,
+            $this->title,
+            route('forum.thread.show', $this->slug)
+        );
     }
 
     /**

@@ -40,7 +40,7 @@
                         <button class="px-4 py-2 dark:bg-dark-bg-tertiary bg-light-bg-tertiary dark:text-dark-text-primary text-light-text-primary rounded-lg font-medium hover:shadow-lg transition-all">
                             Edit
                         </button>
-                        <form action="{{ route('media.destroy', $gallery) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this gallery?');">
+                        <form action="{{ route('downloads.destroy', $gallery) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this gallery?');">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="px-4 py-2 bg-accent-red text-white rounded-lg font-medium hover:shadow-lg transition-all">
@@ -88,7 +88,7 @@
                                 <span class="text-xs dark:text-dark-text-tertiary text-light-text-tertiary">
                                     {{ number_format($media->size / 1024, 2) }} KB
                                 </span>
-                                <a href="{{ route('media.download', $media->id) }}" class="text-xs text-accent-blue hover:text-accent-purple transition-colors font-medium">
+                                <a href="{{ route('downloads.download', $media->id) }}" class="text-xs text-accent-blue hover:text-accent-purple transition-colors font-medium">
                                     Download
                                 </a>
                             </div>
@@ -110,7 +110,7 @@
         </h2>
         
         @auth
-            <form action="{{ route('media.comment.store', $gallery) }}" method="POST" class="mb-6">
+            <form action="{{ route('downloads.comment.store', $gallery) }}" method="POST" class="mb-6">
                 @csrf
                 <textarea name="content" 
                           rows="3"
