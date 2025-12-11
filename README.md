@@ -36,6 +36,12 @@
 - ✅ **IP Logging** - Track user IP addresses for security and moderation
 - ✅ **Edit History** - Track all content edits with timestamps and reasons
 
+### Legal & Static Pages
+- ✅ **Terms of Service** - Comprehensive terms page covering user agreements, content policies, and legal disclaimers
+- ✅ **Privacy Policy** - Detailed privacy policy covering data collection, usage, and user rights (GDPR-compliant)
+- ✅ **Contact Page** - Full-featured contact form with subject categories and success messaging
+- ✅ **Footer Integration** - All static pages accessible via footer links
+
 ### Forum System
 - ✅ **Categories & Forums** - Hierarchical forum structure with subforums
 - ✅ **Threads & Posts** - Full-featured discussion system
@@ -179,6 +185,22 @@
   - Reset seasonal rankings
   - Manage achievement criteria
 
+### Reddit Content Integration
+- ✅ **Reddit API Integration** - Automatic scraping from Reddit using OAuth authentication
+- ✅ **Gaming Clips** - Video clips from r/LivestreamFail (YouTube, Twitch, Kick, Reddit embeds)
+- ✅ **AITAH Stories** - Text-based stories from r/AITAH (Am I The A**hole)
+- ✅ **Automatic Scraping** - Scheduled imports every 2 hours via Laravel scheduler
+- ✅ **Admin Controls** - Enable/disable subreddits, configure scrape limits, manual triggers
+- ✅ **Content Management** - Publish/unpublish, feature, and delete scraped posts
+- ✅ **Deduplication** - Prevents duplicate posts using unique Reddit IDs
+- ✅ **Rich Metadata** - Stores scores, comments, authors, flairs, and timestamps
+- ✅ **Media Support** - Full support for videos, images, and embedded content
+- ✅ **Dedicated Pages**:
+  - Clips page (`/clips`) - Grid layout with video thumbnails
+  - AITAH page (`/aitah`) - List layout with story previews
+  - Individual post pages with full content and Reddit links
+- ✅ **Navigation Integration** - Reddit dropdown in main navigation
+
 ### Game Deals & Stores (CheapShark)
 - ✅ **Games Dropdown Navigation** - Dedicated dropdown menu in navbar for game-related features
 - ✅ **Live Deals Feed** - CheapShark API integration for stores, deals, and games
@@ -240,6 +262,12 @@
    
    # OpenWebNinja API for events (required for events feature)
    OPEN_WEB_NINJA_API_KEY=your_api_key_here
+    
+    # Reddit API for content scraping (optional)
+    REDDIT_CLIENT_ID=your_client_id
+    REDDIT_CLIENT_SECRET=your_client_secret
+    REDDIT_USERNAME=your_reddit_username
+    REDDIT_PASSWORD=your_reddit_password
    ```
 
 4. **Run migrations**
@@ -288,15 +316,23 @@
    - Search: http://localhost:8000/search
    - What's New: http://localhost:8000/activity/whats-new
    - Leaderboard: http://localhost:8000/leaderboard
+    - **Reddit Content:**
+      - Clips: http://localhost:8000/clips
+      - AITAH: http://localhost:8000/aitah
    - **Games:**
      - Game Deals: http://localhost:8000/games/deals
      - Game Stores: http://localhost:8000/games/stores
+    - **Static Pages:**
+      - Terms of Service: http://localhost:8000/terms
+      - Privacy Policy: http://localhost:8000/privacy
+      - Contact Us: http://localhost:8000/contact
    - **Admin:**
      - Admin Panel: http://localhost:8000/admin
      - Admin News: http://localhost:8000/admin/news
      - Admin RSS: http://localhost:8000/admin/rss
      - Admin Deals: http://localhost:8000/admin/deals
      - Admin Events: http://localhost:8000/admin/events
+      - Admin Reddit: http://localhost:8000/admin/reddit
      - Credentials: admin@example.com / password
 
 ## CheapShark Deals & Stores Workflow
@@ -361,6 +397,12 @@ The gaming events system now integrates with **OpenWebNinja Real-Time Events API
 3. Add your API key to `.env`:
    ```env
    OPEN_WEB_NINJA_API_KEY=your_api_key_here
+    
+    # Reddit API for content scraping (optional)
+    REDDIT_CLIENT_ID=your_client_id
+    REDDIT_CLIENT_SECRET=your_client_secret
+    REDDIT_USERNAME=your_reddit_username
+    REDDIT_PASSWORD=your_reddit_password
    ```
 4. Clear configuration cache:
    ```bash
@@ -1220,3 +1262,94 @@ For issues, questions, or feature requests, please open an issue on GitHub.
 
 ## License
 Open-source software.
+
+## Reddit Content Scraping
+
+### Overview
+The Reddit content integration automatically scrapes posts from configured subreddits and displays them on dedicated pages. Currently supports:
+- **r/LivestreamFail** - Gaming clips and highlights (videos)
+- **r/AITAH** - "Am I The A**hole" text-based stories
+
+### Setup Reddit API Credentials
+
+1. **Create a Reddit App**:
+   - Go to https://www.reddit.com/prefs/apps
+   - Click "Create App" or "Create Another App"
+   - Select "script" as the app type
+   - Fill in the name and description
+   - Set redirect URI to `http://localhost` (not used but required)
+   - Note your `client_id` (under app name) and `client_secret`
+
+2. **Add credentials to `.env`**:
+   ```env
+   REDDIT_CLIENT_ID=your_client_id_here
+   REDDIT_CLIENT_SECRET=your_client_secret_here
+   REDDIT_USERNAME=your_reddit_username
+   REDDIT_PASSWORD=your_reddit_password
+   ```
+
+3. **Run initial scrape**:
+   ```bash
+   # Seed the subreddit configuration
+   php artisan db:seed --class=RedditSubredditSeeder
+   
+   # Run initial scrape
+   php artisan reddit:scrape
+   
+   # Or scrape specific subreddit
+   php artisan reddit:scrape LivestreamFail
+   php artisan reddit:scrape AITAH
+   ```
+
+### Features
+
+**Content Pages:**
+- `/clips` - Grid view of video clips from r/LivestreamFail
+- `/aitah` - List view of text stories from r/AITAH
+- `/reddit/{slug}` - Individual post pages with full content
+
+**Admin Management** (`/admin/reddit`):
+- View statistics (total posts, published posts, per-subreddit counts)
+- Manual scrape trigger
+- Enable/disable subreddits
+- Configure scrape limits
+- Publish/unpublish posts
+- Feature posts
+- Delete posts
+
+**Automatic Scraping:**
+- Runs every 2 hours via Laravel scheduler
+- Configurable per-subreddit limits (default: 25 posts)
+- Automatic deduplication using Reddit post IDs
+- Updates existing posts with new scores and comment counts
+
+**Content Features:**
+- Full metadata: title, body, author, flair, scores, comments
+- Video embed support (YouTube, Twitch, Kick, Reddit)
+- Image thumbnails
+- Direct Reddit links
+- View count tracking
+- SEO-optimized pages
+
+### Configuration
+
+Each subreddit can be configured independently:
+- **Enabled/Disabled** - Toggle scraping on/off
+- **Content Type** - video, text, or mixed
+- **Scrape Limit** - Number of posts to fetch per scrape (1-100)
+- **Last Scraped** - Timestamp of last successful scrape
+
+### Database Schema
+
+**`reddit_posts`** - Stores all scraped posts:
+- Basic info: reddit_id, title, slug, subreddit, author
+- Content: body, url, permalink
+- Metadata: score, num_comments, flair, posted_at
+- Media: thumbnail, media (JSON), post_hint, is_video, is_self
+- Management: is_published, is_featured, views_count
+
+**`reddit_subreddits`** - Configuration for subreddits:
+- name, display_name, is_enabled
+- content_type, scrape_limit
+- last_scraped_at
+
