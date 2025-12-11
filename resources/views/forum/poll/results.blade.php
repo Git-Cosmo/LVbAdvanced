@@ -1,6 +1,10 @@
 @extends('layouts.app')
 
 @section('content')
+@php
+    $hasThread = !is_null($poll->thread);
+@endphp
+
 <div class="max-w-4xl mx-auto">
     <div class="dark:bg-dark-bg-secondary bg-light-bg-secondary rounded-lg shadow-md p-6 mb-6">
         <div class="flex items-center justify-between mb-4">
@@ -23,7 +27,7 @@
             @endif
         </div>
         
-        @if($poll->thread)
+        @if($hasThread)
             <a href="{{ route('forum.thread.show', $poll->thread->slug) }}" 
                class="text-sm text-accent-blue hover:underline">
                 ← Back to thread
@@ -93,7 +97,7 @@
                         </svg>
                         <span class="font-medium">You have voted in this poll</span>
                     </div>
-                @elseif($poll->isActive() && $poll->thread)
+                @elseif($poll->isActive() && $hasThread)
                     <a href="{{ route('forum.thread.show', $poll->thread->slug) }}" 
                        class="px-6 py-2 bg-gradient-to-r from-accent-blue to-accent-purple text-white rounded-lg hover:shadow-lg hover:scale-105 transition-all font-medium">
                         Vote Now

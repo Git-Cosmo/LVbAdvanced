@@ -40,9 +40,11 @@
                         class="w-full px-4 py-3 dark:bg-dark-bg-tertiary bg-light-bg-tertiary dark:text-dark-text-primary text-light-text-primary rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-blue">
                     <option value="">None (top-level forum)</option>
                     @foreach($forums as $forumOption)
+                    @if($forumOption->id !== $forum->id)
                     <option value="{{ $forumOption->id }}" {{ old('parent_id', $forum->parent_id) == $forumOption->id ? 'selected' : '' }}>
                         {{ $forumOption->name }}
                     </option>
+                    @endif
                     @endforeach
                 </select>
             </div>
