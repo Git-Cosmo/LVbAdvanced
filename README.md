@@ -115,6 +115,21 @@
 - ✅ **Related Articles** - Automatic related content suggestions
 - ✅ **SEO Optimized** - Full meta tags and structured data for news articles
 
+### Gaming Events System
+- ✅ **Events Calendar** - Dedicated page for gaming events, releases, tournaments, expos, and updates
+- ✅ **Automated Scraper** - Fetch events from GameSpot and IGN RSS feeds (no API keys required)
+- ✅ **Event Types** - Categorized as releases, tournaments, expos, updates, and general events
+- ✅ **Event Status** - Track upcoming, ongoing, and past events
+- ✅ **Featured Events** - Highlight important events on the events page
+- ✅ **Event Details** - Support for start/end dates, location, platform, and game information
+- ✅ **Automatic Deduplication** - Prevent duplicate events from multiple sources
+- ✅ **Admin Management** - Feature, publish/unpublish, and delete events from admin panel
+- ✅ **Scheduled Import** - Hourly automatic import of new events via scheduler
+- ✅ **Manual Import** - Trigger event import manually via admin panel or CLI command
+- ✅ **Rich Event Pages** - Detailed event pages with related events
+- ✅ **Filter & Sort** - Filter by event type and status (upcoming, ongoing, past)
+- ✅ **Source Attribution** - Track event sources (GameSpot, IGN, etc.)
+
 ### Frontend
 - ✅ **TailwindCSS** - Modern, responsive design
 - ✅ **Alpine.js** - Lightweight JavaScript framework
@@ -127,7 +142,7 @@
 
 ### Admin Panel
 - ✅ **Custom Admin Interface** - No external UI packages
-- ✅ **Modern Design** - Consistent with main site design aesthetic
+- ✅ **Modern Dark Theme** - Fully themed dark mode admin panel matching site design
 - ✅ **Dashboard** - Forum statistics and quick actions
 - ✅ **Forum Management** - Create and manage categories and forums
 - ✅ **User Management** - Role-based permissions with badges and achievements
@@ -138,6 +153,7 @@
   - Approve/deny actions for threads and posts
 - ✅ **News Management** - Complete CRUD interface for news articles with image upload
 - ✅ **RSS Feed Management** - Configure and manage RSS feeds for automatic news imports
+- ✅ **Events Management** - Manage gaming events, feature/publish control, manual import trigger
 - ✅ **Activity Monitoring** - System logs with Spatie Activity Log
 - ✅ **Reputation Management**:
   - View top users by XP, karma, and posts
@@ -229,10 +245,21 @@
    * * * * * cd /path-to-your-project && php artisan schedule:run >> /dev/null 2>&1
    ```
 
-8. **Access**
+8. **Set up events import (optional)**
+   ```bash
+   # Import events manually
+   php artisan events:import
+   
+   # Imports are scheduled hourly along with RSS and CheapShark syncs
+   # Add to cron for automatic imports
+   * * * * * cd /path-to-your-project && php artisan schedule:run >> /dev/null 2>&1
+   ```
+
+9. **Access**
    - Portal: http://localhost:8000
    - Forums: http://localhost:8000/forum
    - Downloads: http://localhost:8000/downloads
+   - Events: http://localhost:8000/events
    - Search: http://localhost:8000/search
    - What's New: http://localhost:8000/activity/whats-new
    - Leaderboard: http://localhost:8000/leaderboard
@@ -240,6 +267,7 @@
    - Admin News: http://localhost:8000/admin/news
    - Admin RSS: http://localhost:8000/admin/rss
    - Admin Deals: http://localhost:8000/admin/deals
+   - Admin Events: http://localhost:8000/admin/events
     - Credentials: admin@example.com / password
 
 ## CheapShark Deals Workflow
@@ -253,6 +281,37 @@
 4. Frontend routes:
    - Deals listing: `/deals` (search + store filter)
    - Game detail with all offers: `/game/{slug}`
+
+## Gaming Events Workflow
+
+1. Run a manual import anytime:
+   ```bash
+   php artisan events:import
+   ```
+2. The command is scheduled hourly via `routes/console.php` (runs alongside RSS and CheapShark syncs).
+3. Events are automatically scraped from:
+   - **GameSpot RSS Feed** - Latest gaming news and event announcements
+   - **IGN RSS Feed** - Gaming news and event coverage
+4. Manual imports are available in the admin panel at **Admin → Events Management**.
+5. Frontend routes:
+   - Events listing: `/events` (filter by type and status)
+   - Event detail: `/events/{slug}`
+6. Event types include:
+   - **Releases** - Game launches and release dates
+   - **Tournaments** - Esports competitions and gaming tournaments
+   - **Expos** - Gaming conventions and trade shows (E3, Gamescom, PAX)
+   - **Updates** - Game patches, DLC, and expansions
+   - **General** - Other gaming-related events
+7. Events can be filtered by status:
+   - **Upcoming** - Future events that haven't started yet
+   - **Ongoing** - Currently active events
+   - **Past** - Completed events
+8. Admin controls:
+   - Feature/unfeature events to highlight them on the events page
+   - Publish/unpublish events to control visibility
+   - Delete events that are no longer relevant
+   - View event statistics (total, upcoming, ongoing, featured)
+9. No API keys required - all data is scraped from public RSS feeds
 
 ## Azuracast Radio Integration
 
@@ -815,6 +874,23 @@ XP_DAILY_LOGIN=5
 - All route names updated: `downloads.index`, `downloads.show`, etc.
 - Sitemap updated to reflect new URLs
 - Admin panel updated with new terminology
+
+### Gaming Events System
+- Dedicated events page showing gaming releases, tournaments, expos, and updates
+- Automated scraper fetching from GameSpot and IGN RSS feeds (no API keys needed)
+- Hourly scheduled imports with deduplication to prevent duplicates
+- Event filtering by type (releases, tournaments, expos, updates, general)
+- Event status filtering (upcoming, ongoing, past)
+- Featured events highlighting on events page
+- Admin management panel with publish/feature controls
+- Manual import trigger via admin panel or CLI command
+- Rich event detail pages with related events
+- Source attribution for all imported events
+
+### Admin Panel Improvements
+- **Dark Theme Throughout** - All admin panel pages now use dark theme matching the main site
+- **Unified Design** - Cards, tables, and forms consistently styled with dark backgrounds
+- **Login Routing Fix** - Both admins and regular users now redirect to `/` after login (no more automatic `/admin` redirect for admins)
 
 ### Dynamic Homepage
 - Homepage now displays real data instead of placeholders
