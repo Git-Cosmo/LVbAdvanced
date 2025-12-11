@@ -139,6 +139,7 @@ Route::prefix('forum')->name('forum.')->group(function () {
         
         // Poll routes
         Route::post('/poll/{poll}/vote', [\App\Http\Controllers\Forum\PollController::class, 'vote'])->name('poll.vote');
+        Route::get('/poll/{poll}/results', [\App\Http\Controllers\Forum\PollController::class, 'results'])->name('poll.results');
         
         // Messaging routes
         Route::get('/messages', [\App\Http\Controllers\Forum\MessagingController::class, 'inbox'])->name('messaging.inbox');
