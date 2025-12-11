@@ -23,7 +23,7 @@ class PortalController extends Controller
             ->get();
 
         $latestDeals = CheapSharkDeal::with('game', 'store')
-            ->where('is_on_sale', true)
+            ->where('on_sale', true)
             ->orderBy('savings', 'desc')
             ->take(6)
             ->get();
