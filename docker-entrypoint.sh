@@ -35,6 +35,10 @@ until php artisan migrate --force; do
   sleep 5
 done
 
+# Sync schedule monitor definitions
+echo "Syncing scheduled tasks for monitoring..."
+php artisan schedule-monitor:sync --force || true
+
 # Start cron daemon
 echo "Starting cron..."
 crond

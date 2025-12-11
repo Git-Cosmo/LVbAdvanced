@@ -38,6 +38,12 @@
         {!! json_encode($seoData['structured']) !!}
     </script>
 
+    <script>
+        window.App = {
+            userId: @json(auth()->id()),
+        };
+    </script>
+
     @vite(['resources/css/app.css', 'resources/css/forum.css', 'resources/js/app.js', 'resources/js/forum.js', 'resources/js/mentions.js'])
 </head>
 <body class="dark:bg-dark-bg-primary bg-light-bg-primary dark:text-dark-text-primary text-light-text-primary min-h-screen">
@@ -147,7 +153,6 @@
                     </button>
 
                     <!-- Notifications -->
-                    @auth
                     <div x-data="notificationsDropdown()" @click.away="open = false" class="relative">
                         <button @click="toggleNotifications()" class="relative p-2 rounded-lg dark:bg-dark-bg-tertiary bg-light-bg-tertiary dark:hover:bg-dark-bg-elevated hover:bg-light-bg-elevated transition-colors">
                             <svg class="w-5 h-5 dark:text-dark-text-primary text-light-text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -194,7 +199,6 @@
                             </template>
                         </div>
                     </div>
-                    @endauth
 
                     @auth
                         <!-- User Menu -->
@@ -273,10 +277,17 @@
                 <span class="dark:text-dark-border-primary text-light-border-primary">•</span>
                 <a href="{{ route('downloads.index') }}" class="text-sm dark:text-dark-text-secondary text-light-text-secondary dark:hover:text-dark-text-accent hover:text-light-text-accent transition-colors">Downloads</a>
                 <div class="flex-1"></div>
-                <div class="text-sm dark:text-dark-text-tertiary text-light-text-tertiary">
-                    <span class="dark:text-dark-text-accent text-light-text-accent font-semibold">{{ \App\Models\User::count() }}</span> members,
-                    <span class="dark:text-dark-text-accent text-light-text-accent font-semibold">{{ \App\Models\User::online()->count() }}</span> online,
-                    <span class="dark:text-dark-text-accent text-light-text-accent font-semibold">{{ \App\Models\Forum\Forum::count() }}</span> forums
+                @php
+                    $countryCode = request()->header('CF-IPCountry') ?? request()->server('HTTP_CF_IPCOUNTRY') ?? optional(optional(auth()->user())->profile)->location;
+                    $countryCode = $countryCode ? strtoupper(substr($countryCode, 0, 2)) : null;
+                    $flagEmoji = $countryCode && strlen($countryCode) === 2
+                        ? mb_chr(ord($countryCode[0]) + 127397) . mb_chr(ord($countryCode[1]) + 127397)
+                        : '🌐';
+                    $countryLabel = $countryCode && strlen($countryCode) === 2 ? $countryCode : 'Worldwide';
+                @endphp
+                <div class="flex items-center space-x-2 text-sm dark:text-dark-text-tertiary text-light-text-tertiary">
+                    <span class="text-lg leading-none">{{ $flagEmoji }}</span>
+                    <span class="dark:text-dark-text-accent text-light-text-accent font-semibold">{{ $countryLabel }}</span>
                 </div>
             </div>
         </div>
@@ -355,7 +366,6 @@
         </div>
     </footer>
 
-    @auth
     <script>
         function notificationsDropdown() {
             return {
@@ -363,6 +373,8 @@
                 loading: false,
                 notifications: [],
                 unreadCount: 0,
+                authenticated: Boolean(window.App?.userId),
+                maxNotifications: 15,
                 
                 async toggleNotifications() {
                     this.open = !this.open;
@@ -373,6 +385,11 @@
                 },
                 
                 async loadNotifications() {
+                    if (!this.authenticated) {
+                        this.loading = false;
+                        return;
+                    }
+
                     this.loading = true;
                     try {
                         const response = await fetch('/notifications', {
@@ -392,6 +409,15 @@
                 },
                 
                 async markAsRead(id) {
+                    if (!this.authenticated) {
+                        const notification = this.notifications.find(n => n.id === id);
+                        if (notification && !notification.read_at) {
+                            notification.read_at = new Date();
+                            this.unreadCount = Math.max(0, this.unreadCount - 1);
+                        }
+                        return;
+                    }
+
                     try {
                         await fetch(`/notifications/${id}/read`, {
                             method: 'POST',
@@ -412,6 +438,12 @@
                 },
                 
                 async markAllAsRead() {
+                    if (!this.authenticated) {
+                        this.notifications.forEach(n => n.read_at = new Date());
+                        this.unreadCount = 0;
+                        return;
+                    }
+
                     try {
                         await fetch('/notifications/read-all', {
                             method: 'POST',
@@ -428,25 +460,61 @@
                     }
                 },
                 
+                handleIncoming(payload) {
+                    const existing = this.notifications.find(n => n.id === payload.id);
+                    if (existing) {
+                        const wasUnread = !existing.read_at;
+                        Object.assign(existing, payload);
+                        if (!payload.read_at && !wasUnread) {
+                            this.unreadCount += 1;
+                        }
+                    } else {
+                        this.notifications.unshift(payload);
+                        if (this.notifications.length > this.maxNotifications) {
+                            this.notifications = this.notifications.slice(0, this.maxNotifications);
+                        }
+                        if (!payload.read_at) {
+                            this.unreadCount += 1;
+                        }
+                    }
+                },
+
+                subscribeToRealtime() {
+                    if (!window.Echo) {
+                        return;
+                    }
+
+                    if (this.authenticated && window.App?.userId) {
+                        window.Echo.private(`App.Models.User.${window.App.userId}`)
+                            .listen('.notification.created', (event) => this.handleIncoming(event));
+                    }
+
+                    window.Echo.channel('global-notifications')
+                        .listen('.notification.created', (event) => this.handleIncoming(event));
+                },
+
                 async init() {
                     // Load only unread count initially to reduce page load overhead
-                    try {
-                        const response = await fetch('/notifications', {
-                            headers: {
-                                'X-Requested-With': 'XMLHttpRequest',
-                                'Accept': 'application/json',
-                            }
-                        });
-                        const data = await response.json();
-                        this.unreadCount = data.unread_count;
-                    } catch (error) {
-                        console.error('Error loading notification count:', error);
+                    if (this.authenticated) {
+                        try {
+                            const response = await fetch('/notifications', {
+                                headers: {
+                                    'X-Requested-With': 'XMLHttpRequest',
+                                    'Accept': 'application/json',
+                                }
+                            });
+                            const data = await response.json();
+                            this.unreadCount = data.unread_count;
+                        } catch (error) {
+                            console.error('Error loading notification count:', error);
+                        }
                     }
+
+                    this.subscribeToRealtime();
                 }
             }
         }
     </script>
-    @endauth
 
     <!-- Cookie Consent -->
     @include('cookie-consent::index')
