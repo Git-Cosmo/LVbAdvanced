@@ -12,7 +12,7 @@ Disallow: /password/
 Disallow: /2fa/
 Disallow: /notifications/
 
-# Sitemap
+# Sitemap (update with your actual domain)
 Sitemap: https://yourdomain.com/sitemap.xml
 
 # Crawl rate (optional - adjust based on server capacity)

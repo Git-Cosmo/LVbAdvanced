@@ -62,16 +62,20 @@ class DevelopmentSeeder extends Seeder
 
         // Create 20 news articles
         $this->command->info('Creating 20 news articles...');
-        News::factory(20)->create([
-            'user_id' => $users->random()->id,
-            'is_published' => true,
-        ]);
+        $randomUserIds = $users->random(20)->pluck('id')->toArray();
+        foreach (range(0, 19) as $i) {
+            News::factory()->create([
+                'user_id' => $randomUserIds[$i],
+                'is_published' => true,
+            ]);
+        }
 
         // Create 15 gallery items
         $this->command->info('Creating 15 gallery items...');
-        foreach (range(1, 15) as $i) {
+        $randomGalleryUserIds = $users->random(15)->pluck('id')->toArray();
+        foreach (range(0, 14) as $i) {
             Gallery::factory()->create([
-                'user_id' => $users->random()->id,
+                'user_id' => $randomGalleryUserIds[$i],
                 'is_published' => true,
             ]);
         }
