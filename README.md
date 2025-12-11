@@ -117,20 +117,25 @@
 
 ### Gaming Events System (OpenWebNinja API)
 - ✅ **Real-Time Events API** - Powered by OpenWebNinja Real-Time Events Search API
-- ✅ **Comprehensive Event Data** - Venue names, cities, countries, dates, and ticket information
-- ✅ **Virtual & In-Person Events** - Support for both virtual and physical events with clear indicators
+- ✅ **Complete Event Data Storage** - ALL fields from API stored including event_id, name, description, dates, publisher info
+- ✅ **Normalized Venue Data** - Separate venues table with Google Place ID deduplication
+- ✅ **Multiple Ticket Vendors** - Stores all ticket purchase options (Spotify, Ticketmaster, StubHub, etc.) with favicons
+- ✅ **Rich Venue Information** - Full address, coordinates, ratings, phone, website, timezone, venue types
+- ✅ **Google Maps Integration** - Direct links to venue locations with coordinates
+- ✅ **Publisher Attribution** - Event source tracking with publisher name, favicon, and domain
+- ✅ **UTC & Local Times** - Both local and UTC timestamps with precision indicators
+- ✅ **Virtual & In-Person Events** - Support for both formats with clear visual indicators
 - ✅ **Event Types** - Automatically categorized as expos, tournaments, releases, updates, and general events
 - ✅ **Event Status** - Track upcoming, ongoing, and past events with automatic status calculation
 - ✅ **Featured Events** - Highlight important events on the events page
-- ✅ **Detailed Event Information** - Start/end dates, location, venue, ticket URLs, virtual/in-person indicator
-- ✅ **Automatic Deduplication** - Prevent duplicate events using unique external identifiers
+- ✅ **Automatic Deduplication** - Prevent duplicate events and venues using unique identifiers
 - ✅ **Admin Management** - Feature, publish/unpublish, and delete events from admin panel
 - ✅ **Hourly Scheduled Imports** - Automatic event updates every hour via Laravel scheduler
 - ✅ **Manual Import** - Trigger event import manually via admin panel or CLI command (`php artisan events:import`)
-- ✅ **Rich Event Pages** - Detailed event pages with venue, virtual indicator, ticket info, and related events
+- ✅ **Rich Event Detail Pages** - Comprehensive display with all data including venue section, ticket sidebar, info links
 - ✅ **Filter & Sort** - Filter by event type (expos, tournaments, releases, updates) and status (upcoming, ongoing, past)
-- ✅ **Ticket Integration** - Direct links to purchase tickets when available
-- ✅ **DRY & SMART Database** - Efficient MySQL storage with normalized schema and deduplication
+- ✅ **Related Events** - Smart suggestions based on event type
+- ✅ **DRY & SMART Database** - Normalized schema with venues, ticket links, and info links in separate tables
 - ✅ **Error Handling** - Comprehensive logging and error handling for API failures
 
 ### Frontend
@@ -312,15 +317,43 @@ The command is scheduled to run hourly via `routes/console.php` (ensure your sch
 
 ### Event Data
 
-Events imported from OpenWebNinja API include:
-- **Event Title & Description** - Full event information
-- **Dates** - Start and end dates/times
-- **Location Details** - Venue name, city, country, full address
-- **Virtual/In-Person** - Events marked as virtual or physical
-- **Ticket Information** - Links to purchase tickets
-- **Event Type** - Automatically categorized as expo, tournament, release, update, or general
-- **Source Attribution** - All events credited to OpenWebNinja
-- **Automatic Deduplication** - Prevents duplicate imports using unique identifiers
+Events imported from OpenWebNinja API include comprehensive information:
+
+**Core Event Data:**
+- **Event ID** - Unique identifier from API for deduplication
+- **Name & Description** - Full event information
+- **Link** - Direct link to event page
+- **Language** - Event language code (e.g., "en")
+- **Thumbnail** - Event image/poster
+
+**Date & Time Information:**
+- **Human-readable date** - Formatted date string (e.g., "Fri, Feb 14, 10:00 – 11:30 PM PST")
+- **Start time** - Local and UTC timestamps with precision indicators
+- **End time** - Local and UTC timestamps with precision indicators
+
+**Venue Information (Normalized):**
+- **Venue name** - Name of the event location
+- **Google ID** - Unique Google Place ID for deduplication
+- **Ratings** - Review count and average rating from Google
+- **Contact** - Phone number and website
+- **Address** - Full address with coordinates (latitude/longitude)
+- **Location details** - City, state, country, zipcode, timezone
+- **Venue types** - Primary type and all subtypes (e.g., "Live music venue", "Event venue")
+
+**Ticket & Information Links:**
+- **Multiple ticket vendors** - Links to purchase from various platforms (Spotify, Ticketmaster, StubHub, etc.)
+- **Vendor favicons** - Visual identification of ticket sources
+- **Info links** - Additional sources for event information and reviews
+
+**Publisher Attribution:**
+- **Publisher name** - Source of the event data
+- **Publisher favicon** - Visual branding
+- **Publisher domain** - Website domain
+
+**Classification:**
+- **Event type** - Automatically categorized (expo, tournament, release, update, general)
+- **Virtual/In-Person** - Clear indicator of event format
+- **Automatic Deduplication** - Prevents duplicate imports using API event_id
 
 ### API Parameters
 
@@ -337,15 +370,33 @@ You can customize search parameters in `app/Services/EventsService.php`.
 
 ### Database Schema
 
-Events are stored efficiently in MySQL with the following structure:
+Events are stored in a normalized, DRY database structure with the following tables:
 
-**`events` table:**
-- Core fields: `title`, `slug`, `description`, `content`, `image`
-- Date fields: `start_date`, `end_date`
-- Location fields: `location`, `venue`, `city`, `country`, `is_virtual`
-- Source tracking: `source`, `source_url`, `external_id`
-- Classification: `event_type`, `game_name`, `platform`
+**`events` table (main event data):**
+- Core fields: `event_id` (API ID), `name`, `slug`, `link`, `description`, `language`
+- Date/time fields: `date_human_readable`, `start_time`, `start_time_utc`, `start_time_precision_sec`, `end_time`, `end_time_utc`, `end_time_precision_sec`
+- Media: `thumbnail`, `publisher`, `publisher_favicon`, `publisher_domain`
+- Classification: `event_type` (expo, tournament, release, update, general), `is_virtual`
 - Management: `is_featured`, `is_published`, `views_count`
+
+**`event_venues` table (normalized venue data to avoid duplication):**
+- Identification: `google_id` (unique), `name`, `phone_number`, `website`
+- Ratings: `review_count`, `rating`
+- Types: `subtype`, `subtypes` (JSON array)
+- Address: `full_address`, `latitude`, `longitude`, `district`, `street_number`, `street`, `city`, `zipcode`, `state`, `country`, `timezone`, `google_mid`
+- Venues are reused across multiple events via pivot table
+
+**`event_venue` table (pivot):**
+- Many-to-many relationship between events and venues
+- Allows multiple events at the same venue without data duplication
+
+**`event_ticket_links` table:**
+- Stores all ticket purchase options: `event_id`, `source`, `link`, `fav_icon`
+- Each event can have multiple ticket vendors (Spotify, Ticketmaster, etc.)
+
+**`event_info_links` table:**
+- Additional information sources: `event_id`, `source`, `link`
+- Links to articles, reviews, and event information pages
 
 **`event_imported_items` table:**
 - Tracks imports: `source`, `external_id`, `event_id`
@@ -356,17 +407,27 @@ Events are stored efficiently in MySQL with the following structure:
 **Events listing** (`/events`):
 - Filter by type: All, Releases, Tournaments, Expos, Updates
 - Filter by status: Upcoming, Ongoing, Past, All
-- Virtual event indicator badge
-- Featured events showcase
+- Virtual event indicator badge on each card
+- Featured events showcase section
+- Event thumbnails and human-readable dates
 - Pagination support
 
 **Event detail page** (`/events/{slug}`):
-- Full event information with all details
-- Virtual/In-Person event indicator with icon
-- Related events suggestions
-- Source attribution
-- Ticket links (when available)
-- View count tracking
+- **Rich event header**: Thumbnail, event name, badges (type, status, virtual/in-person, featured)
+- **Date display**: Human-readable date and separate local/UTC time sections
+- **Full venue information**:
+  - Venue name with Google ratings and review count
+  - Complete address with Google Maps integration link
+  - Phone number and website links
+  - Venue type and subtypes
+- **Ticket purchasing sidebar**:
+  - Multiple ticket vendor options with source favicons
+  - Direct links to purchase from various platforms (Spotify, Ticketmaster, etc.)
+- **Additional information sidebar**:
+  - Links to event articles and reviews
+  - Publisher attribution with favicon
+- **Related events**: Suggests similar events by type
+- **View count tracking**: Increments on each page view
 
 ### Admin Controls
 
@@ -405,13 +466,46 @@ Events are automatically tracked by status:
 
 **Error Handling:** Comprehensive logging for debugging issues
 
-### Development Notes
+### Data Flow & Architecture
 
-- Events are DRY (Don't Repeat Yourself) - no duplication in storage
-- SMART storage using normalized database structure
-- All API responses properly validated and sanitized
-- Failed imports logged for troubleshooting
-- Service-based architecture for easy maintenance
+**Import Process:**
+```
+OpenWebNinja API → EventsService → Database (normalized) → Frontend Views
+```
+
+1. **API Request**: EventsService queries OpenWebNinja API with search terms (gaming conventions, esports tournaments, etc.)
+2. **Data Processing**: 
+   - Event records created with all API fields
+   - Venues extracted and deduplicated by `google_id`
+   - Ticket links created for each vendor
+   - Info links created for additional sources
+3. **Storage**: Data stored in normalized tables to avoid duplication
+4. **Display**: Frontend loads events with eager-loaded relationships (venues, ticket links, info links)
+
+**Key Architecture Decisions:**
+
+**DRY (Don't Repeat Yourself):**
+- Venues stored in separate table and reused across events
+- Same venue (identified by Google Place ID) referenced by multiple events
+- No duplicate venue data in database
+
+**SMART Storage:**
+- Normalized database structure with proper foreign keys
+- Indexed fields for optimal query performance (event_id, start_time, google_id, etc.)
+- JSON arrays for venue subtypes (preserves array structure from API)
+- Separate tables for ticket links and info links (one-to-many relationships)
+
+**Error Handling:**
+- API failures logged with full context
+- Missing required fields (event_id) handled gracefully
+- Duplicate imports prevented at database level (unique constraints)
+- All API responses validated before storage
+
+**Service-Based Architecture:**
+- OpenWebNinjaService: API communication and authentication
+- EventsService: Business logic for importing and mapping data
+- Models: Event, EventVenue, EventTicketLink, EventInfoLink
+- Controller: EventsController with eager loading for performance
 
 ## Azuracast Radio Integration
 
