@@ -68,4 +68,11 @@ return [
         'api_key' => env('OPEN_WEB_NINJA_API_KEY'),
     ],
 
+    'reddit' => [
+        'client_id' => env('REDDIT_CLIENT_ID'),
+        'client_secret' => env('REDDIT_CLIENT_SECRET'),
+        'username' => env('REDDIT_USERNAME'),
+        'password' => env('REDDIT_PASSWORD'),
+    ],
+
 ];

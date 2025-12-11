@@ -39,3 +39,8 @@ Schedule::job(new ImportEventsJob())
     ->monitorName('events-import')
     ->graceTimeInMinutes(SCHEDULE_GRACE_MINUTES)
     ->hourly();
+
+// Reddit scraping every 2 hours
+Schedule::command('reddit:scrape')
+    ->withoutOverlapping()
+    ->everyTwoHours();

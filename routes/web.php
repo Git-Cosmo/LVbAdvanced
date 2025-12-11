@@ -23,6 +23,12 @@ use App\Http\Controllers\StatusController;
 Route::get('/', [PortalController::class, 'home'])->name('home');
 Route::get('/status', StatusController::class)->name('status');
 
+// Static Pages
+Route::get('/terms', [\App\Http\Controllers\StaticPageController::class, 'terms'])->name('terms');
+Route::get('/privacy', [\App\Http\Controllers\StaticPageController::class, 'privacy'])->name('privacy');
+Route::get('/contact', [\App\Http\Controllers\StaticPageController::class, 'contact'])->name('contact');
+Route::post('/contact', [\App\Http\Controllers\StaticPageController::class, 'sendContact'])->name('contact.send');
+
 // Games Routes
 Route::prefix('games')->name('games.')->group(function () {
     Route::get('/deals', [DealController::class, 'index'])->name('deals');
@@ -272,6 +278,17 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
         Route::post('/reset-season', [\App\Http\Controllers\Admin\GamificationController::class, 'resetSeason'])->name('reset-season');
     });
     
+    // Reddit Management
+    Route::prefix('reddit')->name('reddit.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Admin\RedditManagementController::class, 'index'])->name('index');
+        Route::post('/scrape', [\App\Http\Controllers\Admin\RedditManagementController::class, 'scrape'])->name('scrape');
+        Route::post('/subreddit/{subreddit}/toggle', [\App\Http\Controllers\Admin\RedditManagementController::class, 'toggleSubreddit'])->name('subreddit.toggle');
+        Route::patch('/subreddit/{subreddit}', [\App\Http\Controllers\Admin\RedditManagementController::class, 'updateSubreddit'])->name('subreddit.update');
+        Route::post('/post/{post}/toggle-publish', [\App\Http\Controllers\Admin\RedditManagementController::class, 'togglePublish'])->name('post.toggle-publish');
+        Route::post('/post/{post}/toggle-feature', [\App\Http\Controllers\Admin\RedditManagementController::class, 'toggleFeature'])->name('post.toggle-feature');
+        Route::delete('/post/{post}', [\App\Http\Controllers\Admin\RedditManagementController::class, 'deletePost'])->name('post.delete');
+    });
+    
     // Events Management
     Route::prefix('events')->name('events.')->group(function () {
         Route::get('/', [\App\Http\Controllers\Admin\EventsManagementController::class, 'index'])->name('index');
@@ -298,6 +315,11 @@ Route::prefix('news')->name('news.')->group(function () {
     Route::get('/', [\App\Http\Controllers\NewsController::class, 'index'])->name('index');
     Route::get('/{news}', [\App\Http\Controllers\NewsController::class, 'show'])->name('show');
 });
+
+// Reddit Content Routes
+Route::get('/clips', [\App\Http\Controllers\RedditController::class, 'clips'])->name('clips.index');
+Route::get('/aitah', [\App\Http\Controllers\RedditController::class, 'aitah'])->name('aitah.index');
+Route::get('/reddit/{post}', [\App\Http\Controllers\RedditController::class, 'show'])->name('reddit.show');
 
 // Events Routes
 Route::prefix('events')->name('events.')->group(function () {
