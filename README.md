@@ -551,6 +551,15 @@ The patch notes system allows you to track, manage, and display game updates and
 - League of Legends (Riot Games)
 - Dota 2 (Valve)
 
+**Automation Details:**
+- **Hourly Execution**: Runs automatically every hour via Laravel scheduler
+- **RSS/HTML Fallback**: Intelligent feed detection with HTML scraping as backup
+- **No API Keys Required**: Uses free RSS feeds and public web scraping
+- **Reliable & Sustainable**: Built-in error handling and retry logic
+- **Automatic Deduplication**: Prevents duplicate patch notes using external IDs
+- **Version Extraction**: Automatically detects version numbers from titles
+- **Keyword Detection**: Smart filtering to identify actual patch notes vs regular news
+
 **Managing Patch Notes:**
 - **View All** - See all patch notes with statistics
 - **Filter** - Filter by game name
@@ -917,6 +926,8 @@ The radio system is organized into a dropdown menu with three main sections:
   - Album artwork display
   - Login required to submit requests
   - Request success/error feedback
+  - **Redis caching** for improved performance (5-minute cache)
+  - Automatic cache invalidation on song request submission
 
 **Accessing the Radio:**
 - Radio Home: `http://localhost:8000/radio/home`
@@ -1476,6 +1487,24 @@ XP_DAILY_LOGIN=5
 
 ## New Features in Latest Update
 
+### Navigation Redesign & UX Improvements
+- **Completely reorganized navigation** for better usability and logical grouping
+- **Content Dropdown**: News, Events, Downloads, Clips, AITAH Stories - all content in one place
+- **Games Dropdown**: Game Deals, Game Stores, Patch Notes - gaming-related features together
+- **Community Dropdown**: What's New, Leaderboard, Achievements, Clans, Tournaments, Streamers, Casual Games, Integrations
+- **Radio Dropdown**: Radio Home, Popout Player, Song Requests - clearer labels
+- **Forum Link**: Direct access to forums from main navigation
+- **Cleaner Design**: Reduced spacing, smaller icons, better hover states
+- **Visual Grouping**: Separator lines in dropdowns for logical sections
+- **Removed Redundancy**: Eliminated duplicate Streamers dropdown
+
+### Performance & Caching Improvements
+- **Redis Caching for Radio Requests**: 5-minute cache for song library dramatically improves load times
+- **Automatic Cache Invalidation**: Cache clears automatically when songs are requested
+- **CheapShark API Improvements**: Enhanced error handling with retry logic and better logging
+- **Connection Resilience**: 3-retry mechanism for failed API requests with exponential backoff
+- **Detailed Error Logging**: HTTP status codes, response bodies, and connection errors tracked
+
 ### Universal Search (Spatie Searchable)
 - Powerful search across ALL models using Spatie's laravel-searchable package
 - Replaces the previous MySQL full-text search with more flexible Spatie Searchable implementation
@@ -1553,6 +1582,43 @@ XP_DAILY_LOGIN=5
 - Publish/unpublish scheduling
 - Featured article support
 - Tag management for better organization
+
+## Troubleshooting
+
+### Common Issues
+
+**CheapShark Sync Failures:**
+- The system now includes automatic retry logic (3 attempts with 1-second delays)
+- Check logs at `storage/logs/laravel.log` for detailed error messages
+- Verify internet connectivity and firewall settings
+- CheapShark API may experience temporary outages - sync will retry automatically
+- Manual sync: `php artisan cheapshark:sync`
+
+**Redis Connection Issues:**
+- Ensure Redis is running: `redis-cli ping` should return `PONG`
+- Check `.env` configuration: `CACHE_STORE=redis` and `REDIS_HOST`
+- For Docker: ensure Redis container is started (`docker compose up -d redis`)
+- Clear cache if corrupted: `php artisan cache:clear`
+
+**Radio Requests Page Slow Loading:**
+- Redis caching is now enabled by default (5-minute cache)
+- If still slow, check AzuraCast API response time
+- Verify `AZURACAST_BASE_URL` and `AZURACAST_API_KEY` in `.env`
+- Test API directly: `curl -H "X-API-Key: YOUR_KEY" https://your-radio.com/api/station/1/requests`
+- Cache can be manually cleared: `php artisan cache:forget radio.requestable_songs`
+
+**Patch Notes Not Scraping:**
+- Verify Laravel scheduler is running: `php artisan schedule:list`
+- Check if cron is configured: `* * * * * cd /path && php artisan schedule:run`
+- Manual scrape: `php artisan patch-notes:scrape`
+- Check logs for specific game failures
+- Some game websites may block scrapers temporarily - built-in retry logic handles this
+
+**Navigation Issues After Update:**
+- Clear browser cache and hard refresh (Ctrl+Shift+R or Cmd+Shift+R)
+- Clear Laravel view cache: `php artisan view:clear`
+- Rebuild frontend assets: `npm run build`
+- Check JavaScript console for errors
 
 ## Contributing
 
