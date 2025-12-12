@@ -94,6 +94,7 @@ Route::middleware('auth')->prefix('settings')->name('settings.')->group(function
     Route::patch('/password', [\App\Http\Controllers\SettingsController::class, 'updatePassword'])->name('update.password');
     Route::patch('/privacy', [\App\Http\Controllers\SettingsController::class, 'updatePrivacy'])->name('update.privacy');
     Route::patch('/notifications', [\App\Http\Controllers\SettingsController::class, 'updateNotifications'])->name('update.notifications');
+    Route::patch('/status', [\App\Http\Controllers\SettingsController::class, 'updateStatus'])->name('update.status');
 });
 
 // Notification Routes
