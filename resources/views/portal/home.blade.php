@@ -94,6 +94,70 @@
             </div>
         </div>
 
+        <!-- Game Servers Block -->
+        <div class="dark:bg-dark-bg-secondary bg-light-bg-secondary rounded-lg shadow-md p-6">
+            <h3 class="text-lg font-bold dark:text-dark-text-bright text-light-text-bright mb-4 border-b dark:border-dark-border-primary border-light-border-primary pb-2">
+                <div class="flex items-center">
+                    <svg class="w-5 h-5 mr-2 text-accent-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01"/>
+                    </svg>
+                    Game Servers
+                </div>
+            </h3>
+            <div class="space-y-3">
+                <!-- FiveM Server -->
+                <div class="dark:bg-dark-bg-tertiary bg-light-bg-tertiary rounded-lg p-3 border dark:border-dark-border-primary border-light-border-primary hover:border-accent-blue transition-colors">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="flex items-center space-x-2">
+                            <div class="w-8 h-8 bg-gradient-to-br from-accent-purple to-accent-pink rounded flex items-center justify-center">
+                                <span class="text-white font-bold text-xs">5M</span>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold dark:text-dark-text-primary text-light-text-primary text-sm">FiveM Server</h4>
+                                <p class="text-xs dark:text-dark-text-tertiary text-light-text-tertiary">GTA V RP</p>
+                            </div>
+                        </div>
+                        <span class="px-2 py-1 bg-yellow-500/20 text-yellow-600 dark:text-yellow-400 text-xs rounded font-semibold">Soon</span>
+                    </div>
+                    <p class="text-xs dark:text-dark-text-secondary text-light-text-secondary">High-quality roleplay experience coming soon</p>
+                </div>
+
+                <!-- Counter Strike 2 Server -->
+                <div class="dark:bg-dark-bg-tertiary bg-light-bg-tertiary rounded-lg p-3 border dark:border-dark-border-primary border-light-border-primary hover:border-accent-blue transition-colors">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="flex items-center space-x-2">
+                            <div class="w-8 h-8 bg-gradient-to-br from-accent-blue to-accent-teal rounded flex items-center justify-center">
+                                <span class="text-white font-bold text-xs">CS2</span>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold dark:text-dark-text-primary text-light-text-primary text-sm">CS2 Server</h4>
+                                <p class="text-xs dark:text-dark-text-tertiary text-light-text-tertiary">Competitive</p>
+                            </div>
+                        </div>
+                        <span class="px-2 py-1 bg-yellow-500/20 text-yellow-600 dark:text-yellow-400 text-xs rounded font-semibold">Soon</span>
+                    </div>
+                    <p class="text-xs dark:text-dark-text-secondary text-light-text-secondary">Custom maps and competitive matches</p>
+                </div>
+
+                <!-- Minecraft Server -->
+                <div class="dark:bg-dark-bg-tertiary bg-light-bg-tertiary rounded-lg p-3 border dark:border-dark-border-primary border-light-border-primary hover:border-accent-blue transition-colors">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="flex items-center space-x-2">
+                            <div class="w-8 h-8 bg-gradient-to-br from-accent-green to-accent-teal rounded flex items-center justify-center">
+                                <span class="text-white font-bold text-xs">MC</span>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold dark:text-dark-text-primary text-light-text-primary text-sm">Minecraft Server</h4>
+                                <p class="text-xs dark:text-dark-text-tertiary text-light-text-tertiary">Survival/Creative</p>
+                            </div>
+                        </div>
+                        <span class="px-2 py-1 bg-yellow-500/20 text-yellow-600 dark:text-yellow-400 text-xs rounded font-semibold">Soon</span>
+                    </div>
+                    <p class="text-xs dark:text-dark-text-secondary text-light-text-secondary">Community-driven world building</p>
+                </div>
+            </div>
+        </div>
+
         <!-- Quick Links Block -->
         <div class="dark:bg-dark-bg-secondary bg-light-bg-secondary rounded-lg shadow-md p-6">
             <h3 class="text-lg font-bold dark:text-dark-text-bright text-light-text-bright mb-4 border-b dark:border-dark-border-primary border-light-border-primary pb-2">
@@ -286,47 +350,64 @@
                 </div>
             </div>
 
-            <!-- Latest Downloads -->
+            <!-- Latest Game Deals -->
             <div class="dark:bg-dark-bg-secondary bg-light-bg-secondary rounded-lg shadow-md p-6">
                 <div class="flex items-center justify-between mb-4 border-b dark:border-dark-border-primary border-light-border-primary pb-2">
                     <h3 class="text-xl font-bold dark:text-dark-text-bright text-light-text-bright">
-                        Latest Downloads
+                        <div class="flex items-center">
+                            <svg class="w-5 h-5 mr-2 text-accent-green" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V6m0 2v8m0 0v2m0-2c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            Latest Game Deals
+                        </div>
                     </h3>
-                    <a href="{{ route('downloads.index') }}" class="text-sm text-accent-blue hover:text-accent-purple transition-colors">
+                    <a href="{{ route('games.deals') }}" class="text-sm text-accent-blue hover:text-accent-purple transition-colors">
                         View All →
                     </a>
                 </div>
-                <div class="grid grid-cols-2 gap-4">
-                    @forelse($latestDownloads as $download)
-                        <a href="{{ route('downloads.show', $download) }}" class="block dark:bg-dark-bg-tertiary bg-light-bg-tertiary rounded-lg overflow-hidden hover:shadow-lg transition-shadow">
-                            <div class="relative h-32 dark:bg-dark-bg-elevated bg-light-bg-elevated">
-                                @if($download->galleryMedia->first())
-                                    <img src="{{ $download->galleryMedia->first()->url }}" alt="{{ $download->title }}" class="w-full h-full object-cover">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    @forelse($latestDeals->take(4) as $deal)
+                        <div class="dark:bg-dark-bg-tertiary bg-light-bg-tertiary rounded-lg p-3 hover:shadow-lg transition-all border dark:border-dark-border-primary border-light-border-primary hover:border-accent-green">
+                            <div class="flex items-center gap-3">
+                                @if($deal->game && $deal->game->thumb)
+                                    <img src="{{ $deal->game->thumb }}" alt="{{ $deal->game->title ?? 'Game' }}" class="w-20 h-20 object-cover rounded">
                                 @else
-                                    <div class="w-full h-full flex items-center justify-center">
-                                        <svg class="w-12 h-12 dark:text-dark-text-tertiary text-light-text-tertiary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10"/>
+                                    <div class="w-20 h-20 bg-gradient-to-br from-accent-blue to-accent-purple rounded flex items-center justify-center">
+                                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                         </svg>
                                     </div>
                                 @endif
-                                <div class="absolute top-2 right-2 px-2 py-1 bg-accent-blue rounded text-white text-xs font-semibold">
-                                    {{ $download->game }}
+                                <div class="flex-1 min-w-0">
+                                    <h4 class="font-semibold dark:text-dark-text-primary text-light-text-primary text-sm line-clamp-1 mb-1">
+                                        {{ $deal->game->title ?? 'Unknown Game' }}
+                                    </h4>
+                                    <div class="flex items-center gap-2 flex-wrap">
+                                        <span class="text-xs line-through dark:text-dark-text-tertiary text-light-text-tertiary">
+                                            ${{ number_format($deal->normal_price, 2) }}
+                                        </span>
+                                        <span class="text-sm font-bold text-accent-green">
+                                            ${{ number_format($deal->sale_price, 2) }}
+                                        </span>
+                                        <span class="px-2 py-0.5 bg-accent-red text-white text-xs font-bold rounded">
+                                            -{{ round($deal->savings) }}%
+                                        </span>
+                                    </div>
+                                    @if($deal->store)
+                                        <p class="text-xs dark:text-dark-text-tertiary text-light-text-tertiary mt-1">
+                                            {{ $deal->store->store_name }}
+                                        </p>
+                                    @endif
                                 </div>
                             </div>
-                            <div class="p-3">
-                                <h4 class="font-semibold dark:text-dark-text-primary text-light-text-primary text-sm line-clamp-1 mb-1">
-                                    {{ $download->title }}
-                                </h4>
-                                <div class="flex items-center justify-between text-xs dark:text-dark-text-tertiary text-light-text-tertiary">
-                                    <span>⬇ {{ $download->downloads }}</span>
-                                    <span>{{ $download->created_at->diffForHumans() }}</span>
-                                </div>
-                            </div>
-                        </a>
+                        </div>
                     @empty
                         <div class="col-span-2 text-center py-8">
+                            <svg class="w-12 h-12 mx-auto mb-3 dark:text-dark-text-tertiary text-light-text-tertiary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V6m0 2v8m0 0v2m0-2c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
                             <p class="dark:text-dark-text-secondary text-light-text-secondary">
-                                No downloads yet. Be the first to upload!
+                                No deals available right now. Check back soon!
                             </p>
                         </div>
                     @endforelse
@@ -479,6 +560,75 @@
                     <div class="text-center py-4">
                         <p class="dark:text-dark-text-secondary text-light-text-secondary">
                             No recent threads yet.
+                        </p>
+                    </div>
+                @endforelse
+            </div>
+        </div>
+
+        <!-- Upcoming Events Block -->
+        <div class="dark:bg-dark-bg-secondary bg-light-bg-secondary rounded-lg shadow-md p-6">
+            <div class="flex items-center justify-between mb-4 border-b dark:border-dark-border-primary border-light-border-primary pb-2">
+                <h3 class="text-lg font-bold dark:text-dark-text-bright text-light-text-bright">
+                    <div class="flex items-center">
+                        <svg class="w-5 h-5 mr-2 text-accent-purple" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                        </svg>
+                        Upcoming Events
+                    </div>
+                </h3>
+                <a href="{{ route('events.index') }}" class="text-xs text-accent-blue hover:text-accent-purple transition-colors">
+                    View All →
+                </a>
+            </div>
+            <div class="space-y-3">
+                @forelse($upcomingEvents as $event)
+                    <a href="{{ route('events.show', $event->slug) }}" class="block dark:bg-dark-bg-tertiary bg-light-bg-tertiary rounded-lg p-3 hover:shadow-lg transition-all border dark:border-dark-border-primary border-light-border-primary hover:border-accent-purple">
+                        <div class="flex items-start gap-3">
+                            <!-- Date Badge -->
+                            <div class="flex-shrink-0 w-12 text-center">
+                                <div class="dark:bg-dark-bg-elevated bg-light-bg-elevated rounded-lg p-2 border-2 border-accent-purple">
+                                    <p class="text-xs font-bold text-accent-purple uppercase">
+                                        {{ $event->start_time ? \Carbon\Carbon::parse($event->start_time)->format('M') : 'TBA' }}
+                                    </p>
+                                    <p class="text-lg font-bold dark:text-dark-text-bright text-light-text-bright leading-none">
+                                        {{ $event->start_time ? \Carbon\Carbon::parse($event->start_time)->format('d') : '--' }}
+                                    </p>
+                                </div>
+                            </div>
+                            
+                            <!-- Event Info -->
+                            <div class="flex-1 min-w-0">
+                                <h4 class="font-semibold dark:text-dark-text-primary text-light-text-primary text-sm line-clamp-2 mb-1">
+                                    {{ $event->name }}
+                                </h4>
+                                <div class="flex items-center gap-2 flex-wrap">
+                                    @if($event->event_type)
+                                        <span class="px-2 py-0.5 bg-accent-blue/20 text-accent-blue text-xs rounded font-medium capitalize">
+                                            {{ $event->event_type }}
+                                        </span>
+                                    @endif
+                                    @if($event->is_virtual)
+                                        <span class="px-2 py-0.5 bg-accent-green/20 text-accent-green text-xs rounded font-medium">
+                                            Virtual
+                                        </span>
+                                    @endif
+                                </div>
+                                @if($event->start_time)
+                                    <p class="text-xs dark:text-dark-text-tertiary text-light-text-tertiary mt-1">
+                                        {{ \Carbon\Carbon::parse($event->start_time)->diffForHumans() }}
+                                    </p>
+                                @endif
+                            </div>
+                        </div>
+                    </a>
+                @empty
+                    <div class="text-center py-6">
+                        <svg class="w-12 h-12 mx-auto mb-3 dark:text-dark-text-tertiary text-light-text-tertiary opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                        </svg>
+                        <p class="dark:text-dark-text-secondary text-light-text-secondary text-sm">
+                            No upcoming events yet.
                         </p>
                     </div>
                 @endforelse

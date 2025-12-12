@@ -92,22 +92,6 @@
                             </div>
                         </a>
                         
-                        <!-- Universal Search Bar -->
-                        <form action="{{ route('search') }}" method="GET" class="relative ml-4" role="search" aria-label="Search site">
-                            <label for="universal-search" class="sr-only">Search</label>
-                            <input type="text" 
-                                   id="universal-search"
-                                   name="q" 
-                                   placeholder="Search everything..." 
-                                   aria-label="Search query"
-                                   class="px-4 py-2 pl-10 w-64 rounded-lg dark:bg-dark-bg-tertiary bg-light-bg-tertiary dark:text-dark-text-primary text-light-text-primary focus:outline-none focus:ring-2 focus:ring-accent-blue">
-                            <button type="submit" class="absolute left-3 top-1/2 transform -translate-y-1/2" aria-label="Submit search">
-                                <svg class="w-4 h-4 dark:text-dark-text-tertiary text-light-text-tertiary" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-                                </svg>
-                            </button>
-                        </form>
-                        
                         <a href="{{ route('news.index') }}" class="px-4 py-2 rounded-lg dark:text-dark-text-primary text-light-text-primary dark:hover:bg-dark-bg-tertiary hover:bg-light-bg-tertiary dark:hover:text-dark-text-accent hover:text-light-text-accent transition-all font-medium">
                             <div class="flex items-center space-x-2">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -222,6 +206,45 @@
 
                 <!-- Right Side Actions -->
                 <div class="flex items-center space-x-3">
+                    <!-- Live Clock -->
+                    <div x-data="liveClock()" class="hidden md:flex items-center px-3 py-2 rounded-lg dark:bg-dark-bg-tertiary bg-light-bg-tertiary">
+                        <svg class="w-4 h-4 mr-2 dark:text-dark-text-accent text-light-text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        <span class="text-sm font-medium dark:text-dark-text-primary text-light-text-primary" x-text="time"></span>
+                    </div>
+
+                    <!-- Search Icon -->
+                    <div x-data="{ searchOpen: false }" @click.away="searchOpen = false" class="relative">
+                        <button @click="searchOpen = !searchOpen" class="p-2 rounded-lg dark:bg-dark-bg-tertiary bg-light-bg-tertiary dark:hover:bg-dark-bg-elevated hover:bg-light-bg-elevated transition-colors">
+                            <svg class="w-5 h-5 dark:text-dark-text-primary text-light-text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                            </svg>
+                        </button>
+                        
+                        <!-- Search Dropdown -->
+                        <div x-show="searchOpen" x-transition class="absolute right-0 mt-2 w-96 dark:bg-dark-bg-secondary bg-light-bg-secondary rounded-xl shadow-xl dark:border dark:border-dark-border-primary border-light-border-primary p-4 z-50">
+                            <form action="{{ route('search') }}" method="GET" role="search">
+                                <div class="relative">
+                                    <input type="text" 
+                                           name="q" 
+                                           placeholder="Search forums, news, downloads, users..." 
+                                           autofocus
+                                           class="w-full px-4 py-3 pl-12 rounded-lg dark:bg-dark-bg-tertiary bg-light-bg-tertiary dark:text-dark-text-primary text-light-text-primary border dark:border-dark-border-primary border-light-border-primary focus:outline-none focus:ring-2 focus:ring-accent-blue focus:border-transparent">
+                                    <svg class="w-5 h-5 absolute left-4 top-1/2 transform -translate-y-1/2 dark:text-dark-text-tertiary text-light-text-tertiary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                                    </svg>
+                                </div>
+                                <div class="mt-3 flex items-center justify-between text-xs dark:text-dark-text-tertiary text-light-text-tertiary">
+                                    <span>Press Enter to search</span>
+                                    <button type="button" @click="searchOpen = false" class="px-2 py-1 dark:bg-dark-bg-tertiary bg-light-bg-tertiary rounded hover:bg-accent-blue hover:text-white transition-colors">
+                                        ESC
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
                     <!-- Theme Switcher -->
                     <button x-data="{ dark: true }" @click="dark = !dark; document.documentElement.classList.toggle('dark')" class="p-2 rounded-lg dark:bg-dark-bg-tertiary bg-light-bg-tertiary dark:hover:bg-dark-bg-elevated hover:bg-light-bg-elevated transition-colors">
                         <svg x-show="dark" class="w-5 h-5 dark:text-dark-text-accent text-light-text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -588,6 +611,28 @@
                     }
 
                     this.subscribeToRealtime();
+                }
+            }
+        }
+    </script>
+
+    <script>
+        // Live Clock Component
+        function liveClock() {
+            return {
+                time: '',
+                init() {
+                    this.updateTime();
+                    setInterval(() => this.updateTime(), 1000);
+                },
+                updateTime() {
+                    const now = new Date();
+                    this.time = now.toLocaleTimeString('en-US', { 
+                        hour: '2-digit', 
+                        minute: '2-digit',
+                        second: '2-digit',
+                        hour12: true 
+                    });
                 }
             }
         }

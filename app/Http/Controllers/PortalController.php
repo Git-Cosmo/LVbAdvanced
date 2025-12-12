@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\CheapSharkDeal;
+use App\Models\Event;
 use App\Models\Forum\ForumThread;
 use App\Models\News;
 use App\Models\User\Gallery;
@@ -49,6 +50,13 @@ class PortalController extends Controller
             ->take(5)
             ->get();
 
+        // Get upcoming events
+        $upcomingEvents = Event::where('is_published', true)
+            ->where('start_time', '>', now())
+            ->orderBy('start_time', 'asc')
+            ->take(3)
+            ->get();
+
         return view('portal.home', [
             'nowPlaying' => $payload['now_playing'] ?? null,
             'upNext' => $payload['playing_next'] ?? null,
@@ -58,6 +66,7 @@ class PortalController extends Controller
             'latestDeals' => $latestDeals,
             'latestDownloads' => $latestDownloads,
             'recentThreads' => $recentThreads,
+            'upcomingEvents' => $upcomingEvents,
         ]);
     }
 }
