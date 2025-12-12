@@ -100,7 +100,7 @@
                             <div class="flex items-center justify-between text-sm">
                                 <span class="text-accent-blue font-medium">{{ $achievement->points }} points</span>
                                 <span class="text-xs dark:text-dark-text-muted">
-                                    Unlocked {{ $achievement->pivot->unlocked_at ? \Carbon\Carbon::parse($achievement->pivot->unlocked_at)->diffForHumans() : 'recently' }}
+                                    Unlocked {{ $achievement->formatted_unlocked_at ?? 'recently' }}
                                 </span>
                             </div>
                         </div>
@@ -131,7 +131,7 @@
                             <div class="flex items-center justify-between text-sm">
                                 <span class="text-accent-purple font-medium">{{ $badge->points }} points</span>
                                 <span class="text-xs dark:text-dark-text-muted">
-                                    Earned {{ $badge->pivot->awarded_at ? \Carbon\Carbon::parse($badge->pivot->awarded_at)->diffForHumans() : 'recently' }}
+                                    Earned {{ $badge->formatted_awarded_at ?? 'recently' }}
                                 </span>
                             </div>
                         </div>

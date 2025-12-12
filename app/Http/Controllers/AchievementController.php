@@ -26,7 +26,7 @@ class AchievementController extends Controller
             ->get();
 
         $topAchievers = User::withCount(['achievements' => function ($query) {
-                $query->where('is_unlocked', true);
+                $query->wherePivot('is_unlocked', true);
             }])
             ->orderBy('achievements_count', 'desc')
             ->take(10)
@@ -48,10 +48,10 @@ class AchievementController extends Controller
     {
         $user->load([
             'achievements' => function ($query) {
-                $query->orderBy('pivot_unlocked_at', 'desc');
+                $query->orderByPivot('unlocked_at', 'desc');
             },
             'badges' => function ($query) {
-                $query->orderBy('pivot_awarded_at', 'desc');
+                $query->orderByPivot('awarded_at', 'desc');
             }
         ]);
 
