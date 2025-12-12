@@ -63,12 +63,14 @@ class AchievementController extends Controller
             ->whereNotIn('id', $unlockedAchievements->pluck('id'))
             ->get();
 
+        $totalActiveAchievements = UserAchievement::where('is_active', true)->count();
+        
         $stats = [
             'total_achievements' => $unlockedAchievements->count(),
             'total_badges' => $user->badges->count(),
             'total_points' => $unlockedAchievements->sum('points') + $user->badges->sum('points'),
-            'completion_rate' => UserAchievement::where('is_active', true)->count() > 0 
-                ? round(($unlockedAchievements->count() / UserAchievement::where('is_active', true)->count()) * 100, 1)
+            'completion_rate' => $totalActiveAchievements > 0 
+                ? round(($unlockedAchievements->count() / $totalActiveAchievements) * 100, 1)
                 : 0,
         ];
 
