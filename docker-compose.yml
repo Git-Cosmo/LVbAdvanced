@@ -9,6 +9,9 @@ services:
       - "8067:80"
     volumes:
       # Mount storage and cache for persistence
+      # WARNING: These volume mounts may cause permission issues in production if the host's
+      # ./storage and ./bootstrap/cache directories are not owned by or writable by the container's www-data user.
+      # Ensure these directories have the correct ownership and permissions to avoid runtime errors.
       - ./storage:/var/www/storage
       - ./bootstrap/cache:/var/www/bootstrap/cache
       # Optional: mount .env.docker as .env for local overrides

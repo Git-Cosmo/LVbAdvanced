@@ -459,7 +459,7 @@ jobs:
 
 - [Docker Documentation](https://docs.docker.com/)
 - [Docker Compose Documentation](https://docs.docker.com/compose/)
-- [Laravel Docker Guide](https://laravel.com/docs/deployment#docker)
+- [Laravel Sail (Official Docker Guide)](https://laravel.com/docs/sail)
 - [Project README](README.md)
 
 ## Support

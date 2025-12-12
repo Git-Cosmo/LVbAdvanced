@@ -56,9 +56,6 @@ tests
 phpunit.xml
 
 # Documentation
-README.md
-INSTALLATION.md
-EVENTS_SETUP.md
 *.md
 
 # Docker files (don't copy docker-compose.yml into the image)
