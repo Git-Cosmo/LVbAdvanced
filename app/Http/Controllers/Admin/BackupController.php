@@ -17,7 +17,7 @@ class BackupController extends Controller
         
         try {
             // Get backup statuses using the correct v9 API
-            $backupDestinationStatuses = BackupDestinationStatus::all();
+            $backupDestinationStatuses = BackupDestinationStatus::get();
 
             foreach ($backupDestinationStatuses as $backupDestinationStatus) {
                 if (!$backupDestinationStatus->isHealthy()) {

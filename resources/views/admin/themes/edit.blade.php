@@ -6,7 +6,7 @@
 <div class="max-w-3xl">
     <form action="{{ route('admin.themes.update', $theme) }}" method="POST" class="space-y-6">
         @csrf
-        @method('PUT')
+        @method('PATCH')
 
         <div class="dark:bg-dark-bg-secondary rounded-lg border dark:border-dark-border-primary p-6 space-y-4">
             <h3 class="text-lg font-semibold dark:text-dark-text-bright mb-4">Basic Information</h3>
