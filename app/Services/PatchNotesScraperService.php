@@ -14,6 +14,16 @@ use Symfony\Component\DomCrawler\Crawler;
 class PatchNotesScraperService
 {
     /**
+     * CSS selectors for finding patch note content in HTML
+     */
+    protected const HTML_SELECTORS = 'article[class*="patch"], div[class*="patch"], article[class*="update"], div[class*="update"], .post, article';
+    
+    /**
+     * Maximum number of items to scrape per game
+     */
+    protected const MAX_ITEMS_PER_SCRAPE = 10;
+
+    /**
      * Scrape patch notes for all configured games
      */
     public function scrapeAll(): array
@@ -174,12 +184,10 @@ class PatchNotesScraperService
             $crawler = new Crawler($response->body());
             
             // Look for common patch note patterns in HTML - combine selectors for efficiency
-            $combinedSelector = 'article[class*="patch"], div[class*="patch"], article[class*="update"], div[class*="update"], .post, article';
-            
             try {
-                $crawler->filter($combinedSelector)->each(function (Crawler $node) use ($gameName, &$count) {
+                $crawler->filter(self::HTML_SELECTORS)->each(function (Crawler $node) use ($gameName, &$count) {
                     // Limit to reasonable amount to avoid processing too many items
-                    if ($count >= 10) {
+                    if ($count >= self::MAX_ITEMS_PER_SCRAPE) {
                         return;
                     }
                     

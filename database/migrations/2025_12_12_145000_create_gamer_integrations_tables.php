@@ -15,7 +15,7 @@ return new class extends Migration
         Schema::create('game_integrations', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->string('platform'); // steam, xbox, psn
+            $table->enum('platform', ['steam', 'xbox', 'psn']); // Supported gaming platforms
             $table->string('platform_id'); // Platform-specific user ID
             $table->string('username')->nullable();
             $table->text('access_token')->nullable();

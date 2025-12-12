@@ -101,8 +101,8 @@
                                  alt="Album Art" 
                                  class="w-16 h-16 rounded">
                         @else
-                            <div class="w-16 h-16 bg-dark-bg-tertiary rounded flex items-center justify-center">
-                                <svg class="w-8 h-8 dark:text-dark-text-tertiary" fill="currentColor" viewBox="0 0 20 20">
+                            <div class="w-16 h-16 dark:bg-dark-bg-tertiary bg-light-bg-tertiary rounded flex items-center justify-center">
+                                <svg class="w-8 h-8 dark:text-dark-text-tertiary text-light-text-tertiary" fill="currentColor" viewBox="0 0 20 20">
                                     <path d="M18 3a1 1 0 00-1.196-.98l-10 2A1 1 0 006 5v9.114A4.369 4.369 0 005 14c-1.657 0-3 .895-3 2s1.343 2 3 2 3-.895 3-2V7.82l8-1.6v5.894A4.37 4.37 0 0015 12c-1.657 0-3 .895-3 2s1.343 2 3 2 3-.895 3-2V3z"/>
                                 </svg>
                             </div>
@@ -133,14 +133,14 @@
                     </h3>
                     <div class="space-y-3">
                         @foreach(array_slice($nowPlaying['song_history'], 0, 5) as $track)
-                            <div class="flex items-center space-x-3 p-2 rounded hover:bg-dark-bg-tertiary transition-colors">
+                            <div class="flex items-center space-x-3 p-2 rounded hover:bg-light-bg-tertiary dark:hover:bg-dark-bg-tertiary transition-colors">
                                 @if(isset($track['song']['art']))
                                     <img src="{{ $track['song']['art'] }}" 
                                          alt="Album Art" 
                                          class="w-12 h-12 rounded">
                                 @else
-                                    <div class="w-12 h-12 bg-dark-bg-tertiary rounded flex items-center justify-center">
-                                        <svg class="w-6 h-6 dark:text-dark-text-tertiary" fill="currentColor" viewBox="0 0 20 20">
+                                    <div class="w-12 h-12 dark:bg-dark-bg-tertiary bg-light-bg-tertiary rounded flex items-center justify-center">
+                                        <svg class="w-6 h-6 dark:text-dark-text-tertiary text-light-text-tertiary" fill="currentColor" viewBox="0 0 20 20">
                                             <path d="M18 3a1 1 0 00-1.196-.98l-10 2A1 1 0 006 5v9.114A4.369 4.369 0 005 14c-1.657 0-3 .895-3 2s1.343 2 3 2 3-.895 3-2V7.82l8-1.6v5.894A4.37 4.37 0 0015 12c-1.657 0-3 .895-3 2s1.343 2 3 2 3-.895 3-2V3z"/>
                                         </svg>
                                     </div>
@@ -165,7 +165,7 @@
                     Quick Links
                 </h3>
                 <div class="space-y-2">
-                    <a href="{{ route('radio.index') }}" class="block p-3 rounded-lg hover:bg-dark-bg-tertiary transition-colors">
+                    <a href="{{ route('radio.index') }}" class="block p-3 rounded-lg hover:bg-light-bg-tertiary dark:hover:bg-dark-bg-tertiary transition-colors">
                         <div class="flex items-center space-x-2">
                             <svg class="w-5 h-5 text-accent-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"/>
@@ -173,7 +173,7 @@
                             <span class="dark:text-dark-text-primary text-light-text-primary">Radio Player</span>
                         </div>
                     </a>
-                    <a href="{{ route('radio.requests') }}" class="block p-3 rounded-lg hover:bg-dark-bg-tertiary transition-colors">
+                    <a href="{{ route('radio.requests') }}" class="block p-3 rounded-lg hover:bg-light-bg-tertiary dark:hover:bg-dark-bg-tertiary transition-colors">
                         <div class="flex items-center space-x-2">
                             <svg class="w-5 h-5 text-accent-purple" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
