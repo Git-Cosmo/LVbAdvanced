@@ -347,6 +347,50 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
         Route::post('/participants/{participant}/reject', [\App\Http\Controllers\Admin\TournamentManagementController::class, 'rejectParticipant'])->name('participants.reject');
         Route::post('/matches/{match}/result', [\App\Http\Controllers\Admin\TournamentManagementController::class, 'updateMatchResult'])->name('matches.result');
     });
+    
+    // Theme Settings
+    Route::prefix('themes')->name('themes.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Admin\ThemeSettingsController::class, 'index'])->name('index');
+        Route::get('/create', [\App\Http\Controllers\Admin\ThemeSettingsController::class, 'create'])->name('create');
+        Route::post('/', [\App\Http\Controllers\Admin\ThemeSettingsController::class, 'store'])->name('store');
+        Route::get('/{theme}/edit', [\App\Http\Controllers\Admin\ThemeSettingsController::class, 'edit'])->name('edit');
+        Route::patch('/{theme}', [\App\Http\Controllers\Admin\ThemeSettingsController::class, 'update'])->name('update');
+        Route::delete('/{theme}', [\App\Http\Controllers\Admin\ThemeSettingsController::class, 'destroy'])->name('destroy');
+        Route::post('/{theme}/toggle', [\App\Http\Controllers\Admin\ThemeSettingsController::class, 'toggle'])->name('toggle');
+    });
+    
+    // Casual Games Management
+    Route::prefix('casual-games')->name('casual-games.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Admin\CasualGamesController::class, 'index'])->name('index');
+        
+        // Trivia Management
+        Route::prefix('trivia')->name('trivia.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\Admin\TriviaManagementController::class, 'index'])->name('index');
+            Route::get('/create', [\App\Http\Controllers\Admin\TriviaManagementController::class, 'create'])->name('create');
+            Route::post('/', [\App\Http\Controllers\Admin\TriviaManagementController::class, 'store'])->name('store');
+            Route::get('/{triviaGame}/edit', [\App\Http\Controllers\Admin\TriviaManagementController::class, 'edit'])->name('edit');
+            Route::patch('/{triviaGame}', [\App\Http\Controllers\Admin\TriviaManagementController::class, 'update'])->name('update');
+            Route::delete('/{triviaGame}', [\App\Http\Controllers\Admin\TriviaManagementController::class, 'destroy'])->name('destroy');
+            Route::post('/{triviaGame}/questions', [\App\Http\Controllers\Admin\TriviaManagementController::class, 'addQuestion'])->name('questions.add');
+            Route::delete('/questions/{question}', [\App\Http\Controllers\Admin\TriviaManagementController::class, 'deleteQuestion'])->name('questions.delete');
+        });
+        
+        // Predictions Management
+        Route::prefix('predictions')->name('predictions.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\Admin\PredictionManagementController::class, 'index'])->name('index');
+            Route::get('/create', [\App\Http\Controllers\Admin\PredictionManagementController::class, 'create'])->name('create');
+            Route::post('/', [\App\Http\Controllers\Admin\PredictionManagementController::class, 'store'])->name('store');
+            Route::post('/{prediction}/resolve', [\App\Http\Controllers\Admin\PredictionManagementController::class, 'resolve'])->name('resolve');
+        });
+        
+        // Daily Challenges Management
+        Route::prefix('challenges')->name('challenges.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\Admin\DailyChallengeManagementController::class, 'index'])->name('index');
+            Route::get('/create', [\App\Http\Controllers\Admin\DailyChallengeManagementController::class, 'create'])->name('create');
+            Route::post('/', [\App\Http\Controllers\Admin\DailyChallengeManagementController::class, 'store'])->name('store');
+            Route::delete('/{challenge}', [\App\Http\Controllers\Admin\DailyChallengeManagementController::class, 'destroy'])->name('destroy');
+        });
+    });
 });
 
 // Public Leaderboard Route
@@ -402,6 +446,31 @@ Route::get('/reddit/{post}', [\App\Http\Controllers\RedditController::class, 'sh
 // StreamerBans Routes
 Route::get('/streamerbans', [\App\Http\Controllers\StreamerBansController::class, 'index'])->name('streamerbans.index');
 Route::get('/streamerbans/{streamerBan}', [\App\Http\Controllers\StreamerBansController::class, 'show'])->name('streamerbans.show');
+
+// Casual Games Routes
+Route::prefix('casual-games')->name('casual-games.')->group(function () {
+    Route::get('/', [\App\Http\Controllers\CasualGamesController::class, 'index'])->name('index');
+    
+    // Trivia
+    Route::prefix('trivia')->name('trivia.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\CasualGamesController::class, 'triviaIndex'])->name('index');
+        Route::get('/{triviaGame}', [\App\Http\Controllers\CasualGamesController::class, 'triviaShow'])->name('show');
+        Route::post('/{triviaGame}/submit', [\App\Http\Controllers\CasualGamesController::class, 'triviaSubmit'])->name('submit')->middleware('auth');
+        Route::get('/result/{attempt}', [\App\Http\Controllers\CasualGamesController::class, 'triviaResult'])->name('result')->middleware('auth');
+    });
+    
+    // Predictions
+    Route::prefix('predictions')->name('predictions.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\CasualGamesController::class, 'predictionsIndex'])->name('index');
+        Route::get('/{prediction}', [\App\Http\Controllers\CasualGamesController::class, 'predictionShow'])->name('show');
+        Route::post('/{prediction}/submit', [\App\Http\Controllers\CasualGamesController::class, 'predictionSubmit'])->name('submit')->middleware('auth');
+    });
+    
+    // Daily Challenges
+    Route::prefix('challenges')->name('challenges.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\CasualGamesController::class, 'challengesIndex'])->name('index');
+    });
+});
 
 // Events Routes
 Route::prefix('events')->name('events.')->group(function () {

@@ -205,6 +205,13 @@
                                     </svg>
                                     <span>Tournaments</span>
                                 </a>
+                                <a href="{{ route('casual-games.index') }}" class="flex items-center space-x-2 px-4 py-2 dark:hover:bg-dark-bg-tertiary hover:bg-light-bg-tertiary dark:text-dark-text-primary text-light-text-primary transition-colors">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                    <span>Casual Games</span>
+                                </a>
                                 @auth
                                 <a href="{{ route('integrations.index') }}" class="flex items-center space-x-2 px-4 py-2 dark:hover:bg-dark-bg-tertiary hover:bg-light-bg-tertiary dark:text-dark-text-primary text-light-text-primary transition-colors">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -743,5 +750,8 @@
 
     <!-- Cookie Consent -->
     @include('cookie-consent::index')
+    
+    {{-- Theme Effects (Snow, Lights, etc.) --}}
+    <x-theme-effects />
 </body>
 </html>
