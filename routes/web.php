@@ -351,8 +351,13 @@ Route::prefix('patch-notes')->name('patch-notes.')->group(function () {
 });
 
 // Radio Routes
-Route::get('/radio', [\App\Http\Controllers\RadioController::class, 'index'])->name('radio.index');
-Route::get('/radio/popout', [\App\Http\Controllers\RadioController::class, 'popout'])->name('radio.popout');
+Route::prefix('radio')->name('radio.')->group(function () {
+    Route::get('/', [\App\Http\Controllers\RadioController::class, 'index'])->name('index');
+    Route::get('/home', [\App\Http\Controllers\RadioController::class, 'home'])->name('home');
+    Route::get('/popout', [\App\Http\Controllers\RadioController::class, 'popout'])->name('popout');
+    Route::get('/requests', [\App\Http\Controllers\RadioController::class, 'requests'])->name('requests');
+    Route::post('/request', [\App\Http\Controllers\RadioController::class, 'submitRequest'])->name('request.submit')->middleware('auth');
+});
 
 // Reddit Content Routes
 Route::get('/clips', [\App\Http\Controllers\RedditController::class, 'clips'])->name('clips.index');
