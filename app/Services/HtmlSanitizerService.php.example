@@ -1,0 +1,120 @@
+<?php
+
+namespace App\Services;
+
+/**
+ * HTML Sanitizer Service - Example Implementation
+ * 
+ * This is an example service for sanitizing HTML content from the rich text editor.
+ * 
+ * USAGE:
+ * 1. Rename this file to HtmlSanitizerService.php (remove .example)
+ * 2. Install HTMLPurifier: composer require ezyang/htmlpurifier
+ * 3. Use in your controllers:
+ *    $sanitized = app(HtmlSanitizerService::class)->sanitize($validated['content']);
+ * 
+ * ALTERNATIVE: If you don't want to use HTMLPurifier, you can use strip_tags():
+ *    $sanitized = strip_tags($content, '<p><strong><em><u><h2><ul><ol><li><blockquote><code><pre><a>');
+ *    // Then validate <a> tags to ensure href attributes are safe URLs
+ */
+class HtmlSanitizerService
+{
+    /**
+     * Sanitize HTML content using HTMLPurifier
+     * 
+     * @param string $content Raw HTML content from rich text editor
+     * @return string Sanitized HTML safe for storage and display
+     */
+    public function sanitize(string $content): string
+    {
+        // Option 1: Using HTMLPurifier (recommended - install with: composer require ezyang/htmlpurifier)
+        if (class_exists(\HTMLPurifier::class)) {
+            $config = \HTMLPurifier_Config::createDefault();
+            
+            // Configure allowed HTML tags and attributes
+            $config->set('HTML.Allowed', implode(',', [
+                'p',
+                'strong',
+                'em',
+                'u',
+                'h2',
+                'ul',
+                'ol',
+                'li',
+                'blockquote',
+                'code',
+                'pre',
+                'a[href|title]', // Allow <a> with href and title attributes
+            ]));
+            
+            // Additional security settings
+            $config->set('HTML.Nofollow', true); // Add rel="nofollow" to links
+            $config->set('URI.AllowedSchemes', ['http' => true, 'https' => true]); // Only allow http/https URLs
+            $config->set('AutoFormat.RemoveEmpty', true); // Remove empty tags
+            $config->set('AutoFormat.AutoParagraph', true); // Wrap text in paragraphs
+            
+            $purifier = new \HTMLPurifier($config);
+            return $purifier->purify($content);
+        }
+        
+        // Option 2: Simple fallback using strip_tags (less secure, but doesn't require external library)
+        // This only removes disallowed tags but doesn't validate attributes
+        $allowedTags = '<p><strong><em><u><h2><ul><ol><li><blockquote><code><pre><a>';
+        $sanitized = strip_tags($content, $allowedTags);
+        
+        // Additional validation for <a> tags
+        $sanitized = $this->sanitizeLinks($sanitized);
+        
+        return $sanitized;
+    }
+    
+    /**
+     * Sanitize links to prevent javascript: and other malicious URLs
+     * 
+     * @param string $html HTML content with potential links
+     * @return string HTML with sanitized links
+     */
+    protected function sanitizeLinks(string $html): string
+    {
+        // Remove any javascript: links and other dangerous protocols
+        $html = preg_replace('/href\s*=\s*["\']?\s*javascript:/i', 'href="#"', $html);
+        $html = preg_replace('/href\s*=\s*["\']?\s*data:/i', 'href="#"', $html);
+        $html = preg_replace('/href\s*=\s*["\']?\s*vbscript:/i', 'href="#"', $html);
+        
+        // Remove on* event handlers (onclick, onload, etc.)
+        $html = preg_replace('/\s*on\w+\s*=\s*["\']?[^"\']*["\']?/i', '', $html);
+        
+        return $html;
+    }
+    
+    /**
+     * Strip all HTML tags (for plain text extraction)
+     * 
+     * @param string $content HTML content
+     * @return string Plain text
+     */
+    public function toPlainText(string $content): string
+    {
+        return strip_tags($content);
+    }
+    
+    /**
+     * Truncate HTML content while preserving valid HTML structure
+     * 
+     * @param string $content HTML content
+     * @param int $length Maximum length
+     * @return string Truncated HTML
+     */
+    public function truncate(string $content, int $length = 200): string
+    {
+        $plainText = $this->toPlainText($content);
+        
+        if (mb_strlen($plainText) <= $length) {
+            return $content;
+        }
+        
+        // Simple truncation - for better HTML-aware truncation, use a library
+        $truncated = mb_substr($plainText, 0, $length) . '...';
+        return '<p>' . e($truncated) . '</p>';
+    }
+}

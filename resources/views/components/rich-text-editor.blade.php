@@ -11,8 +11,19 @@
     - Quill.js (https://quilljs.com/)
     - Trix Editor (https://trix-editor.org/)
     
-    SECURITY: Content is sanitized on the server side. Ensure backend validation
-    and sanitization (e.g., using HTMLPurifier) before storing in database.
+    SECURITY WARNING: This component accepts raw HTML input via contenteditable.
+    ⚠️ CRITICAL: You MUST sanitize content on the server side before storing in database.
+    
+    Recommended approach:
+    1. Install HTMLPurifier: composer require ezyang/htmlpurifier
+    2. Create a sanitization service (see app/Services/HtmlSanitizerService.php.example)
+    3. Sanitize in controller before saving:
+       $sanitized = app(HtmlSanitizerService::class)->sanitize($validated['content']);
+    
+    Allowed tags should include: <p>, <strong>, <em>, <u>, <h2>, <ul>, <ol>, <li>, 
+    <blockquote>, <code>, <pre>, <a href=""> (with URL validation)
+    
+    DO NOT: Store raw HTML from this editor without sanitization - this creates XSS vulnerabilities!
 --}}
 
 <div x-data="richTextEditor()" x-init="init()">

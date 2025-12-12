@@ -185,10 +185,13 @@
 ### Security
 - ✅ Input validation on all forms
 - ✅ Authentication guards on protected routes
-- ✅ XSS prevention throughout
+- ✅ XSS protection with @json() for initial values
+- ⚠️ **Rich text editor requires server-side HTML sanitization** (documented in HTML_SANITIZATION_GUIDE.md)
 - ✅ CSRF protection maintained
 - ✅ SQL injection protection (ORM)
 - ✅ Error handling without data exposure
+
+**Important Security Note:** The rich text editor accepts raw HTML via contenteditable. Server-side sanitization with HTMLPurifier is REQUIRED before storing content in database. See `HTML_SANITIZATION_GUIDE.md` and `app/Services/HtmlSanitizerService.php.example` for implementation details.
 
 ---
 

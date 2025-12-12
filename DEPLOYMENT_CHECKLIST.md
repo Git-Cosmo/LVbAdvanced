@@ -70,6 +70,14 @@
 - [ ] Test CSS/JS loading on production
 - [ ] Verify dark/light theme switching works
 
+### Security - HTML Sanitization (CRITICAL)
+- [ ] **Install HTMLPurifier:** `composer require ezyang/htmlpurifier`
+- [ ] **Rename service file:** `mv app/Services/HtmlSanitizerService.php.example app/Services/HtmlSanitizerService.php`
+- [ ] **Update ThreadController** to sanitize rich text content before storing
+- [ ] **Test XSS protection** with malicious HTML payloads
+- [ ] Review `HTML_SANITIZATION_GUIDE.md` for complete implementation details
+- [ ] Verify all user-generated HTML content is sanitized server-side
+
 ### Search & Indexing
 - [ ] Configure full-text search if using
 - [ ] Generate sitemap: `php artisan sitemap:generate`
