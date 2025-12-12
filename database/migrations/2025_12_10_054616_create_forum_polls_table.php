@@ -20,7 +20,7 @@ return new class extends Migration
             $table->timestamp('closes_at')->nullable();
             $table->integer('total_votes')->default(0);
             $table->timestamps();
-            
+
             $table->unique('thread_id');
         });
     }

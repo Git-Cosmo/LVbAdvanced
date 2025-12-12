@@ -41,7 +41,7 @@ class StreamerBansManagementController extends Controller
     {
         try {
             $action = $request->input('action', 'all');
-            
+
             if ($action === 'update') {
                 // Update existing streamers
                 $limit = $request->input('limit', 50);
@@ -52,15 +52,15 @@ class StreamerBansManagementController extends Controller
                 $results = $scraper->scrapeAll();
                 $message = "Successfully scraped {$results['success']} streamers out of {$results['total']}. Failed: {$results['failed']}";
             }
-            
+
             return back()->with('success', $message);
         } catch (\Exception $e) {
-            Log::error('StreamerBans scrape failed: ' . $e->getMessage(), [
+            Log::error('StreamerBans scrape failed: '.$e->getMessage(), [
                 'exception' => $e,
-                'trace' => $e->getTraceAsString()
+                'trace' => $e->getTraceAsString(),
             ]);
-            
-            return back()->with('error', 'Failed to scrape StreamerBans: ' . $e->getMessage());
+
+            return back()->with('error', 'Failed to scrape StreamerBans: '.$e->getMessage());
         }
     }
 
@@ -75,15 +75,16 @@ class StreamerBansManagementController extends Controller
 
         try {
             $success = $scraper->scrapeStreamer($validated['username']);
-            
+
             if ($success) {
                 return back()->with('success', "Successfully scraped data for {$validated['username']}");
             } else {
                 return back()->with('error', "Failed to scrape data for {$validated['username']}");
             }
         } catch (\Exception $e) {
-            Log::error('StreamerBans scrape failed for ' . $validated['username'] . ': ' . $e->getMessage());
-            return back()->with('error', 'Failed to scrape streamer: ' . $e->getMessage());
+            Log::error('StreamerBans scrape failed for '.$validated['username'].': '.$e->getMessage());
+
+            return back()->with('error', 'Failed to scrape streamer: '.$e->getMessage());
         }
     }
 
@@ -93,10 +94,11 @@ class StreamerBansManagementController extends Controller
     public function togglePublish(StreamerBan $streamerBan)
     {
         $streamerBan->update([
-            'is_published' => !$streamerBan->is_published,
+            'is_published' => ! $streamerBan->is_published,
         ]);
 
         $status = $streamerBan->is_published ? 'published' : 'unpublished';
+
         return back()->with('success', "Streamer has been {$status}.");
     }
 
@@ -106,10 +108,11 @@ class StreamerBansManagementController extends Controller
     public function toggleFeature(StreamerBan $streamerBan)
     {
         $streamerBan->update([
-            'is_featured' => !$streamerBan->is_featured,
+            'is_featured' => ! $streamerBan->is_featured,
         ]);
 
         $status = $streamerBan->is_featured ? 'featured' : 'unfeatured';
+
         return back()->with('success', "Streamer has been {$status}.");
     }
 

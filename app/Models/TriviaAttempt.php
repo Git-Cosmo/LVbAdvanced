@@ -37,7 +37,7 @@ class TriviaAttempt extends Model
 
     public function getAccuracyAttribute()
     {
-        return $this->total_questions > 0 
+        return $this->total_questions > 0
             ? round(($this->correct_answers / $this->total_questions) * 100, 1)
             : 0;
     }

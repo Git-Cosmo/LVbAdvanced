@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Services\ActivityFeedService;
-use Illuminate\Http\Request;
 
 class ActivityFeedController extends Controller
 {
@@ -20,7 +19,7 @@ class ActivityFeedController extends Controller
     public function whatsNew()
     {
         $feed = $this->activityFeedService->getWhatsNew(30);
-        
+
         return view('activity.whats-new', [
             'feed' => $feed,
             'page' => (object) [
@@ -37,7 +36,7 @@ class ActivityFeedController extends Controller
     public function trending()
     {
         $trending = $this->activityFeedService->getTrending(20);
-        
+
         return view('activity.trending', [
             'threads' => $trending,
             'page' => (object) [
@@ -54,7 +53,7 @@ class ActivityFeedController extends Controller
     public function recentPosts()
     {
         $posts = $this->activityFeedService->getRecentPosts(50);
-        
+
         return view('activity.recent-posts', [
             'posts' => $posts,
             'page' => (object) [
@@ -71,7 +70,7 @@ class ActivityFeedController extends Controller
     public function recommended()
     {
         $recommended = $this->activityFeedService->getRecommended(auth()->user(), 20);
-        
+
         return view('activity.recommended', [
             'threads' => $recommended,
             'page' => (object) [

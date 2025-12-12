@@ -30,16 +30,16 @@ class ScrapePatchNotes extends Command
         $this->info('Starting patch notes scraper...');
 
         $startTime = microtime(true);
-        
+
         try {
             $results = $scraper->scrapeAll();
-            
+
             $totalScraped = array_sum($results);
-            
+
             $this->newLine();
             $this->info('Scraping complete!');
             $this->newLine();
-            
+
             // Display results
             $this->table(
                 ['Game', 'Patch Notes Found'],
@@ -47,18 +47,18 @@ class ScrapePatchNotes extends Command
                     return [$game, $count];
                 })->toArray()
             );
-            
+
             $this->newLine();
             $this->info("Total patch notes scraped: {$totalScraped}");
-            
+
             $duration = round(microtime(true) - $startTime, 2);
             $this->info("Time taken: {$duration} seconds");
-            
+
             return self::SUCCESS;
         } catch (\Exception $e) {
-            $this->error('Scraping failed: ' . $e->getMessage());
+            $this->error('Scraping failed: '.$e->getMessage());
             $this->error($e->getTraceAsString());
-            
+
             return self::FAILURE;
         }
     }

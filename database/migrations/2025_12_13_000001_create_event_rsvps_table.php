@@ -18,7 +18,7 @@ return new class extends Migration
             $table->enum('status', ['going', 'interested', 'not_going'])->default('going');
             $table->text('notes')->nullable();
             $table->timestamps();
-            
+
             $table->unique(['event_id', 'user_id']);
             $table->index('status');
         });

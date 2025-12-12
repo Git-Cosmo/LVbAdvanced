@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use App\Models\Forum\ForumPost;
 use Illuminate\View\View;
 
 class LeaderboardController extends Controller

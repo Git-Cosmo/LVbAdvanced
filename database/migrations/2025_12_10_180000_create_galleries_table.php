@@ -18,7 +18,7 @@ return new class extends Migration
             $table->unsignedInteger('views')->default(0);
             $table->unsignedInteger('downloads')->default(0);
             $table->timestamps();
-            
+
             $table->index(['game', 'category']);
             $table->index('created_at');
         });

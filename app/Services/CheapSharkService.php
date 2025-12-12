@@ -100,7 +100,7 @@ class CheapSharkService
             ];
         })->all();
 
-        if (!empty($payload)) {
+        if (! empty($payload)) {
             CheapSharkStore::upsert(
                 $payload,
                 ['cheapshark_id'],
@@ -123,6 +123,7 @@ class CheapSharkService
 
             if ($response->failed()) {
                 Log::warning('CheapShark deals fetch failed for store', ['store_id' => $externalId]);
+
                 continue;
             }
 
@@ -156,6 +157,7 @@ class CheapSharkService
 
             if ($response->failed()) {
                 Log::warning('CheapShark games fetch failed for chunk', ['ids' => $chunk]);
+
                 continue;
             }
 
@@ -163,7 +165,7 @@ class CheapSharkService
                 $info = $game['info'] ?? [];
                 $title = $info['title'] ?? 'Unknown Game';
                 // Append CheapShark ID to guarantee uniqueness even when titles collide across stores.
-                $slug = Str::slug($title) . '-' . $id;
+                $slug = Str::slug($title).'-'.$id;
 
                 $records[] = [
                     'cheapshark_id' => (string) $id,
@@ -179,7 +181,7 @@ class CheapSharkService
             }
         }
 
-        if (!empty($records)) {
+        if (! empty($records)) {
             CheapSharkGame::upsert(
                 $records,
                 ['cheapshark_id'],
@@ -203,7 +205,7 @@ class CheapSharkService
             $gameKey = (string) ($deal['gameID'] ?? '');
             $storeKey = (string) ($deal['store_external_id'] ?? '');
 
-            if (!isset($gameMap[$gameKey]) || !$storeMap->has($storeKey)) {
+            if (! isset($gameMap[$gameKey]) || ! $storeMap->has($storeKey)) {
                 continue;
             }
 
@@ -219,13 +221,13 @@ class CheapSharkService
                 'deal_rating' => $deal['dealRating'] ?? null,
                 'steam_app_id' => $deal['steamAppID'] ?? null,
                 'on_sale' => filter_var($onSaleFlag, FILTER_VALIDATE_BOOLEAN),
-                'deal_link' => isset($deal['dealID']) ? 'https://www.cheapshark.com/redirect?dealID=' . $deal['dealID'] : null,
+                'deal_link' => isset($deal['dealID']) ? 'https://www.cheapshark.com/redirect?dealID='.$deal['dealID'] : null,
                 'created_at' => now(),
                 'updated_at' => now(),
             ];
         }
 
-        if (!empty($records)) {
+        if (! empty($records)) {
             CheapSharkDeal::upsert(
                 $records,
                 ['deal_id'],
@@ -249,6 +251,6 @@ class CheapSharkService
 
     protected function endpoint(string $path): string
     {
-        return rtrim($this->baseUrl, '/') . $path;
+        return rtrim($this->baseUrl, '/').$path;
     }
 }

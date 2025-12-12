@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Forum\ForumThread;
 use App\Models\Forum\ForumPost;
+use App\Models\Forum\ForumThread;
 use App\Models\News;
 use App\Models\User;
 use App\Models\User\Gallery;
@@ -18,7 +18,7 @@ class SearchController extends Controller
     public function index(Request $request)
     {
         $query = $request->input('q', '');
-        
+
         if (empty($query)) {
             return view('search.index', [
                 'query' => '',
@@ -31,7 +31,7 @@ class SearchController extends Controller
             ]);
         }
 
-        $searchResults = (new Search())
+        $searchResults = (new Search)
             ->registerModel(ForumThread::class, 'title')
             ->registerModel(ForumPost::class, 'content')
             ->registerModel(News::class, ['title', 'excerpt', 'content'])

@@ -35,11 +35,11 @@ class RssFeed extends Model
      */
     public function needsRefresh(): bool
     {
-        if (!$this->is_active) {
+        if (! $this->is_active) {
             return false;
         }
 
-        if (!$this->last_fetched_at) {
+        if (! $this->last_fetched_at) {
             return true;
         }
 

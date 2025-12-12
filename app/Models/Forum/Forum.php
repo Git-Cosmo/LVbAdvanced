@@ -11,6 +11,7 @@ use Spatie\Sluggable\SlugOptions;
 class Forum extends Model
 {
     use HasSlug;
+
     protected $fillable = [
         'category_id',
         'parent_id',

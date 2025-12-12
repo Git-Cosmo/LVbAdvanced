@@ -22,7 +22,7 @@ class SubscriptionController extends Controller
             'notify_email' => true,
             'notify_push' => true,
         ]);
-        
+
         return back()->with('success', 'Subscribed to thread!');
     }
 
@@ -35,7 +35,7 @@ class SubscriptionController extends Controller
             ->where('subscribable_type', ForumThread::class)
             ->where('subscribable_id', $thread->id)
             ->delete();
-        
+
         return back()->with('success', 'Unsubscribed from thread!');
     }
 }

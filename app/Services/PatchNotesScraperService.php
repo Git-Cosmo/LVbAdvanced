@@ -17,7 +17,7 @@ class PatchNotesScraperService
      * CSS selectors for finding patch note content in HTML
      */
     protected const HTML_SELECTORS = 'article[class*="patch"], div[class*="patch"], article[class*="update"], div[class*="update"], .post, article';
-    
+
     /**
      * Maximum number of items to scrape per game
      */
@@ -29,7 +29,7 @@ class PatchNotesScraperService
     public function scrapeAll(): array
     {
         $results = [];
-        
+
         $games = [
             'Counter Strike 2' => 'https://www.counter-strike.net/newsentry/',
             'GTA V' => 'https://www.rockstargames.com/newswire/tags/702',
@@ -64,14 +64,14 @@ class PatchNotesScraperService
 
         // For this implementation, we'll use a generic RSS/Atom feed approach
         // In a production environment, you'd implement specific scrapers for each game
-        
+
         try {
             // Try to fetch RSS feed if available
             $rssUrl = $this->guessRssFeedUrl($baseUrl);
             if ($rssUrl) {
                 $count = $this->scrapeFromRss($gameName, $rssUrl);
             }
-            
+
             // If RSS doesn't work, try HTML scraping
             if ($count === 0) {
                 $count = $this->scrapeFromHtml($gameName, $baseUrl);
@@ -89,16 +89,16 @@ class PatchNotesScraperService
     protected function guessRssFeedUrl(string $baseUrl): ?string
     {
         $possibleFeeds = [
-            $baseUrl . '/feed',
-            $baseUrl . '/rss',
-            $baseUrl . '/atom',
+            $baseUrl.'/feed',
+            $baseUrl.'/rss',
+            $baseUrl.'/atom',
             str_replace('news/', 'news/feed/', $baseUrl),
         ];
 
         foreach ($possibleFeeds as $feedUrl) {
             try {
                 $response = Http::timeout(5)->get($feedUrl);
-                if ($response->successful() && 
+                if ($response->successful() &&
                     (str_contains($response->body(), '<rss') || str_contains($response->body(), '<feed'))) {
                     return $feedUrl;
                 }
@@ -119,43 +119,43 @@ class PatchNotesScraperService
 
         try {
             $response = Http::timeout(10)->get($rssUrl);
-            if (!$response->successful()) {
+            if (! $response->successful()) {
                 return 0;
             }
 
             $xml = simplexml_load_string($response->body());
-            if (!$xml) {
+            if (! $xml) {
                 return 0;
             }
 
             // Handle RSS 2.0
             if (isset($xml->channel->item)) {
                 foreach ($xml->channel->item as $item) {
-                    if ($this->isPatchNoteItem((string)$item->title, (string)($item->description ?? ''))) {
+                    if ($this->isPatchNoteItem((string) $item->title, (string) ($item->description ?? ''))) {
                         $this->storePatchNote($gameName, [
-                            'title' => (string)$item->title,
-                            'description' => strip_tags((string)($item->description ?? '')),
-                            'content' => (string)($item->description ?? $item->content ?? ''),
-                            'source_url' => (string)$item->link,
-                            'released_at' => isset($item->pubDate) ? date('Y-m-d H:i:s', strtotime((string)$item->pubDate)) : now(),
-                            'external_id' => md5((string)$item->link),
+                            'title' => (string) $item->title,
+                            'description' => strip_tags((string) ($item->description ?? '')),
+                            'content' => (string) ($item->description ?? $item->content ?? ''),
+                            'source_url' => (string) $item->link,
+                            'released_at' => isset($item->pubDate) ? date('Y-m-d H:i:s', strtotime((string) $item->pubDate)) : now(),
+                            'external_id' => md5((string) $item->link),
                         ]);
                         $count++;
                     }
                 }
             }
-            
+
             // Handle Atom
             if (isset($xml->entry)) {
                 foreach ($xml->entry as $entry) {
-                    if ($this->isPatchNoteItem((string)$entry->title, (string)($entry->summary ?? ''))) {
+                    if ($this->isPatchNoteItem((string) $entry->title, (string) ($entry->summary ?? ''))) {
                         $this->storePatchNote($gameName, [
-                            'title' => (string)$entry->title,
-                            'description' => strip_tags((string)($entry->summary ?? '')),
-                            'content' => (string)($entry->content ?? $entry->summary ?? ''),
-                            'source_url' => (string)$entry->link['href'] ?? '',
-                            'released_at' => isset($entry->published) ? date('Y-m-d H:i:s', strtotime((string)$entry->published)) : now(),
-                            'external_id' => md5((string)($entry->link['href'] ?? $entry->id)),
+                            'title' => (string) $entry->title,
+                            'description' => strip_tags((string) ($entry->summary ?? '')),
+                            'content' => (string) ($entry->content ?? $entry->summary ?? ''),
+                            'source_url' => (string) $entry->link['href'] ?? '',
+                            'released_at' => isset($entry->published) ? date('Y-m-d H:i:s', strtotime((string) $entry->published)) : now(),
+                            'external_id' => md5((string) ($entry->link['href'] ?? $entry->id)),
                         ]);
                         $count++;
                     }
@@ -177,12 +177,12 @@ class PatchNotesScraperService
 
         try {
             $response = Http::timeout(10)->get($url);
-            if (!$response->successful()) {
+            if (! $response->successful()) {
                 return 0;
             }
 
             $crawler = new Crawler($response->body());
-            
+
             // Look for common patch note patterns in HTML - combine selectors for efficiency
             try {
                 $crawler->filter(self::HTML_SELECTORS)->each(function (Crawler $node) use ($gameName, &$count) {
@@ -190,7 +190,7 @@ class PatchNotesScraperService
                     if ($count >= self::MAX_ITEMS_PER_SCRAPE) {
                         return;
                     }
-                    
+
                     $title = $this->extractTitle($node);
                     $content = $this->extractContent($node);
                     $link = $this->extractLink($node);
@@ -223,12 +223,12 @@ class PatchNotesScraperService
     protected function isPatchNoteItem(string $title, string $content): bool
     {
         $keywords = [
-            'patch', 'update', 'notes', 'changelog', 'hotfix', 
-            'version', 'release', 'bug fix', 'balance', 'changes'
+            'patch', 'update', 'notes', 'changelog', 'hotfix',
+            'version', 'release', 'bug fix', 'balance', 'changes',
         ];
 
-        $text = strtolower($title . ' ' . $content);
-        
+        $text = strtolower($title.' '.$content);
+
         foreach ($keywords as $keyword) {
             if (str_contains($text, $keyword)) {
                 return true;
@@ -246,7 +246,7 @@ class PatchNotesScraperService
         try {
             // Try different title selectors
             $selectors = ['h1', 'h2', 'h3', '.title', '.headline', 'header'];
-            
+
             foreach ($selectors as $selector) {
                 $title = $node->filter($selector)->first();
                 if ($title->count() > 0) {
@@ -268,7 +268,7 @@ class PatchNotesScraperService
         try {
             // Try different content selectors
             $selectors = ['.content', '.body', '.description', 'p'];
-            
+
             foreach ($selectors as $selector) {
                 $content = $node->filter($selector);
                 if ($content->count() > 0) {
@@ -341,7 +341,7 @@ class PatchNotesScraperService
         }
 
         if (preg_match('/Season\s+(\d+)/i', $title, $matches)) {
-            return 'Season ' . $matches[1];
+            return 'Season '.$matches[1];
         }
 
         if (preg_match('/Update\s+(\d+\.?\d*)/i', $title, $matches)) {

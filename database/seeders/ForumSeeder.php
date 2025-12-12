@@ -5,7 +5,6 @@ namespace Database\Seeders;
 use App\Models\Forum\Forum;
 use App\Models\Forum\ForumCategory;
 use App\Models\User\UserProfile;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class ForumSeeder extends Seeder
@@ -17,7 +16,7 @@ class ForumSeeder extends Seeder
     {
         // Create user profiles for existing users
         \App\Models\User::all()->each(function ($user) {
-            if (!$user->profile) {
+            if (! $user->profile) {
                 UserProfile::create([
                     'user_id' => $user->id,
                     'xp' => 0,
@@ -172,4 +171,3 @@ class ForumSeeder extends Seeder
         ]);
     }
 }
-

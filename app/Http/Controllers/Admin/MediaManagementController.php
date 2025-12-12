@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\User\Gallery;
-use Illuminate\Http\Request;
 
 class MediaManagementController extends Controller
 {
@@ -16,7 +15,7 @@ class MediaManagementController extends Controller
         $galleries = Gallery::with(['user', 'galleryMedia'])
             ->latest()
             ->paginate(20);
-        
+
         return view('admin.media.index', [
             'galleries' => $galleries,
             'page' => (object) ['title' => 'Media Management'],
@@ -29,6 +28,7 @@ class MediaManagementController extends Controller
     public function approve(Gallery $gallery)
     {
         $gallery->update(['is_approved' => true]);
+
         return back()->with('success', 'Gallery approved');
     }
 
@@ -45,9 +45,9 @@ class MediaManagementController extends Controller
             }
             $media->delete();
         }
-        
+
         $gallery->delete();
-        
+
         return back()->with('success', 'Gallery deleted');
     }
 
@@ -56,9 +56,10 @@ class MediaManagementController extends Controller
      */
     public function feature(Gallery $gallery)
     {
-        $gallery->update(['is_featured' => !$gallery->is_featured]);
-        
+        $gallery->update(['is_featured' => ! $gallery->is_featured]);
+
         $message = $gallery->is_featured ? 'Gallery featured' : 'Gallery unfeatured';
+
         return back()->with('success', $message);
     }
 }

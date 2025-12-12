@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Forum;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
 use App\Models\Forum\ForumAttachment;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -35,13 +35,13 @@ class GalleryController extends Controller
         ]);
 
         $file = $request->file('image');
-        $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
-        
+        $filename = time().'_'.uniqid().'.'.$file->getClientOriginalExtension();
+
         // Store original
         $file->storeAs('gallery', $filename, 'public');
-        
+
         // Create thumbnail
-        $thumbnailName = 'thumb_' . $filename;
+        $thumbnailName = 'thumb_'.$filename;
         $this->createThumbnail($file, $thumbnailName);
 
         $attachment = ForumAttachment::create([
@@ -62,7 +62,7 @@ class GalleryController extends Controller
      */
     public function show(ForumAttachment $image)
     {
-        if (!in_array($image->mime_type, ['image/jpeg', 'image/png', 'image/gif', 'image/webp'])) {
+        if (! in_array($image->mime_type, ['image/jpeg', 'image/png', 'image/gif', 'image/webp'])) {
             abort(404);
         }
 
@@ -76,8 +76,8 @@ class GalleryController extends Controller
     {
         $this->authorize('delete', $image);
 
-        Storage::delete('gallery/' . $image->filename);
-        Storage::delete('gallery/thumb_' . $image->filename);
+        Storage::delete('gallery/'.$image->filename);
+        Storage::delete('gallery/thumb_'.$image->filename);
         $image->delete();
 
         return redirect()->back()->with('success', 'Image deleted successfully!');

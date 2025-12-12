@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\GameServer;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 
 class GameServerController extends Controller
 {
@@ -137,7 +136,7 @@ class GameServerController extends Controller
      */
     public function toggleActive(GameServer $gameServer)
     {
-        $gameServer->update(['is_active' => !$gameServer->is_active]);
+        $gameServer->update(['is_active' => ! $gameServer->is_active]);
 
         return back()->with('success', 'Server status toggled successfully!');
     }
@@ -147,7 +146,7 @@ class GameServerController extends Controller
      */
     public function toggleFeatured(GameServer $gameServer)
     {
-        $gameServer->update(['is_featured' => !$gameServer->is_featured]);
+        $gameServer->update(['is_featured' => ! $gameServer->is_featured]);
 
         return back()->with('success', 'Featured status toggled successfully!');
     }

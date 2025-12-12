@@ -23,7 +23,7 @@ class CountryHelper
         }
 
         $flagEmoji = $countryCode
-            ? mb_chr(ord($countryCode[0]) + 127397) . mb_chr(ord($countryCode[1]) + 127397)
+            ? mb_chr(ord($countryCode[0]) + 127397).mb_chr(ord($countryCode[1]) + 127397)
             : '🌐';
 
         $countryLabel = $countryCode ?? 'Worldwide';

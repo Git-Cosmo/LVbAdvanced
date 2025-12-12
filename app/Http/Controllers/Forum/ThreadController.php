@@ -24,7 +24,7 @@ class ThreadController extends Controller
     {
         $thread = $this->threadService->getThreadBySlug($slug);
         $posts = $this->threadService->getPostsForThread($thread->id);
-        
+
         return view('forum.thread.show', compact('thread', 'posts'));
     }
 
@@ -34,7 +34,7 @@ class ThreadController extends Controller
     public function create(Forum $forum): View
     {
         $this->authorize('create', [ForumThread::class, $forum]);
-        
+
         return view('forum.thread.create', compact('forum'));
     }
 
@@ -44,27 +44,26 @@ class ThreadController extends Controller
     public function store(Request $request, Forum $forum): RedirectResponse
     {
         $this->authorize('create', [ForumThread::class, $forum]);
-        
+
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'content' => 'required|string',
         ]);
-        
+
         $thread = $this->threadService->createThread([
             'forum_id' => $forum->id,
             'title' => $validated['title'],
         ], $request->user());
-        
+
         // Create first post
         $this->threadService->createPost($thread, [
             'content' => $validated['content'],
         ], $request->user());
-        
+
         // Award XP for creating a thread
         $this->gamificationService->awardActionXP($request->user(), 'create_thread');
-        
+
         return redirect()->route('forum.thread.show', $thread->slug)
             ->with('success', 'Thread created successfully!');
     }
 }
-

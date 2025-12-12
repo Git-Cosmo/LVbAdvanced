@@ -3,11 +3,10 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\TriviaGame;
-use App\Models\Prediction;
 use App\Models\DailyChallenge;
+use App\Models\Prediction;
 use App\Models\TournamentBet;
-use Illuminate\Http\Request;
+use App\Models\TriviaGame;
 
 class CasualGamesController extends Controller
 {

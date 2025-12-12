@@ -18,7 +18,7 @@ return new class extends Migration
             $table->integer('votes_count')->default(0);
             $table->integer('order')->default(0);
             $table->timestamps();
-            
+
             $table->index(['poll_id', 'order']);
         });
     }

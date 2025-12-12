@@ -26,10 +26,10 @@ return new class extends Migration
             $table->foreignId('edited_by')->nullable()->constrained('users')->onDelete('set null');
             $table->timestamps();
             $table->softDeletes();
-            
+
             $table->index(['thread_id', 'created_at']);
             $table->index('user_id');
-            
+
             // Only add fulltext if not using SQLite
             if (config('database.default') !== 'sqlite') {
                 $table->fullText('content');

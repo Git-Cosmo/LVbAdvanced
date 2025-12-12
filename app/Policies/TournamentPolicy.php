@@ -38,7 +38,7 @@ class TournamentPolicy
      */
     public function manage(User $user, Tournament $tournament): bool
     {
-        return $user->id === $tournament->user_id || 
+        return $user->id === $tournament->user_id ||
                $user->hasRole('admin') ||
                $tournament->staff()->where('user_id', $user->id)->exists();
     }

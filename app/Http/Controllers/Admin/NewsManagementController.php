@@ -84,6 +84,7 @@ class NewsManagementController extends Controller
     public function edit(News $news): View
     {
         $news->load('tags');
+
         return view('admin.news.edit', compact('news'));
     }
 

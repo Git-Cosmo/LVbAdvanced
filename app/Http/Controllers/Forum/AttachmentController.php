@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Forum;
 
 use App\Http\Controllers\Controller;
 use App\Models\Forum\ForumAttachment;
-use App\Models\Forum\ForumPost;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -22,7 +21,7 @@ class AttachmentController extends Controller
         ]);
 
         $file = $request->file('file');
-        $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+        $filename = time().'_'.uniqid().'.'.$file->getClientOriginalExtension();
         $path = $file->storeAs('attachments', $filename, 'public');
 
         $attachment = ForumAttachment::create([
@@ -41,7 +40,7 @@ class AttachmentController extends Controller
                 'id' => $attachment->id,
                 'filename' => $attachment->original_filename,
                 'size' => $attachment->human_size,
-                'url' => Storage::url('attachments/' . $attachment->filename),
+                'url' => Storage::url('attachments/'.$attachment->filename),
             ],
         ]);
     }
@@ -52,9 +51,9 @@ class AttachmentController extends Controller
     public function download(ForumAttachment $attachment)
     {
         $attachment->increment('downloads_count');
-        
+
         return Storage::download(
-            'attachments/' . $attachment->filename,
+            'attachments/'.$attachment->filename,
             $attachment->original_filename
         );
     }
@@ -66,7 +65,7 @@ class AttachmentController extends Controller
     {
         $this->authorize('delete', $attachment);
 
-        Storage::delete('attachments/' . $attachment->filename);
+        Storage::delete('attachments/'.$attachment->filename);
         $attachment->delete();
 
         return response()->json(['success' => true]);

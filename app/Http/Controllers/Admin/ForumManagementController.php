@@ -24,7 +24,7 @@ class ForumManagementController extends Controller
     {
         $categories = ForumCategory::withCount(['forums'])->orderBy('order')->get();
         $forums = Forum::with('category')->withCount(['threads', 'children'])->orderBy('order')->get();
-        
+
         return view('admin.forum.index', compact('categories', 'forums'));
     }
 
@@ -48,20 +48,20 @@ class ForumManagementController extends Controller
             'order' => 'nullable|integer',
             'is_active' => 'boolean',
         ]);
-        
+
         $validated['slug'] = $validated['slug'] ?? Str::slug($validated['name']);
         $validated['order'] = $validated['order'] ?? 0;
         $validated['is_active'] = $validated['is_active'] ?? true;
-        
+
         $category = $this->forumService->createCategory($validated);
-        
+
         // Log activity
         activity()
             ->causedBy(auth()->user())
             ->performedOn($category)
             ->withProperties(['name' => $validated['name']])
             ->log('forum_category_created');
-        
+
         return redirect()->route('admin.forum.index')
             ->with('success', 'Category created successfully!');
     }
@@ -73,7 +73,7 @@ class ForumManagementController extends Controller
     {
         $categories = ForumCategory::active()->orderBy('order')->get();
         $forums = Forum::active()->whereNull('parent_id')->orderBy('order')->get();
-        
+
         return view('admin.forum.create-forum', compact('categories', 'forums'));
     }
 
@@ -92,21 +92,21 @@ class ForumManagementController extends Controller
             'is_active' => 'boolean',
             'is_locked' => 'boolean',
         ]);
-        
+
         $validated['slug'] = $validated['slug'] ?? Str::slug($validated['name']);
         $validated['order'] = $validated['order'] ?? 0;
         $validated['is_active'] = $validated['is_active'] ?? true;
         $validated['is_locked'] = $validated['is_locked'] ?? false;
-        
+
         $forum = $this->forumService->createForum($validated);
-        
+
         // Log activity
         activity()
             ->causedBy(auth()->user())
             ->performedOn($forum)
             ->withProperties(['name' => $validated['name'], 'category_id' => $validated['category_id']])
             ->log('forum_created');
-        
+
         return redirect()->route('admin.forum.index')
             ->with('success', 'Forum created successfully!');
     }
@@ -126,14 +126,14 @@ class ForumManagementController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'slug' => 'required|string|max:255|unique:forum_categories,slug,' . $category->id,
+            'slug' => 'required|string|max:255|unique:forum_categories,slug,'.$category->id,
             'description' => 'nullable|string',
             'order' => 'nullable|integer',
             'is_active' => 'boolean',
         ]);
-        
+
         $category->update($validated);
-        
+
         return redirect()->route('admin.forum.index')
             ->with('success', 'Category updated successfully!');
     }
@@ -145,7 +145,7 @@ class ForumManagementController extends Controller
     {
         $categories = ForumCategory::active()->orderBy('order')->get();
         $forums = Forum::active()->where('id', '!=', $forum->id)->whereNull('parent_id')->orderBy('order')->get();
-        
+
         return view('admin.forum.edit-forum', compact('forum', 'categories', 'forums'));
     }
 
@@ -158,15 +158,15 @@ class ForumManagementController extends Controller
             'category_id' => 'required|exists:forum_categories,id',
             'parent_id' => 'nullable|exists:forums,id',
             'name' => 'required|string|max:255',
-            'slug' => 'required|string|max:255|unique:forums,slug,' . $forum->id,
+            'slug' => 'required|string|max:255|unique:forums,slug,'.$forum->id,
             'description' => 'nullable|string',
             'order' => 'nullable|integer',
             'is_active' => 'boolean',
             'is_locked' => 'boolean',
         ]);
-        
+
         $forum->update($validated);
-        
+
         return redirect()->route('admin.forum.index')
             ->with('success', 'Forum updated successfully!');
     }
@@ -177,7 +177,7 @@ class ForumManagementController extends Controller
     public function deleteCategory(ForumCategory $category): RedirectResponse
     {
         $category->delete();
-        
+
         return redirect()->route('admin.forum.index')
             ->with('success', 'Category deleted successfully!');
     }
@@ -188,7 +188,7 @@ class ForumManagementController extends Controller
     public function deleteForum(Forum $forum): RedirectResponse
     {
         $forum->delete();
-        
+
         return redirect()->route('admin.forum.index')
             ->with('success', 'Forum deleted successfully!');
     }

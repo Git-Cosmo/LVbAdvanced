@@ -22,7 +22,7 @@ return new class extends Migration
             $table->boolean('is_active')->default(true);
             $table->timestamps();
         });
-        
+
         // Pivot table for users and achievements
         Schema::create('achievement_user', function (Blueprint $table) {
             $table->id();
@@ -32,7 +32,7 @@ return new class extends Migration
             $table->boolean('is_unlocked')->default(false);
             $table->timestamp('unlocked_at')->nullable();
             $table->timestamps();
-            
+
             $table->unique(['user_id', 'achievement_id']);
         });
     }

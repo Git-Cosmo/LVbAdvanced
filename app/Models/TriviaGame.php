@@ -57,7 +57,7 @@ class TriviaGame extends Model
 
     public function getDifficultyColorAttribute()
     {
-        return match($this->difficulty) {
+        return match ($this->difficulty) {
             'easy' => 'text-green-500',
             'medium' => 'text-yellow-500',
             'hard' => 'text-red-500',

@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Models\User\UserAchievement;
 use App\Models\User\UserBadge;
-use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class AchievementController extends Controller
@@ -26,8 +25,8 @@ class AchievementController extends Controller
             ->get();
 
         $topAchievers = User::withCount(['achievements' => function ($query) {
-                $query->wherePivot('is_unlocked', true);
-            }])
+            $query->wherePivot('is_unlocked', true);
+        }])
             ->orderBy('achievements_count', 'desc')
             ->take(10)
             ->get();
@@ -52,7 +51,7 @@ class AchievementController extends Controller
             },
             'badges' => function ($query) {
                 $query->orderByPivot('awarded_at', 'desc');
-            }
+            },
         ]);
 
         $unlockedAchievements = $user->achievements()
@@ -64,12 +63,12 @@ class AchievementController extends Controller
             ->get();
 
         $totalActiveAchievements = UserAchievement::where('is_active', true)->count();
-        
+
         $stats = [
             'total_achievements' => $unlockedAchievements->count(),
             'total_badges' => $user->badges->count(),
             'total_points' => $unlockedAchievements->sum('points') + $user->badges->sum('points'),
-            'completion_rate' => $totalActiveAchievements > 0 
+            'completion_rate' => $totalActiveAchievements > 0
                 ? round(($unlockedAchievements->count() / $totalActiveAchievements) * 100, 1)
                 : 0,
         ];

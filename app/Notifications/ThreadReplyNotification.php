@@ -12,6 +12,7 @@ class ThreadReplyNotification extends Notification
     use Queueable;
 
     protected ForumPost $post;
+
     protected ForumThread $thread;
 
     /**
@@ -39,8 +40,8 @@ class ThreadReplyNotification extends Notification
         return [
             'type' => 'thread_reply',
             'title' => 'New reply to your thread',
-            'message' => $this->post->user->name . ' replied to your thread "' . $this->thread->title . '"',
-            'url' => route('forum.thread.show', $this->thread->slug) . '#post-' . $this->post->id,
+            'message' => $this->post->user->name.' replied to your thread "'.$this->thread->title.'"',
+            'url' => route('forum.thread.show', $this->thread->slug).'#post-'.$this->post->id,
             'user_id' => $this->post->user_id,
             'user_name' => $this->post->user->name,
             'thread_id' => $this->thread->id,

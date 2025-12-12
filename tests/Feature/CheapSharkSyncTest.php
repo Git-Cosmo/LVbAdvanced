@@ -4,7 +4,6 @@ namespace Tests\Feature;
 
 use App\Models\CheapSharkDeal;
 use App\Models\CheapSharkGame;
-use App\Models\CheapSharkStore;
 use App\Models\CheapSharkSyncLog;
 use App\Services\CheapSharkService;
 use Illuminate\Foundation\Testing\RefreshDatabase;

@@ -18,7 +18,7 @@ class StreamerBansController extends Controller
         // Search functionality
         if ($request->filled('search')) {
             $search = $request->input('search');
-            $query->where('username', 'like', '%' . $search . '%');
+            $query->where('username', 'like', '%'.$search.'%');
         }
 
         // Sorting
@@ -51,7 +51,7 @@ class StreamerBansController extends Controller
     public function show(StreamerBan $streamerBan): View
     {
         // Only show published streamers to public
-        if (!$streamerBan->is_published) {
+        if (! $streamerBan->is_published) {
             abort(404);
         }
 
@@ -63,7 +63,7 @@ class StreamerBansController extends Controller
             ->where('id', '!=', $streamerBan->id)
             ->whereBetween('total_bans', [
                 max(0, $streamerBan->total_bans - 5),
-                $streamerBan->total_bans + 5
+                $streamerBan->total_bans + 5,
             ])
             ->take(6)
             ->get();

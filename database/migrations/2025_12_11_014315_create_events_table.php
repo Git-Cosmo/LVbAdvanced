@@ -31,7 +31,7 @@ return new class extends Migration
             $table->boolean('is_published')->default(true);
             $table->integer('views_count')->default(0);
             $table->timestamps();
-            
+
             // Indexes for better query performance
             $table->index('event_type');
             $table->index('start_date');
@@ -46,7 +46,7 @@ return new class extends Migration
             $table->string('external_id'); // External unique identifier
             $table->foreignId('event_id')->constrained()->onDelete('cascade');
             $table->timestamps();
-            
+
             $table->unique(['source', 'external_id']); // Prevent duplicate imports
         });
     }

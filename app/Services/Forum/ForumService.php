@@ -40,7 +40,7 @@ class ForumService
     public function createCategory(array $data): ForumCategory
     {
         $data['slug'] = $data['slug'] ?? Str::slug($data['name']);
-        
+
         return ForumCategory::create($data);
     }
 
@@ -50,7 +50,7 @@ class ForumService
     public function createForum(array $data): Forum
     {
         $data['slug'] = $data['slug'] ?? Str::slug($data['name']);
-        
+
         return Forum::create($data);
     }
 
@@ -64,13 +64,13 @@ class ForumService
             ->withCount('posts')
             ->get()
             ->sum('posts_count');
-        
+
         $lastPost = $forum->threads()
             ->with('lastPost')
             ->latest('last_post_at')
             ->first()
             ?->lastPost;
-        
+
         $forum->last_post_id = $lastPost?->id;
         $forum->save();
     }

@@ -29,7 +29,7 @@ return new class extends Migration
             $table->string('guid')->unique(); // RSS item guid
             $table->foreignId('news_id')->nullable()->constrained('news')->onDelete('set null');
             $table->timestamps();
-            
+
             $table->index(['rss_feed_id', 'guid']);
         });
     }

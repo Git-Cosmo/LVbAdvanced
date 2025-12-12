@@ -17,7 +17,7 @@ class RedditManagementController extends Controller
     public function index(): View
     {
         $subreddits = RedditSubreddit::withCount('posts')->get();
-        
+
         $stats = [
             'total_posts' => RedditPost::count(),
             'published_posts' => RedditPost::where('is_published', true)->count(),
@@ -40,23 +40,23 @@ class RedditManagementController extends Controller
         try {
             // Run the scraper directly instead of via Artisan
             $results = $scraper->scrapeAll();
-            
+
             $total = array_sum($results);
             $details = [];
             foreach ($results as $sub => $count) {
                 $details[] = "r/{$sub}: {$count} posts";
             }
-            
-            $message = "Successfully scraped {$total} total posts. " . implode(', ', $details);
-            
+
+            $message = "Successfully scraped {$total} total posts. ".implode(', ', $details);
+
             return back()->with('success', $message);
         } catch (\Exception $e) {
-            \Log::error('Reddit scrape failed: ' . $e->getMessage(), [
+            \Log::error('Reddit scrape failed: '.$e->getMessage(), [
                 'exception' => $e,
-                'trace' => $e->getTraceAsString()
+                'trace' => $e->getTraceAsString(),
             ]);
-            
-            return back()->with('error', 'Failed to scrape Reddit: ' . $e->getMessage());
+
+            return back()->with('error', 'Failed to scrape Reddit: '.$e->getMessage());
         }
     }
 
@@ -66,10 +66,11 @@ class RedditManagementController extends Controller
     public function toggleSubreddit(RedditSubreddit $subreddit)
     {
         $subreddit->update([
-            'is_enabled' => !$subreddit->is_enabled,
+            'is_enabled' => ! $subreddit->is_enabled,
         ]);
 
         $status = $subreddit->is_enabled ? 'enabled' : 'disabled';
+
         return back()->with('success', "Subreddit {$subreddit->display_name} has been {$status}.");
     }
 
@@ -94,10 +95,11 @@ class RedditManagementController extends Controller
     public function togglePublish(RedditPost $post)
     {
         $post->update([
-            'is_published' => !$post->is_published,
+            'is_published' => ! $post->is_published,
         ]);
 
         $status = $post->is_published ? 'published' : 'unpublished';
+
         return back()->with('success', "Post has been {$status}.");
     }
 
@@ -107,10 +109,11 @@ class RedditManagementController extends Controller
     public function toggleFeature(RedditPost $post)
     {
         $post->update([
-            'is_featured' => !$post->is_featured,
+            'is_featured' => ! $post->is_featured,
         ]);
 
         $status = $post->is_featured ? 'featured' : 'unfeatured';
+
         return back()->with('success', "Post has been {$status}.");
     }
 

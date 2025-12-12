@@ -36,7 +36,7 @@ class StreamerBansScrapeCommand extends Command
             // Scrape a specific streamer
             $this->info("Scraping data for {$username}...");
             $success = $scraper->scrapeStreamer($username);
-            
+
             if ($success) {
                 $this->info("✓ Successfully scraped and saved data for {$username}");
             } else {
@@ -48,10 +48,10 @@ class StreamerBansScrapeCommand extends Command
             if ($limit) {
                 $this->info("Limiting to {$limit} streamers");
             }
-            
+
             $results = $scraper->updateExistingStreamers($limit ? (int) $limit : null);
-            
-            $this->info("Update complete:");
+
+            $this->info('Update complete:');
             $this->info("  Total: {$results['total']}");
             $this->info("  Success: {$results['success']}");
             $this->info("  Failed: {$results['failed']}");
@@ -59,14 +59,15 @@ class StreamerBansScrapeCommand extends Command
             // Scrape all streamers from the main page
             $this->info('Scraping all streamers from streamerbans.com...');
             $results = $scraper->scrapeAll();
-            
-            $this->info("Scraping complete:");
+
+            $this->info('Scraping complete:');
             $this->info("  Total streamers found: {$results['total']}");
             $this->info("  Successfully scraped: {$results['success']}");
             $this->info("  Failed: {$results['failed']}");
         }
 
         $this->info('Done!');
+
         return Command::SUCCESS;
     }
 }

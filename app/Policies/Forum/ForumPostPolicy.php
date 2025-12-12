@@ -5,7 +5,6 @@ namespace App\Policies\Forum;
 use App\Models\Forum\ForumPost;
 use App\Models\Forum\ForumThread;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 
 class ForumPostPolicy
 {
@@ -26,7 +25,7 @@ class ForumPostPolicy
         if ($forumPost->is_hidden) {
             return $user && ($user->hasRole('admin') || $user->hasRole('moderator'));
         }
-        
+
         return true;
     }
 
@@ -39,7 +38,7 @@ class ForumPostPolicy
         if ($thread && $thread->is_locked) {
             return $user->hasRole('admin') || $user->hasRole('moderator');
         }
-        
+
         return true; // All authenticated users can create posts
     }
 
@@ -51,11 +50,11 @@ class ForumPostPolicy
         // User can edit their own post within 15 minutes or moderators/admins can edit any
         if ($user->id === $forumPost->user_id) {
             // Allow edit within 15 minutes or if moderator/admin
-            return $forumPost->created_at->diffInMinutes(now()) <= 15 
-                || $user->hasRole('admin') 
+            return $forumPost->created_at->diffInMinutes(now()) <= 15
+                || $user->hasRole('admin')
                 || $user->hasRole('moderator');
         }
-        
+
         return $user->hasRole('admin') || $user->hasRole('moderator');
     }
 
@@ -65,8 +64,8 @@ class ForumPostPolicy
     public function delete(User $user, ForumPost $forumPost): bool
     {
         // User can delete their own post or moderators/admins can delete any
-        return $user->id === $forumPost->user_id 
-            || $user->hasRole('admin') 
+        return $user->id === $forumPost->user_id
+            || $user->hasRole('admin')
             || $user->hasRole('moderator');
     }
 
@@ -86,4 +85,3 @@ class ForumPostPolicy
         return $user->hasRole('admin');
     }
 }
-

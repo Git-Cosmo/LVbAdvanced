@@ -82,7 +82,7 @@ class OpenWebNinjaService
             Log::error('OpenWebNinja API error', [
                 'status' => $statusCode,
                 'message' => $errorMessage,
-                'api_key_configured' => !empty($this->apiKey),
+                'api_key_configured' => ! empty($this->apiKey),
                 'api_key_length' => $this->apiKey ? strlen($this->apiKey) : 0,
             ]);
 

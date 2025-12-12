@@ -9,7 +9,6 @@ use App\Models\Forum\ForumThread;
 use App\Models\News;
 use App\Models\User;
 use App\Models\User\Gallery;
-use App\Models\Event;
 use Illuminate\Database\Seeder;
 
 class DevelopmentSeeder extends Seeder
@@ -62,7 +61,7 @@ class DevelopmentSeeder extends Seeder
         }
 
         // Bulk update thread post counts using DB transaction with optimized CASE statement
-        if (!empty($threadsData)) {
+        if (! empty($threadsData)) {
             \DB::transaction(function () use ($threadsData) {
                 $ids = array_column($threadsData, 'id');
                 $cases = '';

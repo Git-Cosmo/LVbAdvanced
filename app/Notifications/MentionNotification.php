@@ -36,8 +36,8 @@ class MentionNotification extends Notification
         return [
             'type' => 'mention',
             'title' => 'You were mentioned',
-            'message' => $this->post->user->name . ' mentioned you in a post',
-            'url' => route('forum.thread.show', $this->post->thread->slug) . '#post-' . $this->post->id,
+            'message' => $this->post->user->name.' mentioned you in a post',
+            'url' => route('forum.thread.show', $this->post->thread->slug).'#post-'.$this->post->id,
             'user_id' => $this->post->user_id,
             'user_name' => $this->post->user->name,
             'post_id' => $this->post->id,

@@ -98,7 +98,7 @@ class RedditPost extends Model
      */
     public function getRedditUrlAttribute(): string
     {
-        return 'https://reddit.com' . $this->permalink;
+        return 'https://reddit.com'.$this->permalink;
     }
 
     /**
@@ -106,7 +106,7 @@ class RedditPost extends Model
      */
     public function getYoutubeVideoId(): ?string
     {
-        if (!$this->url) {
+        if (! $this->url) {
             return null;
         }
 

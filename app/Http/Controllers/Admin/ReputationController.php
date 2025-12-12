@@ -22,7 +22,7 @@ class ReputationController extends Controller
     public function index()
     {
         $topUsers = $this->reputationService->getLeaderboard('xp', 'all-time', 20);
-        
+
         return view('admin.reputation.index', [
             'topUsers' => $topUsers,
             'page' => (object) ['title' => 'Reputation Management'],

@@ -33,7 +33,7 @@ return new class extends Migration
             $table->boolean('is_active')->default(true);
             $table->timestamp('last_ping_at')->nullable(); // Last status check
             $table->timestamps();
-            
+
             $table->index('game');
             $table->index('status');
             $table->index(['is_active', 'display_order']);

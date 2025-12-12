@@ -36,7 +36,7 @@ class SettingsController extends Controller
 
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|max:255|unique:users,email,' . $user->id,
+            'email' => 'required|email|max:255|unique:users,email,'.$user->id,
         ]);
 
         $user->update($validated);
@@ -112,14 +112,14 @@ class SettingsController extends Controller
     public function updateStatus(Request $request)
     {
         $user = auth()->user();
-        
+
         // Ensure profile exists
-        if (!$user->profile) {
+        if (! $user->profile) {
             $user->profile()->create([
                 'status' => 'online',
             ]);
         }
-        
+
         $profile = $user->profile;
 
         $validated = $request->validate([

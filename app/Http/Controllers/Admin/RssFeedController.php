@@ -52,7 +52,7 @@ class RssFeedController extends Controller
         ]);
 
         $validated['is_active'] = $request->boolean('is_active', true);
-        
+
         // Store tags in settings
         if ($request->filled('tags')) {
             $tags = array_map('trim', explode(',', $request->tags));
@@ -87,7 +87,7 @@ class RssFeedController extends Controller
         ]);
 
         $validated['is_active'] = $request->boolean('is_active');
-        
+
         // Store tags in settings
         if ($request->filled('tags')) {
             $tags = array_map('trim', explode(',', $request->tags));

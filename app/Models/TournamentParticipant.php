@@ -66,10 +66,10 @@ class TournamentParticipant extends Model
     public function getDisplayNameAttribute(): string
     {
         if ($this->tournament->type === 'team') {
-            return $this->team_name ?? $this->clan?->name ?? 'Team #' . $this->id;
+            return $this->team_name ?? $this->clan?->name ?? 'Team #'.$this->id;
         }
 
-        return $this->user?->name ?? 'Player #' . $this->id;
+        return $this->user?->name ?? 'Player #'.$this->id;
     }
 
     public function isCheckedIn(): bool

@@ -21,10 +21,10 @@ use Spatie\Permission\Traits\HasRoles;
 use Spatie\Searchable\Searchable;
 use Spatie\Searchable\SearchResult;
 
-class User extends Authenticatable implements MustVerifyEmail, HasMediaInterface, Searchable
+class User extends Authenticatable implements HasMediaInterface, MustVerifyEmail, Searchable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, HasRoles, InteractsWithMedia;
+    use HasFactory, HasRoles, InteractsWithMedia, Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -214,7 +214,7 @@ class User extends Authenticatable implements MustVerifyEmail, HasMediaInterface
     /**
      * Register media conversions for this model.
      */
-    public function registerMediaConversions(\Spatie\MediaLibrary\MediaCollections\Models\Media $media = null): void
+    public function registerMediaConversions(?\Spatie\MediaLibrary\MediaCollections\Models\Media $media = null): void
     {
         $this->addMediaConversion('thumb')
             ->width(150)

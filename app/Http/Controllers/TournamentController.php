@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Tournament;
-use App\Models\TournamentParticipant;
 use App\Models\TournamentAnnouncement;
 use App\Models\TournamentCheckIn;
+use App\Models\TournamentParticipant;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -112,7 +112,7 @@ class TournamentController extends Controller
                     ->orderBy('match_number');
             },
             'announcements.user',
-            'staff.user'
+            'staff.user',
         ]);
 
         $userParticipant = null;
@@ -135,7 +135,7 @@ class TournamentController extends Controller
                 $query->with(['participant1', 'participant2', 'winner'])
                     ->orderBy('round')
                     ->orderBy('match_number');
-            }
+            },
         ]);
 
         $rounds = $tournament->matches->groupBy('round');
@@ -148,7 +148,7 @@ class TournamentController extends Controller
      */
     public function register(Request $request, Tournament $tournament): RedirectResponse
     {
-        if (!$tournament->canRegister()) {
+        if (! $tournament->canRegister()) {
             return back()->with('error', 'Registration is not available for this tournament.');
         }
 
@@ -156,7 +156,7 @@ class TournamentController extends Controller
         if ($tournament->type === 'team') {
             $rules['team_name'] = 'required|string|max:255';
             $maxRoster = $tournament->team_size ? $tournament->team_size - 1 : 10; // Subtract 1 for captain
-            $rules['roster'] = 'nullable|array|max:' . $maxRoster;
+            $rules['roster'] = 'nullable|array|max:'.$maxRoster;
             $rules['roster.*.name'] = 'required|string|max:255';
             $rules['roster.*.role'] = 'nullable|string|max:100';
         }
@@ -175,12 +175,12 @@ class TournamentController extends Controller
         // For team tournaments, always add the captain to roster
         if ($tournament->type === 'team') {
             $roster = $validated['roster'] ?? [];
-            
+
             // Add captain as first member
             array_unshift($roster, [
                 'user_id' => auth()->id(),
                 'name' => auth()->user()->name,
-                'role' => 'Captain'
+                'role' => 'Captain',
             ]);
             $validated['roster'] = $roster;
         }
@@ -201,8 +201,8 @@ class TournamentController extends Controller
             $tournament->incrementParticipants();
         }
 
-        return back()->with('success', $status === 'approved' 
-            ? 'Successfully registered for the tournament!' 
+        return back()->with('success', $status === 'approved'
+            ? 'Successfully registered for the tournament!'
             : 'Registration submitted and pending approval.');
     }
 
@@ -211,7 +211,7 @@ class TournamentController extends Controller
      */
     public function checkIn(Tournament $tournament): RedirectResponse
     {
-        if (!$tournament->canCheckIn()) {
+        if (! $tournament->canCheckIn()) {
             return back()->with('error', 'Check-in is not available at this time.');
         }
 

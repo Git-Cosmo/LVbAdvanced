@@ -25,7 +25,7 @@ return new class extends Migration
             $table->boolean('is_active')->default(true);
             $table->timestamp('last_synced_at')->nullable();
             $table->timestamps();
-            
+
             $table->unique(['user_id', 'platform']);
             $table->index('platform');
             $table->index('is_active');
@@ -43,7 +43,7 @@ return new class extends Migration
             $table->integer('playtime_minutes')->default(0); // Total playtime
             $table->timestamp('added_at')->nullable();
             $table->timestamps();
-            
+
             $table->index('user_id');
             $table->index('platform');
             $table->index(['user_id', 'platform']);
@@ -57,7 +57,7 @@ return new class extends Migration
             $table->timestamp('last_played_at');
             $table->integer('session_minutes')->default(0); // Last session duration
             $table->timestamps();
-            
+
             $table->index('user_id');
             $table->index('last_played_at');
             $table->index(['user_id', 'last_played_at']);
@@ -73,7 +73,7 @@ return new class extends Migration
             $table->string('stat_type')->default('integer'); // integer, float, string, json
             $table->timestamp('recorded_at');
             $table->timestamps();
-            
+
             $table->index('user_id');
             $table->index(['game_library_id', 'stat_name']);
         });
@@ -94,7 +94,7 @@ return new class extends Migration
             $table->integer('member_limit')->default(50);
             $table->json('requirements')->nullable(); // Join requirements
             $table->timestamps();
-            
+
             $table->index('slug');
             $table->index('game');
             $table->index(['is_public', 'is_recruiting']);
@@ -109,7 +109,7 @@ return new class extends Migration
             $table->timestamp('joined_at');
             $table->json('stats')->nullable(); // Member-specific clan stats
             $table->timestamps();
-            
+
             $table->unique(['clan_id', 'user_id']);
             $table->index('clan_id');
             $table->index('user_id');
@@ -127,7 +127,7 @@ return new class extends Migration
             $table->boolean('is_locked')->default(false);
             $table->integer('views_count')->default(0);
             $table->timestamps();
-            
+
             $table->index('clan_id');
             $table->index(['clan_id', 'is_pinned']);
         });
@@ -145,7 +145,7 @@ return new class extends Migration
             $table->json('participants')->nullable(); // Array of user IDs
             $table->foreignId('created_by')->constrained('users')->onDelete('cascade');
             $table->timestamps();
-            
+
             $table->index('clan_id');
             $table->index('start_time');
             $table->index(['clan_id', 'start_time']);

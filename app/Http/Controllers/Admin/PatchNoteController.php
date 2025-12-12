@@ -135,7 +135,7 @@ class PatchNoteController extends Controller
      */
     public function togglePublish(PatchNote $patchNote): RedirectResponse
     {
-        $patchNote->update(['is_published' => !$patchNote->is_published]);
+        $patchNote->update(['is_published' => ! $patchNote->is_published]);
 
         activity()
             ->causedBy(auth()->user())
@@ -153,7 +153,7 @@ class PatchNoteController extends Controller
      */
     public function toggleFeatured(PatchNote $patchNote): RedirectResponse
     {
-        $patchNote->update(['is_featured' => !$patchNote->is_featured]);
+        $patchNote->update(['is_featured' => ! $patchNote->is_featured]);
 
         activity()
             ->causedBy(auth()->user())

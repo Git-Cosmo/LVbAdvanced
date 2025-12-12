@@ -59,7 +59,7 @@ class PatchNoteController extends Controller
      */
     public function show(PatchNote $patchNote)
     {
-        if (!$patchNote->is_published) {
+        if (! $patchNote->is_published) {
             abort(404);
         }
 
@@ -74,7 +74,7 @@ class PatchNoteController extends Controller
             ->get();
 
         $seoData = $this->seoService->generateMetaTags([
-            'title' => $patchNote->title . ' - ' . $patchNote->game_name . ' Patch Notes',
+            'title' => $patchNote->title.' - '.$patchNote->game_name.' Patch Notes',
             'description' => $patchNote->description ?? substr(strip_tags($patchNote->content), 0, 160),
             'keywords' => implode(', ', [$patchNote->game_name, 'patch notes', 'update', $patchNote->version]),
         ]);

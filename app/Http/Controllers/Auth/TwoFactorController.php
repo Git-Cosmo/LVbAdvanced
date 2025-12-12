@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Str;
 use Illuminate\View\View;
 use PragmaRX\Google2FA\Google2FA;
 
@@ -31,14 +30,14 @@ class TwoFactorController extends Controller
 
         $user = $request->user();
 
-        if (!$user || !$user->two_factor_secret) {
+        if (! $user || ! $user->two_factor_secret) {
             return redirect()->route('login')->withErrors(['code' => '2FA is not enabled for this account.']);
         }
 
-        $google2fa = new Google2FA();
+        $google2fa = new Google2FA;
         $valid = $google2fa->verifyKey(decrypt($user->two_factor_secret), $request->code);
 
-        if (!$valid) {
+        if (! $valid) {
             return back()->withErrors(['code' => 'The provided code is invalid.']);
         }
 
@@ -53,16 +52,16 @@ class TwoFactorController extends Controller
     public function setup(): View
     {
         $user = auth()->user();
-        
+
         if ($user->two_factor_confirmed_at) {
             return view('auth.two-factor-manage');
         }
 
-        $google2fa = new Google2FA();
+        $google2fa = new Google2FA;
         $secret = $google2fa->generateSecretKey();
-        
+
         session()->put('2fa_secret', $secret);
-        
+
         $qrCodeUrl = $google2fa->getQRCodeUrl(
             config('app.name'),
             $user->email,
@@ -85,20 +84,20 @@ class TwoFactorController extends Controller
         ]);
 
         $secret = session()->get('2fa_secret');
-        
-        if (!$secret) {
+
+        if (! $secret) {
             return redirect()->route('2fa.setup')->withErrors(['code' => 'Session expired. Please try again.']);
         }
 
-        $google2fa = new Google2FA();
+        $google2fa = new Google2FA;
         $valid = $google2fa->verifyKey($secret, $request->code);
 
-        if (!$valid) {
+        if (! $valid) {
             return back()->withErrors(['code' => 'The provided code is invalid.']);
         }
 
         $user = auth()->user();
-        
+
         // Generate 8 cryptographically secure recovery codes, each a 10-character hexadecimal string (generated from 5 random bytes)
         $recoveryCodes = Collection::times(8, function () {
             return bin2hex(random_bytes(5));
@@ -125,7 +124,7 @@ class TwoFactorController extends Controller
         ]);
 
         $user = auth()->user();
-        
+
         $user->forceFill([
             'two_factor_secret' => null,
             'two_factor_recovery_codes' => null,

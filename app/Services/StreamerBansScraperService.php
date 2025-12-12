@@ -6,11 +6,11 @@ use App\Models\StreamerBan;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\DomCrawler\Crawler;
-use Carbon\Carbon;
 
 class StreamerBansScraperService
 {
     protected $client;
+
     protected $baseUrl = 'https://streamerbans.com';
 
     public function __construct()
@@ -30,10 +30,10 @@ class StreamerBansScraperService
     public function scrapeStreamerList(): array
     {
         try {
-            Log::info('Starting to scrape streamer list from ' . $this->baseUrl . '/streamers');
-            $response = $this->client->get($this->baseUrl . '/streamers');
+            Log::info('Starting to scrape streamer list from '.$this->baseUrl.'/streamers');
+            $response = $this->client->get($this->baseUrl.'/streamers');
             $html = $response->getBody()->getContents();
-            Log::debug('Streamer list page HTML: ' . substr($html, 0, 2000)); // Log first 2000 chars for debug
+            Log::debug('Streamer list page HTML: '.substr($html, 0, 2000)); // Log first 2000 chars for debug
             $crawler = new Crawler($html);
             $streamers = [];
 
@@ -45,7 +45,7 @@ class StreamerBansScraperService
                     $href = $a->attr('href');
                     if (preg_match('/\/user\/([^\/\?]+)/', $href, $matches)) {
                         $username = $matches[1];
-                        if (!in_array($username, $streamers)) {
+                        if (! in_array($username, $streamers)) {
                             $streamers[] = $username;
                         }
                     }
@@ -58,17 +58,19 @@ class StreamerBansScraperService
                     $href = $a->attr('href');
                     if (preg_match('/\/user\/([^\/\?]+)/', $href, $matches)) {
                         $username = $matches[1];
-                        if (!in_array($username, $streamers)) {
+                        if (! in_array($username, $streamers)) {
                             $streamers[] = $username;
                         }
                     }
                 });
             }
 
-            Log::info('Found ' . count($streamers) . ' streamers on the main page');
+            Log::info('Found '.count($streamers).' streamers on the main page');
+
             return $streamers;
         } catch (\Exception $e) {
-            Log::error('Error scraping streamer list: ' . $e->getMessage());
+            Log::error('Error scraping streamer list: '.$e->getMessage());
+
             return [];
         }
     }
@@ -79,11 +81,11 @@ class StreamerBansScraperService
     public function scrapeStreamerPage(string $username): ?array
     {
         try {
-            $url = $this->baseUrl . '/user/' . $username;
-            Log::info('Scraping streamer page: ' . $url);
+            $url = $this->baseUrl.'/user/'.$username;
+            Log::info('Scraping streamer page: '.$url);
             $response = $this->client->get($url);
             $html = $response->getBody()->getContents();
-            Log::debug('Streamer page HTML for ' . $username . ': ' . substr($html, 0, 2000));
+            Log::debug('Streamer page HTML for '.$username.': '.substr($html, 0, 2000));
             $crawler = new Crawler($html);
 
             $data = [
@@ -103,7 +105,7 @@ class StreamerBansScraperService
                     $data['avatar_url'] = $img->attr('src');
                 }
             } catch (\Exception $e) {
-                Log::debug('Could not find avatar for ' . $username);
+                Log::debug('Could not find avatar for '.$username);
             }
 
             // Extract stats: find all <dt> and <dd> pairs in the stats section
@@ -124,13 +126,15 @@ class StreamerBansScraperService
                     }
                 });
             } catch (\Exception $e) {
-                Log::debug('Could not extract stats for ' . $username);
+                Log::debug('Could not extract stats for '.$username);
             }
 
             // Extract ban history: look for the Recent Activity table
             try {
                 $crawler->filter('table tr')->each(function (Crawler $row, $i) use (&$data) {
-                    if ($i === 0) return; // skip header
+                    if ($i === 0) {
+                        return;
+                    } // skip header
                     $cells = $row->filter('td');
                     if ($cells->count() === 3) {
                         $activity = trim($cells->eq(1)->text());
@@ -142,13 +146,15 @@ class StreamerBansScraperService
                     }
                 });
             } catch (\Exception $e) {
-                Log::debug('Could not extract ban history for ' . $username);
+                Log::debug('Could not extract ban history for '.$username);
             }
 
-            Log::info('Successfully scraped data for ' . $username . ' - Total bans: ' . $data['total_bans']);
+            Log::info('Successfully scraped data for '.$username.' - Total bans: '.$data['total_bans']);
+
             return $data;
         } catch (\Exception $e) {
-            Log::error('Error scraping streamer page for ' . $username . ': ' . $e->getMessage());
+            Log::error('Error scraping streamer page for '.$username.': '.$e->getMessage());
+
             return null;
         }
     }
@@ -172,10 +178,12 @@ class StreamerBansScraperService
                 ]
             );
 
-            Log::info('Saved/updated streamer: ' . $data['username']);
+            Log::info('Saved/updated streamer: '.$data['username']);
+
             return true;
         } catch (\Exception $e) {
-            Log::error('Error saving streamer ' . $data['username'] . ': ' . $e->getMessage());
+            Log::error('Error saving streamer '.$data['username'].': '.$e->getMessage());
+
             return false;
         }
     }
@@ -194,7 +202,7 @@ class StreamerBansScraperService
 
         foreach ($streamers as $username) {
             $data = $this->scrapeStreamerPage($username);
-            
+
             if ($data && $this->saveStreamer($data)) {
                 $results['success']++;
             } else {
@@ -205,7 +213,8 @@ class StreamerBansScraperService
             usleep(1000000);
         }
 
-        Log::info('Scraping complete. Total: ' . $results['total'] . ', Success: ' . $results['success'] . ', Failed: ' . $results['failed']);
+        Log::info('Scraping complete. Total: '.$results['total'].', Success: '.$results['success'].', Failed: '.$results['failed']);
+
         return $results;
     }
 
@@ -215,7 +224,7 @@ class StreamerBansScraperService
     public function scrapeStreamer(string $username): bool
     {
         $data = $this->scrapeStreamerPage($username);
-        
+
         if ($data) {
             return $this->saveStreamer($data);
         }
@@ -226,10 +235,10 @@ class StreamerBansScraperService
     /**
      * Update existing streamers (re-scrape their data).
      */
-    public function updateExistingStreamers(int $limit = null): array
+    public function updateExistingStreamers(?int $limit = null): array
     {
         $query = StreamerBan::query();
-        
+
         if ($limit) {
             $query->limit($limit);
         }
@@ -243,7 +252,7 @@ class StreamerBansScraperService
 
         foreach ($streamers as $streamer) {
             $data = $this->scrapeStreamerPage($streamer->username);
-            
+
             if ($data && $this->saveStreamer($data)) {
                 $results['success']++;
             } else {

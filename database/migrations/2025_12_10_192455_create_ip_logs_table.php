@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('user_agent')->nullable();
             $table->text('metadata')->nullable(); // Additional data in JSON
             $table->timestamps();
-            
+
             $table->index('ip_address');
             $table->index('user_id');
             $table->index('action');

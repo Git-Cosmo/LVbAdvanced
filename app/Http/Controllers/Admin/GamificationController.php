@@ -21,7 +21,7 @@ class GamificationController extends Controller
     public function index()
     {
         $seasonalLeaderboard = $this->gamificationService->getSeasonalLeaderboard(10);
-        
+
         return view('admin.gamification.index', [
             'seasonalLeaderboard' => $seasonalLeaderboard,
             'page' => (object) ['title' => 'Gamification Settings'],
@@ -35,7 +35,7 @@ class GamificationController extends Controller
     {
         // This would typically save to a settings table or config
         // For now, we'll just return success
-        
+
         return back()->with('success', 'XP settings updated');
     }
 
@@ -46,7 +46,7 @@ class GamificationController extends Controller
     {
         // Clear cache for seasonal leaderboard
         \Cache::forget('leaderboard:seasonal:*');
-        
+
         return back()->with('success', 'Seasonal leaderboard reset');
     }
 }

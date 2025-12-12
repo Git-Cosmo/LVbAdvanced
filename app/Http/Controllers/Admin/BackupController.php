@@ -14,18 +14,18 @@ class BackupController extends Controller
     {
         $backups = [];
         $allHealthy = true;
-        
+
         try {
             // Get backup statuses using the correct v9 API
             $backupDestinationStatuses = BackupDestinationStatus::get();
 
             foreach ($backupDestinationStatuses as $backupDestinationStatus) {
-                if (!$backupDestinationStatus->isHealthy()) {
+                if (! $backupDestinationStatus->isHealthy()) {
                     $allHealthy = false;
                 }
-                
+
                 $backupDestination = $backupDestinationStatus->backupDestination();
-                
+
                 foreach ($backupDestination->backups() as $backup) {
                     $backups[] = [
                         'path' => $backup->path(),
@@ -41,7 +41,7 @@ class BackupController extends Controller
         }
 
         // Sort by date descending
-        usort($backups, function($a, $b) {
+        usort($backups, function ($a, $b) {
             return $b['date'] <=> $a['date'];
         });
 
@@ -70,7 +70,7 @@ class BackupController extends Controller
                 ->with('success', 'Backup created successfully');
         } catch (\Exception $e) {
             return redirect()->route('admin.backups.index')
-                ->with('error', 'Backup failed: ' . $e->getMessage());
+                ->with('error', 'Backup failed: '.$e->getMessage());
         }
     }
 
@@ -78,7 +78,7 @@ class BackupController extends Controller
     {
         $storage = Storage::disk($disk);
 
-        if (!$storage->exists($path)) {
+        if (! $storage->exists($path)) {
             abort(404, 'Backup file not found');
         }
 
@@ -106,8 +106,7 @@ class BackupController extends Controller
                 ->with('success', 'Old backups cleaned successfully');
         } catch (\Exception $e) {
             return redirect()->route('admin.backups.index')
-                ->with('error', 'Cleanup failed: ' . $e->getMessage());
+                ->with('error', 'Cleanup failed: '.$e->getMessage());
         }
     }
-
 }

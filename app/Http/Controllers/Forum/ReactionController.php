@@ -25,12 +25,12 @@ class ReactionController extends Controller
         $validated = $request->validate([
             'type' => 'required|in:like,love,laugh,angry,sad,wow',
         ]);
-        
+
         $existing = ForumReaction::where('user_id', auth()->id())
             ->where('reactable_type', ForumPost::class)
             ->where('reactable_id', $post->id)
             ->first();
-        
+
         if ($existing) {
             if ($existing->type === $validated['type']) {
                 // Remove reaction if clicking same type
@@ -49,13 +49,13 @@ class ReactionController extends Controller
                 'type' => $validated['type'],
             ]);
             $post->increment('reactions_count');
-            
+
             // Award XP to post author for receiving a like
             if ($validated['type'] === 'like' && $post->user_id !== auth()->id()) {
                 $this->gamificationService->awardActionXP($post->user, 'receive_like');
             }
         }
-        
+
         return back()->with('success', 'Reaction updated!');
     }
 
@@ -68,7 +68,7 @@ class ReactionController extends Controller
             ->with('user')
             ->get()
             ->groupBy('type');
-        
+
         return response()->json($reactions);
     }
 }

@@ -4,11 +4,11 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
-use App\Models\User\UserProfile;
 use App\Models\User\UserAchievement;
 use App\Models\User\UserBadge;
-use Illuminate\Http\Request;
+use App\Models\User\UserProfile;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Spatie\Permission\Models\Role;
 
@@ -24,9 +24,9 @@ class UserManagementController extends Controller
         // Search functionality
         if ($request->has('search') && $request->search) {
             $search = $request->search;
-            $query->where(function($q) use ($search) {
+            $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('email', 'like', "%{$search}%");
+                    ->orWhere('email', 'like', "%{$search}%");
             });
         }
 
@@ -61,7 +61,7 @@ class UserManagementController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email,' . $user->id,
+            'email' => 'required|email|unique:users,email,'.$user->id,
             'roles' => 'array',
             'roles.*' => 'exists:roles,name',
         ]);
@@ -101,7 +101,7 @@ class UserManagementController extends Controller
         ]);
 
         // Ensure user has a profile
-        if (!$user->profile) {
+        if (! $user->profile) {
             UserProfile::create(['user_id' => $user->id]);
             $user->load('profile');
         }
@@ -129,8 +129,8 @@ class UserManagementController extends Controller
         ]);
 
         $achievement = UserAchievement::find($validated['achievement_id']);
-        
-        if (!$user->achievements()->where('user_achievements.id', $achievement->id)->exists()) {
+
+        if (! $user->achievements()->where('user_achievements.id', $achievement->id)->exists()) {
             $user->achievements()->attach($achievement->id, [
                 'progress' => 100,
                 'is_unlocked' => true,
@@ -179,8 +179,8 @@ class UserManagementController extends Controller
         ]);
 
         $badge = UserBadge::find($validated['badge_id']);
-        
-        if (!$user->badges()->where('user_badges.id', $badge->id)->exists()) {
+
+        if (! $user->badges()->where('user_badges.id', $badge->id)->exists()) {
             $user->badges()->attach($badge->id, [
                 'awarded_at' => now(),
             ]);

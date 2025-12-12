@@ -21,7 +21,7 @@ return new class extends Migration
             $table->text('moderator_notes')->nullable();
             $table->timestamp('resolved_at')->nullable();
             $table->timestamps();
-            
+
             $table->index('status');
             $table->index('reporter_id');
         });

@@ -1,8 +1,7 @@
 <?php
 
 use App\Http\Controllers\ActivityFeedController;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Cache;
+use App\Http\Controllers\Admin\CheapSharkSyncController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Auth\EmailVerificationController;
 use App\Http\Controllers\Auth\LoginController;
@@ -16,10 +15,11 @@ use App\Http\Controllers\Forum\ProfileController;
 use App\Http\Controllers\Forum\ThreadController;
 use App\Http\Controllers\MediaController;
 use App\Http\Controllers\PortalController;
-use App\Http\Controllers\StoreController;
-use App\Http\Controllers\Admin\CheapSharkSyncController;
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\StatusController;
+use App\Http\Controllers\StoreController;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Route;
 
 // Public Portal Routes
 Route::get('/', [PortalController::class, 'home'])->name('home');
@@ -32,7 +32,7 @@ Route::get('/up', function () {
         'timestamp' => now()->toIso8601String(),
         'environment' => app()->environment(),
     ];
-    
+
     // Basic checks
     try {
         // Database check
@@ -42,7 +42,7 @@ Route::get('/up', function () {
         $health['database'] = 'error';
         $health['status'] = 'error';
     }
-    
+
     // Cache check
     try {
         Cache::put('health_check', true, 10);
@@ -50,12 +50,12 @@ Route::get('/up', function () {
     } catch (\Exception $e) {
         $health['cache'] = 'error';
     }
-    
+
     // Storage check
     $health['storage'] = is_writable(storage_path()) ? 'ok' : 'error';
-    
+
     $statusCode = $health['status'] === 'ok' ? 200 : 503;
-    
+
     return response()->json($health, $statusCode);
 })->name('health');
 
@@ -84,15 +84,15 @@ Route::get('/search', [\App\Http\Controllers\SearchController::class, 'index'])-
 Route::middleware('guest')->group(function () {
     Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
     Route::post('/login', [LoginController::class, 'login'])->middleware('throttle:5,1');
-    
+
     Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
     Route::post('/register', [RegisterController::class, 'register'])->middleware('throttle:3,1');
-    
+
     Route::get('/forgot-password', [PasswordResetController::class, 'showLinkRequestForm'])->name('password.request');
     Route::post('/forgot-password', [PasswordResetController::class, 'sendResetLinkEmail'])->middleware('throttle:3,10')->name('password.email');
     Route::get('/reset-password/{token}', [PasswordResetController::class, 'showResetForm'])->name('password.reset');
     Route::post('/reset-password', [PasswordResetController::class, 'reset'])->middleware('throttle:5,10')->name('password.update');
-    
+
     // OAuth Routes
     Route::get('/auth/{provider}/redirect', [OAuthController::class, 'redirect'])->name('oauth.redirect');
     Route::get('/auth/{provider}/callback', [OAuthController::class, 'callback'])->name('oauth.callback');
@@ -105,7 +105,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/email/verify', [EmailVerificationController::class, 'notice'])->name('verification.notice');
     Route::get('/email/verify/{id}/{hash}', [EmailVerificationController::class, 'verify'])->middleware(['signed'])->name('verification.verify');
     Route::post('/email/verification-notification', [EmailVerificationController::class, 'send'])->middleware('throttle:6,1')->name('verification.send');
-    
+
     // Two-Factor Authentication Routes
     Route::get('/2fa/setup', [\App\Http\Controllers\Auth\TwoFactorController::class, 'setup'])->name('2fa.setup');
     Route::post('/2fa/enable', [\App\Http\Controllers\Auth\TwoFactorController::class, 'enable'])->name('2fa.enable');
@@ -139,7 +139,7 @@ Route::middleware('auth')->prefix('notifications')->name('notifications.')->grou
 // Profile Routes
 Route::prefix('profile')->name('profile.')->group(function () {
     Route::get('/{user}', [ProfileController::class, 'show'])->name('show');
-    
+
     Route::middleware('auth')->group(function () {
         Route::get('/edit/me', [ProfileController::class, 'edit'])->name('edit');
         Route::patch('/update', [ProfileController::class, 'update'])->name('update');
@@ -154,56 +154,56 @@ Route::prefix('forum')->name('forum.')->group(function () {
     Route::get('/', [ForumController::class, 'index'])->name('index');
     Route::get('/search', [\App\Http\Controllers\Forum\SearchController::class, 'index'])->name('search');
     Route::get('/{slug}', [ForumController::class, 'show'])->name('show');
-    
+
     // Thread routes
     Route::get('/thread/{slug}', [ThreadController::class, 'show'])->name('thread.show');
     Route::middleware('auth')->group(function () {
         Route::get('/{forum}/create', [ThreadController::class, 'create'])->name('thread.create');
         Route::post('/{forum}/thread', [ThreadController::class, 'store'])->name('thread.store');
-        
+
         // Post routes
         Route::post('/thread/{thread}/post', [PostController::class, 'store'])->name('post.store');
         Route::patch('/post/{post}', [PostController::class, 'update'])->name('post.update');
         Route::delete('/post/{post}', [PostController::class, 'destroy'])->name('post.destroy');
-        
+
         // Reaction routes
         Route::post('/post/{post}/reaction', [\App\Http\Controllers\Forum\ReactionController::class, 'toggle'])->name('reaction.toggle');
         Route::get('/post/{post}/reactions', [\App\Http\Controllers\Forum\ReactionController::class, 'show'])->name('reaction.show');
-        
+
         // Subscription routes
         Route::post('/thread/{thread}/subscribe', [\App\Http\Controllers\Forum\SubscriptionController::class, 'subscribe'])->name('thread.subscribe');
         Route::post('/thread/{thread}/unsubscribe', [\App\Http\Controllers\Forum\SubscriptionController::class, 'unsubscribe'])->name('thread.unsubscribe');
-        
+
         // Poll routes
         Route::post('/poll/{poll}/vote', [\App\Http\Controllers\Forum\PollController::class, 'vote'])->name('poll.vote');
         Route::get('/poll/{poll}/results', [\App\Http\Controllers\Forum\PollController::class, 'results'])->name('poll.results');
-        
+
         // Messaging routes
         Route::get('/messages', [\App\Http\Controllers\Forum\MessagingController::class, 'inbox'])->name('messaging.inbox');
         Route::get('/messages/compose/{recipient?}', [\App\Http\Controllers\Forum\MessagingController::class, 'compose'])->name('messaging.compose');
         Route::post('/messages/send', [\App\Http\Controllers\Forum\MessagingController::class, 'send'])->name('messaging.send');
         Route::get('/messages/{conversationId}', [\App\Http\Controllers\Forum\MessagingController::class, 'conversation'])->name('messaging.conversation');
         Route::delete('/messages/{message}', [\App\Http\Controllers\Forum\MessagingController::class, 'destroy'])->name('messaging.destroy');
-        
+
         // Attachment routes
         Route::post('/attachments/upload', [\App\Http\Controllers\Forum\AttachmentController::class, 'upload'])->name('attachment.upload');
         Route::delete('/attachments/{attachment}', [\App\Http\Controllers\Forum\AttachmentController::class, 'destroy'])->name('attachment.destroy');
-        
+
         // Gallery routes
         Route::post('/gallery/upload', [\App\Http\Controllers\Forum\GalleryController::class, 'upload'])->name('gallery.upload');
         Route::delete('/gallery/{image}', [\App\Http\Controllers\Forum\GalleryController::class, 'destroy'])->name('gallery.destroy');
     });
-    
+
     // Mention search (public)
     Route::get('/mentions/search', [\App\Http\Controllers\Forum\MentionController::class, 'search'])->name('mentions.search');
-    
+
     // Public attachment download
     Route::get('/attachments/{attachment}/download', [\App\Http\Controllers\Forum\AttachmentController::class, 'download'])->name('attachment.download');
-    
+
     // Gallery routes (public)
     Route::get('/gallery/{user}', [\App\Http\Controllers\Forum\GalleryController::class, 'index'])->name('gallery.index');
     Route::get('/gallery/image/{image}', [\App\Http\Controllers\Forum\GalleryController::class, 'show'])->name('gallery.show');
-    
+
     // Public leaderboard
     Route::get('/leaderboard', [\App\Http\Controllers\Forum\LeaderboardController::class, 'index'])->name('leaderboard');
 });
@@ -212,7 +212,7 @@ Route::prefix('forum')->name('forum.')->group(function () {
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/schedule-monitor', [\App\Http\Controllers\Admin\ScheduleMonitorController::class, 'index'])->name('schedule-monitor.index');
-    
+
     // User Management
     Route::prefix('users')->name('users.')->group(function () {
         Route::get('/', [\App\Http\Controllers\Admin\UserManagementController::class, 'index'])->name('index');
@@ -225,18 +225,18 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
         Route::delete('/{user}/badges', [\App\Http\Controllers\Admin\UserManagementController::class, 'revokeBadge'])->name('revokeBadge');
         Route::delete('/{user}', [\App\Http\Controllers\Admin\UserManagementController::class, 'destroy'])->name('destroy');
     });
-    
+
     // Forum Management
     Route::prefix('forum')->name('forum.')->group(function () {
         Route::get('/', [\App\Http\Controllers\Admin\ForumManagementController::class, 'index'])->name('index');
-        
+
         // Category routes
         Route::get('/category/create', [\App\Http\Controllers\Admin\ForumManagementController::class, 'createCategory'])->name('category.create');
         Route::post('/category', [\App\Http\Controllers\Admin\ForumManagementController::class, 'storeCategory'])->name('category.store');
         Route::get('/category/{category}/edit', [\App\Http\Controllers\Admin\ForumManagementController::class, 'editCategory'])->name('category.edit');
         Route::patch('/category/{category}', [\App\Http\Controllers\Admin\ForumManagementController::class, 'updateCategory'])->name('category.update');
         Route::delete('/category/{category}', [\App\Http\Controllers\Admin\ForumManagementController::class, 'deleteCategory'])->name('category.delete');
-        
+
         // Forum routes
         Route::get('/forum/create', [\App\Http\Controllers\Admin\ForumManagementController::class, 'createForum'])->name('forum.create');
         Route::post('/forum', [\App\Http\Controllers\Admin\ForumManagementController::class, 'storeForum'])->name('forum.store');
@@ -244,7 +244,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
         Route::patch('/forum/{forum}', [\App\Http\Controllers\Admin\ForumManagementController::class, 'updateForum'])->name('forum.update');
         Route::delete('/forum/{forum}', [\App\Http\Controllers\Admin\ForumManagementController::class, 'deleteForum'])->name('forum.delete');
     });
-    
+
     // Moderation routes
     Route::prefix('moderation')->name('moderation.')->group(function () {
         Route::get('/', [\App\Http\Controllers\Admin\ModerationController::class, 'index'])->name('index');
@@ -253,19 +253,19 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
         Route::get('/warnings', [\App\Http\Controllers\Admin\ModerationController::class, 'warnings'])->name('warnings');
         Route::get('/bans', [\App\Http\Controllers\Admin\ModerationController::class, 'bans'])->name('bans');
         Route::post('/bans/{ban}/unban', [\App\Http\Controllers\Admin\ModerationController::class, 'unban'])->name('unban');
-        
+
         // Thread management
         Route::get('/merge-threads', [\App\Http\Controllers\Admin\ModerationController::class, 'mergeThreadsForm'])->name('merge-threads-form');
         Route::post('/merge-threads', [\App\Http\Controllers\Admin\ModerationController::class, 'mergeThreads'])->name('merge-threads');
         Route::get('/move-thread/{thread}', [\App\Http\Controllers\Admin\ModerationController::class, 'moveThreadForm'])->name('move-thread-form');
         Route::post('/move-thread/{thread}', [\App\Http\Controllers\Admin\ModerationController::class, 'moveThread'])->name('move-thread');
-        
+
         // Approval queue
         Route::get('/approval-queue', [\App\Http\Controllers\Admin\ModerationController::class, 'approvalQueue'])->name('approval-queue');
         Route::post('/approve', [\App\Http\Controllers\Admin\ModerationController::class, 'approveContent'])->name('approve');
         Route::post('/deny', [\App\Http\Controllers\Admin\ModerationController::class, 'denyContent'])->name('deny');
     });
-    
+
     // Reputation Management
     Route::prefix('reputation')->name('reputation.')->group(function () {
         Route::get('/', [\App\Http\Controllers\Admin\ReputationController::class, 'index'])->name('index');
@@ -287,7 +287,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
         Route::post('/{gallery}/feature', [\App\Http\Controllers\Admin\MediaManagementController::class, 'feature'])->name('feature');
         Route::delete('/{gallery}', [\App\Http\Controllers\Admin\MediaManagementController::class, 'destroy'])->name('destroy');
     });
-    
+
     // News Management
     Route::prefix('news')->name('news.')->group(function () {
         Route::get('/', [\App\Http\Controllers\Admin\NewsManagementController::class, 'index'])->name('index');
@@ -297,7 +297,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
         Route::patch('/{news}', [\App\Http\Controllers\Admin\NewsManagementController::class, 'update'])->name('update');
         Route::delete('/{news}', [\App\Http\Controllers\Admin\NewsManagementController::class, 'destroy'])->name('destroy');
     });
-    
+
     // Patch Notes Management
     Route::prefix('patch-notes')->name('patch-notes.')->group(function () {
         Route::get('/', [\App\Http\Controllers\Admin\PatchNoteController::class, 'index'])->name('index');
@@ -309,7 +309,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
         Route::patch('/{patchNote}/toggle-publish', [\App\Http\Controllers\Admin\PatchNoteController::class, 'togglePublish'])->name('toggle-publish');
         Route::patch('/{patchNote}/toggle-featured', [\App\Http\Controllers\Admin\PatchNoteController::class, 'toggleFeatured'])->name('toggle-featured');
     });
-    
+
     // RSS Feed Management
     Route::prefix('rss')->name('rss.')->group(function () {
         Route::get('/', [\App\Http\Controllers\Admin\RssFeedController::class, 'index'])->name('index');
@@ -320,14 +320,14 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
         Route::delete('/{rssFeed}', [\App\Http\Controllers\Admin\RssFeedController::class, 'destroy'])->name('destroy');
         Route::post('/{rssFeed}/import', [\App\Http\Controllers\Admin\RssFeedController::class, 'import'])->name('import');
     });
-    
+
     // Gamification Settings
     Route::prefix('gamification')->name('gamification.')->group(function () {
         Route::get('/', [\App\Http\Controllers\Admin\GamificationController::class, 'index'])->name('index');
         Route::post('/update-xp', [\App\Http\Controllers\Admin\GamificationController::class, 'updateXPSettings'])->name('update-xp');
         Route::post('/reset-season', [\App\Http\Controllers\Admin\GamificationController::class, 'resetSeason'])->name('reset-season');
     });
-    
+
     // Reddit Management
     Route::prefix('reddit')->name('reddit.')->group(function () {
         Route::get('/', [\App\Http\Controllers\Admin\RedditManagementController::class, 'index'])->name('index');
@@ -338,7 +338,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
         Route::post('/post/{post}/toggle-feature', [\App\Http\Controllers\Admin\RedditManagementController::class, 'toggleFeature'])->name('post.toggle-feature');
         Route::delete('/post/{post}', [\App\Http\Controllers\Admin\RedditManagementController::class, 'deletePost'])->name('post.delete');
     });
-    
+
     // StreamerBans Management
     Route::prefix('streamerbans')->name('streamerbans.')->group(function () {
         Route::get('/', [\App\Http\Controllers\Admin\StreamerBansManagementController::class, 'index'])->name('index');
@@ -348,7 +348,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
         Route::post('/{streamerBan}/toggle-feature', [\App\Http\Controllers\Admin\StreamerBansManagementController::class, 'toggleFeature'])->name('toggle-feature');
         Route::delete('/{streamerBan}', [\App\Http\Controllers\Admin\StreamerBansManagementController::class, 'deleteStreamer'])->name('delete');
     });
-    
+
     // Events Management
     Route::prefix('events')->name('events.')->group(function () {
         Route::get('/', [\App\Http\Controllers\Admin\EventsManagementController::class, 'index'])->name('index');
@@ -357,7 +357,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
         Route::post('/{event}/toggle-published', [\App\Http\Controllers\Admin\EventsManagementController::class, 'togglePublished'])->name('toggle-published');
         Route::delete('/{event}', [\App\Http\Controllers\Admin\EventsManagementController::class, 'destroy'])->name('destroy');
     });
-    
+
     // Game Server Management
     Route::prefix('game-servers')->name('game-servers.')->group(function () {
         Route::get('/', [\App\Http\Controllers\Admin\GameServerController::class, 'index'])->name('index');
@@ -369,7 +369,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
         Route::patch('/{gameServer}/toggle-active', [\App\Http\Controllers\Admin\GameServerController::class, 'toggleActive'])->name('toggle-active');
         Route::patch('/{gameServer}/toggle-featured', [\App\Http\Controllers\Admin\GameServerController::class, 'toggleFeatured'])->name('toggle-featured');
     });
-    
+
     // Tournament Management
     Route::prefix('tournaments')->name('tournaments.')->group(function () {
         Route::get('/', [\App\Http\Controllers\Admin\TournamentManagementController::class, 'index'])->name('index');
@@ -379,7 +379,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
         Route::post('/participants/{participant}/reject', [\App\Http\Controllers\Admin\TournamentManagementController::class, 'rejectParticipant'])->name('participants.reject');
         Route::post('/matches/{match}/result', [\App\Http\Controllers\Admin\TournamentManagementController::class, 'updateMatchResult'])->name('matches.result');
     });
-    
+
     // Theme Settings
     Route::prefix('themes')->name('themes.')->group(function () {
         Route::get('/', [\App\Http\Controllers\Admin\ThemeSettingsController::class, 'index'])->name('index');
@@ -390,11 +390,11 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
         Route::delete('/{theme}', [\App\Http\Controllers\Admin\ThemeSettingsController::class, 'destroy'])->name('destroy');
         Route::post('/{theme}/toggle', [\App\Http\Controllers\Admin\ThemeSettingsController::class, 'toggle'])->name('toggle');
     });
-    
+
     // Casual Games Management
     Route::prefix('casual-games')->name('casual-games.')->group(function () {
         Route::get('/', [\App\Http\Controllers\Admin\CasualGamesController::class, 'index'])->name('index');
-        
+
         // Trivia Management
         Route::prefix('trivia')->name('trivia.')->group(function () {
             Route::get('/', [\App\Http\Controllers\Admin\TriviaManagementController::class, 'index'])->name('index');
@@ -406,7 +406,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
             Route::post('/{triviaGame}/questions', [\App\Http\Controllers\Admin\TriviaManagementController::class, 'addQuestion'])->name('questions.add');
             Route::delete('/questions/{question}', [\App\Http\Controllers\Admin\TriviaManagementController::class, 'deleteQuestion'])->name('questions.delete');
         });
-        
+
         // Predictions Management
         Route::prefix('predictions')->name('predictions.')->group(function () {
             Route::get('/', [\App\Http\Controllers\Admin\PredictionManagementController::class, 'index'])->name('index');
@@ -414,7 +414,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
             Route::post('/', [\App\Http\Controllers\Admin\PredictionManagementController::class, 'store'])->name('store');
             Route::post('/{prediction}/resolve', [\App\Http\Controllers\Admin\PredictionManagementController::class, 'resolve'])->name('resolve');
         });
-        
+
         // Daily Challenges Management
         Route::prefix('challenges')->name('challenges.')->group(function () {
             Route::get('/', [\App\Http\Controllers\Admin\DailyChallengeManagementController::class, 'index'])->name('index');
@@ -482,7 +482,7 @@ Route::get('/streamerbans/{streamerBan}', [\App\Http\Controllers\StreamerBansCon
 // Casual Games Routes
 Route::prefix('casual-games')->name('casual-games.')->group(function () {
     Route::get('/', [\App\Http\Controllers\CasualGamesController::class, 'index'])->name('index');
-    
+
     // Trivia
     Route::prefix('trivia')->name('trivia.')->group(function () {
         Route::get('/', [\App\Http\Controllers\CasualGamesController::class, 'triviaIndex'])->name('index');
@@ -490,14 +490,14 @@ Route::prefix('casual-games')->name('casual-games.')->group(function () {
         Route::post('/{triviaGame}/submit', [\App\Http\Controllers\CasualGamesController::class, 'triviaSubmit'])->name('submit')->middleware('auth');
         Route::get('/result/{attempt}', [\App\Http\Controllers\CasualGamesController::class, 'triviaResult'])->name('result')->middleware('auth');
     });
-    
+
     // Predictions
     Route::prefix('predictions')->name('predictions.')->group(function () {
         Route::get('/', [\App\Http\Controllers\CasualGamesController::class, 'predictionsIndex'])->name('index');
         Route::get('/{prediction}', [\App\Http\Controllers\CasualGamesController::class, 'predictionShow'])->name('show');
         Route::post('/{prediction}/submit', [\App\Http\Controllers\CasualGamesController::class, 'predictionSubmit'])->name('submit')->middleware('auth');
     });
-    
+
     // Daily Challenges
     Route::prefix('challenges')->name('challenges.')->group(function () {
         Route::get('/', [\App\Http\Controllers\CasualGamesController::class, 'challengesIndex'])->name('index');
@@ -508,7 +508,7 @@ Route::prefix('casual-games')->name('casual-games.')->group(function () {
 Route::prefix('events')->name('events.')->group(function () {
     Route::get('/', [\App\Http\Controllers\EventsController::class, 'index'])->name('index');
     Route::get('/{event}', [\App\Http\Controllers\EventsController::class, 'show'])->name('show');
-    
+
     // RSVP routes (requires authentication)
     Route::middleware('auth')->group(function () {
         Route::post('/{event}/rsvp', [\App\Http\Controllers\EventsController::class, 'rsvp'])->name('rsvp');
@@ -521,7 +521,7 @@ Route::prefix('downloads')->name('downloads.')->group(function () {
     Route::get('/', [MediaController::class, 'index'])->name('index');
     Route::get('/{gallery}', [MediaController::class, 'show'])->name('show');
     Route::get('/download/{mediaId}', [MediaController::class, 'download'])->name('download');
-    
+
     Route::middleware('auth')->group(function () {
         Route::get('/create/upload', [MediaController::class, 'create'])->name('create');
         Route::post('/store', [MediaController::class, 'store'])->name('store');
@@ -544,7 +544,7 @@ Route::prefix('tournaments')->name('tournaments.')->group(function () {
     Route::get('/{tournament}', [\App\Http\Controllers\TournamentController::class, 'show'])->name('show');
     Route::get('/{tournament}/bracket', [\App\Http\Controllers\TournamentController::class, 'bracket'])->name('bracket');
     Route::get('/{tournament}/participants', [\App\Http\Controllers\TournamentController::class, 'participants'])->name('participants');
-    
+
     Route::middleware('auth')->group(function () {
         Route::post('/{tournament}/register', [\App\Http\Controllers\TournamentController::class, 'register'])->name('register');
         Route::post('/{tournament}/check-in', [\App\Http\Controllers\TournamentController::class, 'checkIn'])->name('check-in');
@@ -576,12 +576,12 @@ Route::middleware(['auth'])->prefix('casual-games')->name('casual-games.')->grou
     Route::get('/trivia', [App\Http\Controllers\CasualGamesController::class, 'triviaIndex'])->name('trivia.index');
     Route::get('/trivia/{game}', [App\Http\Controllers\CasualGamesController::class, 'triviaShow'])->name('trivia.show');
     Route::post('/trivia/{game}/submit', [App\Http\Controllers\CasualGamesController::class, 'triviaSubmit'])->name('trivia.submit');
-    
+
     // Predictions
     Route::get('/predictions', [App\Http\Controllers\CasualGamesController::class, 'predictionsIndex'])->name('predictions.index');
     Route::get('/predictions/{prediction}', [App\Http\Controllers\CasualGamesController::class, 'predictionsShow'])->name('predictions.show');
     Route::post('/predictions/{prediction}/submit', [App\Http\Controllers\CasualGamesController::class, 'predictionsSubmit'])->name('predictions.submit');
-    
+
     // Challenges
     Route::get('/challenges', [App\Http\Controllers\CasualGamesController::class, 'challengesIndex'])->name('challenges.index');
     Route::get('/challenges/{challenge}', [App\Http\Controllers\CasualGamesController::class, 'challengesShow'])->name('challenges.show');

@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\News;
 use App\Services\SeoService;
-use Illuminate\Http\Request;
 
 class NewsController extends Controller
 {
@@ -19,6 +18,7 @@ class NewsController extends Controller
     {
         $this->seoService = $seoService;
     }
+
     /**
      * Display a listing of news articles.
      */
@@ -52,7 +52,7 @@ class NewsController extends Controller
      */
     public function show(News $news)
     {
-        if (!$news->is_published || $news->published_at > now()) {
+        if (! $news->is_published || $news->published_at > now()) {
             abort(404);
         }
 
@@ -67,9 +67,9 @@ class NewsController extends Controller
 
         // Generate enhanced SEO data with Article structured data
         $description = $news->excerpt ?? substr(strip_tags($news->content), 0, self::META_DESCRIPTION_LENGTH);
-        
+
         $seoData = $this->seoService->generateMetaTags([
-            'title' => $news->title . ' | Gaming News',
+            'title' => $news->title.' | Gaming News',
             'description' => $description,
             'keywords' => $news->tags ?? 'gaming news, esports, FPSociety',
             'image' => $news->featured_image ?? asset('images/og-image-news.jpg'),
@@ -86,8 +86,8 @@ class NewsController extends Controller
             'seoData' => $seoData,
             'canonicalUrl' => route('news.show', $news),
             'page' => (object) [
-                'title' => $news->title . ' - FPSociety',
-                'meta_title' => $news->title . ' | Gaming News',
+                'title' => $news->title.' - FPSociety',
+                'meta_title' => $news->title.' | Gaming News',
                 'meta_description' => $description,
             ],
         ]);
