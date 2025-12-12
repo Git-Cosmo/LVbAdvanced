@@ -105,7 +105,6 @@
                         <div x-data="{ open: false }" @click.away="open = false" class="relative">
                             <button @click="open = !open" 
                                     aria-label="Games menu"
-                                    aria-expanded="false"
                                     aria-haspopup="true"
                                     :aria-expanded="open.toString()"
                                     class="px-4 py-2 rounded-lg dark:text-dark-text-primary text-light-text-primary dark:hover:bg-dark-bg-tertiary hover:bg-light-bg-tertiary dark:hover:text-dark-text-accent hover:text-light-text-accent transition-all font-medium">
@@ -155,7 +154,6 @@
                         <div x-data="{ open: false }" @click.away="open = false" class="relative">
                             <button @click="open = !open" 
                                     aria-label="Community menu"
-                                    aria-expanded="false"
                                     aria-haspopup="true"
                                     :aria-expanded="open.toString()"
                                     class="px-4 py-2 rounded-lg dark:text-dark-text-primary text-light-text-primary dark:hover:bg-dark-bg-tertiary hover:bg-light-bg-tertiary dark:hover:text-dark-text-accent hover:text-light-text-accent transition-all font-medium">
@@ -217,7 +215,6 @@
                         <div x-data="{ open: false }" @click.away="open = false" class="relative">
                             <button @click="open = !open" 
                                     aria-label="Streamers menu"
-                                    aria-expanded="false"
                                     aria-haspopup="true"
                                     :aria-expanded="open.toString()"
                                     class="px-4 py-2 rounded-lg dark:text-dark-text-primary text-light-text-primary dark:hover:bg-dark-bg-tertiary hover:bg-light-bg-tertiary dark:hover:text-dark-text-accent hover:text-light-text-accent transition-all font-medium">
@@ -265,7 +262,6 @@
                         <div x-data="{ open: false }" @click.away="open = false" class="relative">
                             <button @click="open = !open" 
                                     aria-label="Radio menu"
-                                    aria-expanded="false"
                                     aria-haspopup="true"
                                     :aria-expanded="open.toString()"
                                     class="px-4 py-2 rounded-lg dark:text-dark-text-primary text-light-text-primary dark:hover:bg-dark-bg-tertiary hover:bg-light-bg-tertiary dark:hover:text-dark-text-accent hover:text-light-text-accent transition-all font-medium">
