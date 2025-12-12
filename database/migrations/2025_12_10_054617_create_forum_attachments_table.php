@@ -21,7 +21,7 @@ return new class extends Migration
             $table->integer('size');
             $table->integer('downloads_count')->default(0);
             $table->timestamps();
-            
+
             $table->index('user_id');
         });
     }

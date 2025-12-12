@@ -220,15 +220,15 @@ class EventsService
         } else {
             // Fallback: try to find by name and full_address (or name + city if full_address missing)
             $venue = null;
-            if (!empty($venueData['name'])) {
+            if (! empty($venueData['name'])) {
                 $venueQuery = EventVenue::query()->where('name', $venueData['name']);
-                
-                if (!empty($venueData['full_address'])) {
+
+                if (! empty($venueData['full_address'])) {
                     $venueQuery->where('full_address', $venueData['full_address']);
-                } elseif (!empty($venueData['city'])) {
+                } elseif (! empty($venueData['city'])) {
                     $venueQuery->where('city', $venueData['city']);
                 }
-                
+
                 $venue = $venueQuery->first();
             }
         }
@@ -274,9 +274,10 @@ class EventsService
                     'event_id' => $event->id,
                     'ticket_link_data' => $link,
                 ]);
+
                 continue;
             }
-            
+
             EventTicketLink::create([
                 'event_id' => $event->id,
                 'source' => $link['source'] ?? 'Unknown',
@@ -297,9 +298,10 @@ class EventsService
                     'event_id' => $event->id,
                     'info_link_data' => $link,
                 ]);
+
                 continue;
             }
-            
+
             EventInfoLink::create([
                 'event_id' => $event->id,
                 'source' => $link['source'] ?? 'Unknown',

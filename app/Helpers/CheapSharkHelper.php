@@ -11,6 +11,7 @@ class CheapSharkHelper
     {
         // Use the website base URL for images and redirects, not the API URL
         $apiUrl = config('services.cheapshark.base_url', 'https://www.cheapshark.com/api/1.0');
+
         // Extract the base domain from the API URL
         return rtrim(preg_replace('#/api/.*$#', '', $apiUrl), '/');
     }
@@ -24,7 +25,7 @@ class CheapSharkHelper
             return null;
         }
 
-        return self::baseUrl() . '/' . ltrim($logoPath, '/');
+        return self::baseUrl().'/'.ltrim($logoPath, '/');
     }
 
     /**
@@ -32,6 +33,6 @@ class CheapSharkHelper
      */
     public static function dealRedirectUrl(string $dealId): string
     {
-        return self::baseUrl() . '/redirect?dealID=' . $dealId;
+        return self::baseUrl().'/redirect?dealID='.$dealId;
     }
 }

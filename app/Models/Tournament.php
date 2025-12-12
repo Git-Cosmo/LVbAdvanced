@@ -6,15 +6,15 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
-use Spatie\Activitylog\Traits\LogsActivity;
-use Spatie\Activitylog\LogOptions;
 use Spatie\Tags\HasTags;
 
 class Tournament extends Model
 {
-    use HasSlug, SoftDeletes, LogsActivity, HasTags;
+    use HasSlug, HasTags, LogsActivity, SoftDeletes;
 
     protected $fillable = [
         'user_id',
@@ -155,7 +155,7 @@ class Tournament extends Model
 
     public function canCheckIn(): bool
     {
-        if (!$this->check_in_starts_at || !$this->check_in_ends_at) {
+        if (! $this->check_in_starts_at || ! $this->check_in_ends_at) {
             return false;
         }
 
@@ -195,7 +195,7 @@ class Tournament extends Model
             'checked_in' => $participants->where('status', 'checked_in')->count(),
             'approved' => $participants->where('status', 'approved')->count(),
             'pending' => $participants->where('status', 'pending')->count(),
-            'completion_percentage' => $matches->count() > 0 
+            'completion_percentage' => $matches->count() > 0
                 ? round(($matches->where('status', 'completed')->count() / $matches->count()) * 100, 1)
                 : 0,
         ];
@@ -207,19 +207,19 @@ class Tournament extends Model
     public function getProgress(): string
     {
         $stats = $this->getStatistics();
-        
+
         if ($this->status === 'upcoming' || $this->status === 'registration_open') {
             return "Registration: {$stats['total_participants']}/{$this->max_participants} participants";
         }
-        
+
         if ($this->status === 'in_progress') {
             return "Matches: {$stats['completed_matches']}/{$stats['total_matches']} completed ({$stats['completion_percentage']}%)";
         }
-        
+
         if ($this->status === 'completed') {
             return "Tournament completed with {$stats['total_participants']} participants";
         }
-        
+
         return ucfirst(str_replace('_', ' ', $this->status));
     }
 
@@ -232,7 +232,7 @@ class Tournament extends Model
             ->logOnly(['name', 'status', 'format', 'type', 'max_participants', 'prize_pool', 'starts_at'])
             ->logOnlyDirty()
             ->dontSubmitEmptyLogs()
-            ->setDescriptionForEvent(fn(string $eventName) => match($eventName) {
+            ->setDescriptionForEvent(fn (string $eventName) => match ($eventName) {
                 'created' => "Tournament '{$this->name}' was created",
                 'updated' => "Tournament '{$this->name}' was updated",
                 'deleted' => "Tournament '{$this->name}' was deleted",

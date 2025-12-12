@@ -20,8 +20,8 @@ class UpdateLastActive
             // Update last_active_at every 5 minutes to reduce database writes
             $user = Auth::user();
             $lastActive = $user->last_active_at;
-            
-            if (!$lastActive || $lastActive->diffInMinutes(now()) >= 5) {
+
+            if (! $lastActive || $lastActive->diffInMinutes(now()) >= 5) {
                 // Use updateQuietly to avoid triggering events and extra overhead
                 $user->updateQuietly(['last_active_at' => now()]);
             }

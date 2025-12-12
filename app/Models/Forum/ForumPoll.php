@@ -44,10 +44,10 @@ class ForumPoll extends Model
      */
     public function isActive(): bool
     {
-        if (!$this->closes_at) {
+        if (! $this->closes_at) {
             return true;
         }
-        
+
         return $this->closes_at->isFuture();
     }
 }

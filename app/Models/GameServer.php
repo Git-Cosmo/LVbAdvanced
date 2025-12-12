@@ -80,7 +80,7 @@ class GameServer extends Model
      */
     public function getStatusColorAttribute(): string
     {
-        return match($this->status) {
+        return match ($this->status) {
             'online' => 'emerald',
             'offline' => 'rose',
             'maintenance' => 'amber',
@@ -94,7 +94,7 @@ class GameServer extends Model
      */
     public function getStatusLabelAttribute(): string
     {
-        return match($this->status) {
+        return match ($this->status) {
             'online' => '● Online',
             'offline' => '○ Offline',
             'maintenance' => '⚠ Maintenance',

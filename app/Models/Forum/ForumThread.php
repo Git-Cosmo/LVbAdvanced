@@ -9,15 +9,15 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Searchable\Searchable;
+use Spatie\Searchable\SearchResult;
 use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
 use Spatie\Tags\HasTags;
-use Spatie\Searchable\Searchable;
-use Spatie\Searchable\SearchResult;
 
 class ForumThread extends Model implements Searchable
 {
-    use SoftDeletes, HasSlug, HasTags;
+    use HasSlug, HasTags, SoftDeletes;
 
     protected $fillable = [
         'forum_id',

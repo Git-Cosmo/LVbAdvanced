@@ -63,8 +63,8 @@ class Prediction extends Model
 
     public function getCorrectOptionAttribute()
     {
-        return isset($this->correct_option_index) 
-            ? $this->options[$this->correct_option_index] 
+        return isset($this->correct_option_index)
+            ? $this->options[$this->correct_option_index]
             : null;
     }
 

@@ -20,7 +20,7 @@ return new class extends Migration
             $table->timestamp('expires_at')->nullable();
             $table->boolean('is_active')->default(true);
             $table->timestamps();
-            
+
             $table->index('user_id');
             $table->index('is_active');
         });

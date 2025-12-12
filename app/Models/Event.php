@@ -226,7 +226,7 @@ class Event extends Model
      */
     public function hasUserRsvped(?int $userId): bool
     {
-        if (!$userId) {
+        if (! $userId) {
             return false;
         }
 
@@ -238,11 +238,12 @@ class Event extends Model
      */
     public function getUserRsvpStatus(?int $userId): ?string
     {
-        if (!$userId) {
+        if (! $userId) {
             return null;
         }
 
         $rsvp = $this->rsvps()->where('user_id', $userId)->first();
+
         return $rsvp?->status;
     }
 }

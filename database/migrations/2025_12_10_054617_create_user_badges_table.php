@@ -22,7 +22,7 @@ return new class extends Migration
             $table->boolean('is_active')->default(true);
             $table->timestamps();
         });
-        
+
         // Pivot table for users and badges
         Schema::create('badge_user', function (Blueprint $table) {
             $table->id();
@@ -30,7 +30,7 @@ return new class extends Migration
             $table->foreignId('badge_id')->constrained('user_badges')->onDelete('cascade');
             $table->timestamp('awarded_at')->useCurrent();
             $table->timestamps();
-            
+
             $table->unique(['user_id', 'badge_id']);
         });
     }

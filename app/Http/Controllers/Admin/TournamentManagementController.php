@@ -27,7 +27,7 @@ class TournamentManagementController extends Controller
             'organizer',
             'participants.user',
             'matches',
-            'staff.user'
+            'staff.user',
         ]);
 
         return view('admin.tournaments.show', compact('tournament'));
@@ -91,10 +91,10 @@ class TournamentManagementController extends Controller
     protected function generateSingleEliminationBracket(Tournament $tournament, $participants)
     {
         $participantCount = $participants->count();
-        
+
         // Calculate number of rounds needed
         $rounds = ceil(log($participantCount, 2));
-        
+
         // Seed participants
         $participants = $participants->shuffle();
         foreach ($participants as $index => $participant) {
@@ -104,7 +104,7 @@ class TournamentManagementController extends Controller
         // Create first round matches
         $round = 1;
         $matchNumber = 1;
-        
+
         for ($i = 0; $i < $participantCount; $i += 2) {
             $participant1 = $participants[$i] ?? null;
             $participant2 = $participants[$i + 1] ?? null;
@@ -138,7 +138,7 @@ class TournamentManagementController extends Controller
     {
         // Simplified double elimination - create winners and losers brackets
         $this->generateSingleEliminationBracket($tournament, $participants);
-        
+
         // Additional logic for losers bracket would go here
         // This is a complex algorithm that would need more implementation
     }
@@ -147,7 +147,7 @@ class TournamentManagementController extends Controller
     {
         $count = $participants->count();
         $participants = $participants->values();
-        
+
         $round = 1;
         $matchNumber = 1;
 
@@ -171,7 +171,7 @@ class TournamentManagementController extends Controller
         // Swiss system: pair participants with similar records
         // For the first round, pair randomly
         $participants = $participants->shuffle()->values();
-        
+
         $matchNumber = 1;
         for ($i = 0; $i < $participants->count(); $i += 2) {
             if (isset($participants[$i + 1])) {
@@ -232,7 +232,7 @@ class TournamentManagementController extends Controller
         if ($nextMatch) {
             // Determine if winner goes to participant1 or participant2 slot
             $isOddMatch = ($match->match_number % 2) === 1;
-            
+
             if ($isOddMatch) {
                 $nextMatch->update(['participant1_id' => $match->winner_id]);
             } else {

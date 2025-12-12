@@ -25,21 +25,21 @@ return new class extends Migration
             $table->integer('score')->default(0);
             $table->integer('num_comments')->default(0);
             $table->timestamp('posted_at')->nullable(); // Original Reddit post time
-            
+
             // Media fields
             $table->text('thumbnail')->nullable();
             $table->json('media')->nullable(); // Store video/image URLs and metadata
             $table->string('post_hint')->nullable(); // image, video, link, self
             $table->boolean('is_video')->default(false);
             $table->boolean('is_self')->default(false); // Text post
-            
+
             // Management fields
             $table->boolean('is_published')->default(true);
             $table->boolean('is_featured')->default(false);
             $table->integer('views_count')->default(0);
-            
+
             $table->timestamps();
-            
+
             // Indexes for performance
             $table->index('posted_at');
             $table->index('is_published');

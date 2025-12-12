@@ -5,7 +5,6 @@ namespace App\Policies\Forum;
 use App\Models\Forum\Forum;
 use App\Models\Forum\ForumThread;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 
 class ForumThreadPolicy
 {
@@ -26,7 +25,7 @@ class ForumThreadPolicy
         if ($forumThread->is_hidden) {
             return $user && ($user->hasRole('admin') || $user->hasRole('moderator'));
         }
-        
+
         return true;
     }
 
@@ -39,7 +38,7 @@ class ForumThreadPolicy
         if ($forum && $forum->is_locked) {
             return $user->hasRole('admin') || $user->hasRole('moderator');
         }
-        
+
         return true; // All authenticated users can create threads
     }
 
@@ -49,8 +48,8 @@ class ForumThreadPolicy
     public function update(User $user, ForumThread $forumThread): bool
     {
         // User can edit their own thread or moderators/admins can edit any
-        return $user->id === $forumThread->user_id 
-            || $user->hasRole('admin') 
+        return $user->id === $forumThread->user_id
+            || $user->hasRole('admin')
             || $user->hasRole('moderator');
     }
 
@@ -79,4 +78,3 @@ class ForumThreadPolicy
         return $user->hasRole('admin');
     }
 }
-

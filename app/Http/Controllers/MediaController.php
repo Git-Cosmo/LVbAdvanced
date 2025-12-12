@@ -2,9 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\MediaService;
 use App\Models\User\Gallery;
-use App\Models\User\Album;
+use App\Services\MediaService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -25,7 +24,7 @@ class MediaController extends Controller
         $galleries = Gallery::with(['user', 'galleryMedia'])
             ->latest()
             ->paginate(20);
-        
+
         return view('media.gallery.index', [
             'galleries' => $galleries,
             'page' => (object) [
@@ -43,13 +42,13 @@ class MediaController extends Controller
     {
         $gallery = Gallery::with(['user', 'galleryMedia', 'comments'])->findOrFail($id);
         $gallery->increment('views');
-        
+
         return view('media.gallery.show', [
             'gallery' => $gallery,
             'page' => (object) [
-                'title' => $gallery->title . ' - FPSociety Downloads',
-                'meta_title' => $gallery->title . ' | FPSociety Gaming Resources',
-                'meta_description' => $gallery->description ?? 'Download ' . $gallery->title . ' for ' . $gallery->game,
+                'title' => $gallery->title.' - FPSociety Downloads',
+                'meta_title' => $gallery->title.' | FPSociety Gaming Resources',
+                'meta_description' => $gallery->description ?? 'Download '.$gallery->title.' for '.$gallery->game,
             ],
         ]);
     }
@@ -60,7 +59,7 @@ class MediaController extends Controller
     public function create()
     {
         $games = ['Counter Strike 2', 'GTA V', 'Fortnite', 'Call of Duty', 'Minecraft', 'Other'];
-        
+
         return view('media.gallery.create', [
             'games' => $games,
             'page' => (object) [
@@ -110,11 +109,11 @@ class MediaController extends Controller
     {
         $media = \App\Models\User\Media::findOrFail($mediaId);
         $media->increment('downloads');
-        
+
         if ($media->gallery) {
             $media->gallery->increment('downloads');
         }
-        
+
         return Storage::disk('public')->download($media->path, $media->name);
     }
 
@@ -123,7 +122,7 @@ class MediaController extends Controller
      */
     public function destroy(Gallery $gallery)
     {
-        if (auth()->id() !== $gallery->user_id && !auth()->user()->can('delete any media')) {
+        if (auth()->id() !== $gallery->user_id && ! auth()->user()->can('delete any media')) {
             abort(403);
         }
 

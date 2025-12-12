@@ -34,6 +34,7 @@ class StoreController extends Controller
         // Transform stores to include logo URLs using helper
         $stores->getCollection()->transform(function ($store) {
             $store->logo_url = CheapSharkHelper::logoUrl($store->logo);
+
             return $store;
         });
 

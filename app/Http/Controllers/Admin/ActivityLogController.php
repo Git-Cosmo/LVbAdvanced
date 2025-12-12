@@ -25,9 +25,9 @@ class ActivityLogController extends Controller
 
         // Filter by description/event
         if ($request->filled('search')) {
-            $query->where(function($q) use ($request) {
-                $q->where('description', 'like', '%' . $request->search . '%')
-                  ->orWhere('event', 'like', '%' . $request->search . '%');
+            $query->where(function ($q) use ($request) {
+                $q->where('description', 'like', '%'.$request->search.'%')
+                    ->orWhere('event', 'like', '%'.$request->search.'%');
             });
         }
 
@@ -52,7 +52,7 @@ class ActivityLogController extends Controller
     public function show(Activity $activity)
     {
         $activity->load(['causer', 'subject']);
-        
+
         return view('admin.activity-log.show', compact('activity'));
     }
 
@@ -67,7 +67,7 @@ class ActivityLogController extends Controller
     public function clean(Request $request)
     {
         $days = $request->input('days', 30);
-        
+
         $deleted = Activity::where('created_at', '<', now()->subDays($days))->delete();
 
         return redirect()->route('admin.activity-log.index')

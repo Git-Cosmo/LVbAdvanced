@@ -3,9 +3,6 @@
 namespace App\Http\Controllers\Forum;
 
 use App\Http\Controllers\Controller;
-use App\Models\Forum\ForumPost;
-use App\Models\Forum\ForumThread;
-use App\Models\User;
 use App\Services\SearchService;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -30,11 +27,11 @@ class SearchController extends Controller
         $userId = $request->input('user');
         $dateFrom = $request->input('date_from');
         $dateTo = $request->input('date_to');
-        
+
         $threads = collect();
         $posts = collect();
         $users = collect();
-        
+
         if ($query) {
             $filters = array_filter([
                 'forum_id' => $forumId,
@@ -56,7 +53,7 @@ class SearchController extends Controller
                 $users = $this->searchService->searchUsers($query);
             }
         }
-        
+
         return view('forum.search', compact('query', 'filter', 'threads', 'posts', 'users', 'forumId', 'userId', 'dateFrom', 'dateTo'));
     }
 }

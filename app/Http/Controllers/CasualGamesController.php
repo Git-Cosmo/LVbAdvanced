@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\TriviaGame;
-use App\Models\TriviaAttempt;
+use App\Models\DailyChallenge;
 use App\Models\Prediction;
 use App\Models\PredictionEntry;
-use App\Models\DailyChallenge;
 use App\Models\TournamentBet;
+use App\Models\TriviaAttempt;
+use App\Models\TriviaGame;
 use Illuminate\Http\Request;
 
 class CasualGamesController extends Controller
@@ -58,7 +58,7 @@ class CasualGamesController extends Controller
     public function triviaShow(TriviaGame $triviaGame)
     {
         $triviaGame->load('questions');
-        
+
         $userAttempt = null;
         if (auth()->check()) {
             $userAttempt = TriviaAttempt::where('user_id', auth()->id())
@@ -109,13 +109,13 @@ class CasualGamesController extends Controller
         }
 
         return redirect()->route('casual-games.trivia.result', $attempt)
-            ->with('success', 'Quiz submitted! You scored ' . $score . ' points!');
+            ->with('success', 'Quiz submitted! You scored '.$score.' points!');
     }
 
     public function triviaResult(TriviaAttempt $attempt)
     {
         $this->authorize('view', $attempt);
-        
+
         $attempt->load('triviaGame.questions');
 
         return view('casual-games.trivia.result', [
@@ -140,7 +140,7 @@ class CasualGamesController extends Controller
     public function predictionShow(Prediction $prediction)
     {
         $prediction->loadCount('entries');
-        
+
         $userEntry = null;
         if (auth()->check()) {
             $userEntry = PredictionEntry::where('user_id', auth()->id())
@@ -155,7 +155,7 @@ class CasualGamesController extends Controller
                 ->selectRaw('selected_option_index, count(*) as count')
                 ->groupBy('selected_option_index')
                 ->get();
-            
+
             foreach ($entries as $entry) {
                 $distribution[$entry->selected_option_index] = $entry->count;
             }
@@ -196,7 +196,7 @@ class CasualGamesController extends Controller
     public function challengesIndex()
     {
         $todayChallenges = DailyChallenge::today()->get();
-        
+
         $completedIds = [];
         if (auth()->check()) {
             $completedIds = auth()->user()->profile->custom_fields['completed_challenges'] ?? [];

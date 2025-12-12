@@ -28,7 +28,7 @@ class SeoService
                 'description' => $meta['description'],
                 'keywords' => $meta['keywords'],
             ],
-            
+
             // Open Graph
             'og' => [
                 'og:title' => $meta['title'],
@@ -38,7 +38,7 @@ class SeoService
                 'og:type' => $meta['type'],
                 'og:site_name' => $meta['site_name'],
             ],
-            
+
             // Twitter Card
             'twitter' => [
                 'twitter:card' => 'summary_large_image',
@@ -46,7 +46,7 @@ class SeoService
                 'twitter:description' => $meta['description'],
                 'twitter:image' => $meta['image'],
             ],
-            
+
             // Structured Data (JSON-LD)
             'structured' => $this->generateStructuredData($meta),
         ];
@@ -66,12 +66,12 @@ class SeoService
         ];
 
         // Add search action for website type
-        if (!isset($meta['schema_type']) || $meta['schema_type'] === 'WebSite') {
+        if (! isset($meta['schema_type']) || $meta['schema_type'] === 'WebSite') {
             $structuredData['potentialAction'] = [
                 '@type' => 'SearchAction',
                 'target' => [
                     '@type' => 'EntryPoint',
-                    'urlTemplate' => config('app.url') . '/search?q={search_term_string}',
+                    'urlTemplate' => config('app.url').'/search?q={search_term_string}',
                 ],
                 'query-input' => 'required name=search_term_string',
             ];
@@ -106,9 +106,9 @@ class SeoService
     public function generateGamingContentMeta(string $game, string $title, string $description): array
     {
         return $this->generateMetaTags([
-            'title' => $title . ' - ' . $game . ' | FPSociety Gaming Community',
+            'title' => $title.' - '.$game.' | FPSociety Gaming Community',
             'description' => $description,
-            'keywords' => $game . ', gaming, mods, custom maps, skins, ' . strtolower($title) . ', FPSociety',
+            'keywords' => $game.', gaming, mods, custom maps, skins, '.strtolower($title).', FPSociety',
             'type' => 'article',
         ]);
     }

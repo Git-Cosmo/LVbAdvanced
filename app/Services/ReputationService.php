@@ -2,9 +2,8 @@
 
 namespace App\Services;
 
-use App\Models\User;
 use App\Models\Forum\ForumReaction;
-use Illuminate\Support\Facades\DB;
+use App\Models\User;
 
 class ReputationService
 {
@@ -14,10 +13,10 @@ class ReputationService
     public function awardXP(User $user, int $amount, string $reason = ''): void
     {
         $user->profile->increment('xp', $amount);
-        
+
         // Check for level up
         $this->checkLevelUp($user);
-        
+
         // Log activity
         activity()
             ->causedBy($user)
@@ -33,22 +32,22 @@ class ReputationService
     {
         $currentLevel = $user->profile->level;
         $newLevel = $this->calculateLevel($user->profile->xp);
-        
+
         if ($newLevel > $currentLevel) {
             $user->profile->update(['level' => $newLevel]);
-            
+
             // Award level up badge/achievement
             $this->awardLevelBadge($user, $newLevel);
-            
+
             activity()
                 ->causedBy($user)
                 ->performedOn($user)
                 ->withProperties(['old_level' => $currentLevel, 'new_level' => $newLevel])
                 ->log('level_up');
-            
+
             return true;
         }
-        
+
         return false;
     }
 
@@ -77,13 +76,13 @@ class ReputationService
         // Count likes received on posts by this user
         $karma = ForumReaction::where('reactable_type', \App\Models\Forum\ForumPost::class)
             ->where('type', 'like')
-            ->whereIn('reactable_id', function($query) use ($user) {
+            ->whereIn('reactable_id', function ($query) use ($user) {
                 $query->select('id')
-                      ->from('forum_posts')
-                      ->where('user_id', $user->id);
+                    ->from('forum_posts')
+                    ->where('user_id', $user->id);
             })
             ->count();
-        
+
         $user->profile->update(['karma' => $karma]);
     }
 
@@ -99,7 +98,7 @@ class ReputationService
             50 => ['name' => 'Legendary', 'description' => 'Reached level 50'],
             100 => ['name' => 'Godlike', 'description' => 'Reached level 100'],
         ];
-        
+
         if (isset($badges[$level])) {
             // Find or create the badge
             $badge = \App\Models\User\UserBadge::firstOrCreate([
@@ -107,9 +106,9 @@ class ReputationService
             ], [
                 'description' => $badges[$level]['description'],
             ]);
-            
+
             // Attach badge to user if not already attached
-            if (!$user->badges()->where('badge_id', $badge->id)->exists()) {
+            if (! $user->badges()->where('badge_id', $badge->id)->exists()) {
                 $user->badges()->attach($badge->id, ['awarded_at' => now()]);
             }
         }
@@ -123,7 +122,7 @@ class ReputationService
         $query = User::query()
             ->join('user_profiles', 'users.id', '=', 'user_profiles.user_id')
             ->select('users.*');
-        
+
         switch ($type) {
             case 'karma':
                 $query->orderBy('user_profiles.karma', 'desc');
@@ -136,20 +135,20 @@ class ReputationService
                 $query->orderBy('user_profiles.xp', 'desc');
                 break;
         }
-        
+
         // Apply period filter if not all-time
         if ($period !== 'all-time') {
-            $date = match($period) {
+            $date = match ($period) {
                 'daily' => now()->subDay(),
                 'weekly' => now()->subWeek(),
                 'monthly' => now()->subMonth(),
                 'seasonal' => now()->subMonths(3),
                 default => now()->subDay(),
             };
-            
+
             $query->where('users.created_at', '>=', $date);
         }
-        
+
         return $query->limit($limit)->get();
     }
 }

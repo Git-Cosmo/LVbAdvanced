@@ -4,13 +4,14 @@ namespace App\Services;
 
 use App\Models\RedditPost;
 use App\Models\RedditSubreddit;
+use Carbon\Carbon;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Log;
-use Carbon\Carbon;
 
 class RedditScraperService
 {
     protected $client;
+
     protected $accessToken;
 
     public function __construct()
@@ -30,8 +31,9 @@ class RedditScraperService
         $username = config('services.reddit.username');
         $password = config('services.reddit.password');
 
-        if (!$clientId || !$clientSecret || !$username || !$password) {
+        if (! $clientId || ! $clientSecret || ! $username || ! $password) {
             Log::error('Reddit credentials not configured');
+
             return false;
         }
 
@@ -44,22 +46,25 @@ class RedditScraperService
                     'password' => $password,
                 ],
                 'headers' => [
-                    'User-Agent' => 'Laravel/FetchAITAH'
-                ]
+                    'User-Agent' => 'Laravel/FetchAITAH',
+                ],
             ]);
 
             $data = json_decode($response->getBody()->getContents(), true);
-            
+
             if (isset($data['access_token'])) {
                 $this->accessToken = $data['access_token'];
                 Log::info('Reddit authentication successful');
+
                 return true;
             }
 
             Log::error('Reddit authentication failed: No access token in response');
+
             return false;
         } catch (\Exception $e) {
-            Log::error('Reddit authentication error: ' . $e->getMessage());
+            Log::error('Reddit authentication error: '.$e->getMessage());
+
             return false;
         }
     }
@@ -69,25 +74,26 @@ class RedditScraperService
      */
     public function scrapeSubreddit(string $subredditName, int $limit = 25): int
     {
-        if (!$this->authenticate()) {
+        if (! $this->authenticate()) {
             return 0;
         }
 
         try {
             $response = $this->client->get("https://oauth.reddit.com/r/{$subredditName}/hot", [
                 'headers' => [
-                    'Authorization' => 'Bearer ' . $this->accessToken,
-                    'User-Agent' => 'Laravel/FetchAITAH'
+                    'Authorization' => 'Bearer '.$this->accessToken,
+                    'User-Agent' => 'Laravel/FetchAITAH',
                 ],
                 'query' => [
                     'limit' => $limit,
-                ]
+                ],
             ]);
 
             $data = json_decode($response->getBody()->getContents(), true);
 
-            if (!isset($data['kind']) || $data['kind'] !== 'Listing') {
+            if (! isset($data['kind']) || $data['kind'] !== 'Listing') {
                 Log::error('Invalid Reddit API response structure');
+
                 return 0;
             }
 
@@ -95,21 +101,23 @@ class RedditScraperService
             $importedCount = 0;
 
             foreach ($posts as $postData) {
-                if (!isset($postData['data'])) {
+                if (! isset($postData['data'])) {
                     continue;
                 }
 
                 $post = $postData['data'];
-                
+
                 if ($this->savePost($post, $subredditName)) {
                     $importedCount++;
                 }
             }
 
             Log::info("Scraped {$importedCount} posts from r/{$subredditName}");
+
             return $importedCount;
         } catch (\Exception $e) {
-            Log::error("Error scraping r/{$subredditName}: " . $e->getMessage());
+            Log::error("Error scraping r/{$subredditName}: ".$e->getMessage());
+
             return 0;
         }
     }
@@ -121,15 +129,15 @@ class RedditScraperService
     {
         try {
             $redditId = $postData['id'] ?? null;
-            
-            if (!$redditId) {
+
+            if (! $redditId) {
                 return false;
             }
 
             // Extract media information
             $media = null;
             $isVideo = false;
-            
+
             if (isset($postData['is_video']) && $postData['is_video']) {
                 $isVideo = true;
                 $media = [
@@ -155,8 +163,8 @@ class RedditScraperService
                     'permalink' => $postData['permalink'] ?? null,
                     'score' => $postData['score'] ?? 0,
                     'num_comments' => $postData['num_comments'] ?? 0,
-                    'posted_at' => isset($postData['created_utc']) 
-                        ? Carbon::createFromTimestamp($postData['created_utc']) 
+                    'posted_at' => isset($postData['created_utc'])
+                        ? Carbon::createFromTimestamp($postData['created_utc'])
                         : null,
                     'thumbnail' => ($postData['thumbnail'] ?? '') !== 'self' && ($postData['thumbnail'] ?? '') !== 'default'
                         ? $postData['thumbnail']
@@ -170,7 +178,8 @@ class RedditScraperService
 
             return true;
         } catch (\Exception $e) {
-            Log::error("Error saving Reddit post: " . $e->getMessage());
+            Log::error('Error saving Reddit post: '.$e->getMessage());
+
             return false;
         }
     }
@@ -185,7 +194,7 @@ class RedditScraperService
 
         foreach ($subreddits as $subreddit) {
             $count = $this->scrapeSubreddit($subreddit->name, $subreddit->scrape_limit);
-            
+
             $subreddit->update([
                 'last_scraped_at' => now(),
             ]);

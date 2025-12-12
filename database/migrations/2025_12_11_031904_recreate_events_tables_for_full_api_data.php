@@ -18,7 +18,7 @@ return new class extends Migration
         // Create main events table with all API fields
         Schema::create('events', function (Blueprint $table) {
             $table->id();
-            
+
             // Core event information from API
             $table->string('event_id')->unique(); // API event_id
             $table->string('name'); // Event name
@@ -26,7 +26,7 @@ return new class extends Migration
             $table->text('link')->nullable(); // Original event link
             $table->text('description')->nullable();
             $table->string('language', 10)->nullable(); // e.g., "en"
-            
+
             // Date and time information
             $table->string('date_human_readable')->nullable(); // e.g., "Fri, Feb 14, 10:00 – 11:30 PM PST"
             $table->dateTime('start_time')->nullable(); // Local time
@@ -35,26 +35,26 @@ return new class extends Migration
             $table->dateTime('end_time')->nullable(); // Local time
             $table->dateTime('end_time_utc')->nullable(); // UTC time
             $table->integer('end_time_precision_sec')->nullable(); // Precision in seconds
-            
+
             // Event format
             $table->boolean('is_virtual')->default(false);
-            
+
             // Media
             $table->text('thumbnail')->nullable(); // Thumbnail URL
-            
+
             // Publisher information
             $table->string('publisher')->nullable(); // e.g., "Spotify.com"
             $table->text('publisher_favicon')->nullable(); // Publisher favicon URL
             $table->string('publisher_domain')->nullable(); // e.g., "open.spotify.com"
-            
+
             // Management fields
             $table->string('event_type')->default('general'); // tournament, release, expo, update, general
             $table->boolean('is_featured')->default(false);
             $table->boolean('is_published')->default(true);
             $table->integer('views_count')->default(0);
-            
+
             $table->timestamps();
-            
+
             // Indexes for better query performance
             $table->index('event_type');
             $table->index('start_time');
@@ -67,21 +67,21 @@ return new class extends Migration
         // Create venues table (normalized to avoid duplication)
         Schema::create('event_venues', function (Blueprint $table) {
             $table->id();
-            
+
             // Venue identification
             $table->string('google_id')->unique()->nullable(); // Google Place ID
             $table->string('name'); // Venue name
             $table->string('phone_number')->nullable();
             $table->text('website')->nullable();
-            
+
             // Ratings
             $table->integer('review_count')->nullable();
             $table->decimal('rating', 3, 1)->nullable(); // e.g., 4.5
-            
+
             // Venue types
             $table->string('subtype')->nullable(); // Primary subtype
             $table->json('subtypes')->nullable(); // All subtypes as JSON array
-            
+
             // Address information
             $table->text('full_address')->nullable();
             $table->decimal('latitude', 10, 7)->nullable();
@@ -95,9 +95,9 @@ return new class extends Migration
             $table->string('country', 10)->nullable(); // e.g., "US"
             $table->string('timezone')->nullable(); // e.g., "America/Los_Angeles"
             $table->string('google_mid')->nullable(); // Google MID
-            
+
             $table->timestamps();
-            
+
             // Indexes
             $table->index('city');
             $table->index('state');
@@ -111,7 +111,7 @@ return new class extends Migration
             $table->foreignId('event_id')->constrained('events')->onDelete('cascade');
             $table->foreignId('venue_id')->constrained('event_venues')->onDelete('cascade');
             $table->timestamps();
-            
+
             $table->unique(['event_id', 'venue_id']);
         });
 
@@ -123,7 +123,7 @@ return new class extends Migration
             $table->text('link'); // Ticket purchase link
             $table->text('fav_icon')->nullable(); // Source favicon URL
             $table->timestamps();
-            
+
             $table->index('event_id');
         });
 
@@ -134,7 +134,7 @@ return new class extends Migration
             $table->string('source'); // e.g., "Nobhillgazette.com"
             $table->text('link'); // Information link
             $table->timestamps();
-            
+
             $table->index('event_id');
         });
 
@@ -145,7 +145,7 @@ return new class extends Migration
             $table->string('external_id'); // External unique identifier (event_id from API)
             $table->foreignId('event_id')->constrained('events')->onDelete('cascade');
             $table->timestamps();
-            
+
             $table->unique(['source', 'external_id']); // Prevent duplicate imports
         });
     }

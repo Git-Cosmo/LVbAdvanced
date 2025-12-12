@@ -21,7 +21,7 @@ return new class extends Migration
             $table->timestamp('read_at')->nullable();
             $table->timestamps();
             $table->softDeletes();
-            
+
             $table->index(['sender_id', 'recipient_id']);
             // Removed duplicate index for conversation_id
         });

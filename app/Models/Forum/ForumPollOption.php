@@ -2,7 +2,6 @@
 
 namespace App\Models\Forum;
 
-use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -40,7 +39,7 @@ class ForumPollOption extends Model
         if ($this->poll->total_votes === 0) {
             return 0;
         }
-        
+
         return round(($this->votes_count / $this->poll->total_votes) * 100, 1);
     }
 }

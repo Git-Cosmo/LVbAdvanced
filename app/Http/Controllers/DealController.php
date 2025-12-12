@@ -18,7 +18,7 @@ class DealController extends Controller
 
         if ($search) {
             $dealsQuery->whereHas('game', function ($query) use ($search) {
-                $query->where('title', 'like', '%' . $search . '%');
+                $query->where('title', 'like', '%'.$search.'%');
             });
         }
 

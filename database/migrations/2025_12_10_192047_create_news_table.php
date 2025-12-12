@@ -26,7 +26,7 @@ return new class extends Migration
             $table->timestamp('published_at')->nullable();
             $table->integer('views_count')->default(0);
             $table->timestamps();
-            
+
             $table->index(['is_published', 'published_at']);
             $table->index('is_featured');
         });

@@ -27,7 +27,7 @@ return new class extends Migration
             $table->timestamp('last_post_at')->nullable();
             $table->timestamps();
             $table->softDeletes();
-            
+
             $table->index(['forum_id', 'is_pinned', 'last_post_at']);
             $table->index('user_id');
             $table->index('slug');

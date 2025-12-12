@@ -14,14 +14,14 @@ class MediaService
     public function uploadImage(UploadedFile $file, string $collection = 'images', $model = null): array
     {
         $path = $file->store('images', 'public');
-        
+
         // Optimize image
         $fullPath = Storage::disk('public')->path($path);
         $this->optimizeImage($fullPath);
-        
+
         // Create thumbnail
         $thumbnailPath = $this->createThumbnail($fullPath);
-        
+
         return [
             'path' => $path,
             'url' => Storage::disk('public')->url($path),
@@ -43,17 +43,17 @@ class MediaService
             if ($imageInfo === false) {
                 return;
             }
-            
+
             $mimeType = $imageInfo['mime'];
             $img = imagecreatefromstring(file_get_contents($path));
-            
+
             if ($img !== false) {
                 // Preserve transparency for PNG/GIF
                 if ($mimeType === 'image/png' || $mimeType === 'image/gif') {
                     imagealphablending($img, false);
                     imagesavealpha($img, true);
                 }
-                
+
                 // Save in original format
                 switch ($mimeType) {
                     case 'image/png':
@@ -71,7 +71,7 @@ class MediaService
                         imagejpeg($img, $path, 85);
                         break;
                 }
-                
+
                 imagedestroy($img);
             }
         } catch (\Exception $e) {
@@ -86,34 +86,34 @@ class MediaService
     {
         $info = pathinfo($originalPath);
         $imageInfo = getimagesize($originalPath);
-        
+
         if ($imageInfo === false) {
             return $originalPath;
         }
-        
+
         $mimeType = $imageInfo['mime'];
-        
+
         // Determine extension based on mime type
-        $extension = match($mimeType) {
+        $extension = match ($mimeType) {
             'image/png' => 'png',
             'image/gif' => 'gif',
             'image/webp' => 'webp',
             default => 'jpg',
         };
-        
-        $thumbnailPath = $info['dirname'] . '/' . $info['filename'] . '_thumb.' . $extension;
-        
+
+        $thumbnailPath = $info['dirname'].'/'.$info['filename'].'_thumb.'.$extension;
+
         try {
             $img = imagecreatefromstring(file_get_contents($originalPath));
             if ($img !== false) {
                 $width = imagesx($img);
                 $height = imagesy($img);
-                
+
                 $newWidth = 300;
                 $newHeight = ($height / $width) * $newWidth;
-                
+
                 $thumb = imagecreatetruecolor($newWidth, $newHeight);
-                
+
                 // Preserve transparency for PNG/GIF
                 if ($mimeType === 'image/png' || $mimeType === 'image/gif') {
                     imagealphablending($thumb, false);
@@ -121,9 +121,9 @@ class MediaService
                     $transparent = imagecolorallocatealpha($thumb, 0, 0, 0, 127);
                     imagefill($thumb, 0, 0, $transparent);
                 }
-                
+
                 imagecopyresampled($thumb, $img, 0, 0, 0, 0, $newWidth, $newHeight, $width, $height);
-                
+
                 // Save in appropriate format
                 switch ($mimeType) {
                     case 'image/png':
@@ -139,14 +139,14 @@ class MediaService
                         imagejpeg($thumb, $thumbnailPath, 85);
                         break;
                 }
-                
+
                 imagedestroy($img);
                 imagedestroy($thumb);
             }
         } catch (\Exception $e) {
             return $originalPath;
         }
-        
+
         return str_replace(Storage::disk('public')->path(''), '', $thumbnailPath);
     }
 
@@ -156,7 +156,7 @@ class MediaService
     public function uploadVideo(UploadedFile $file): array
     {
         $path = $file->store('videos', 'public');
-        
+
         return [
             'path' => $path,
             'url' => Storage::disk('public')->url($path),
@@ -173,7 +173,7 @@ class MediaService
     public function uploadAudio(UploadedFile $file): array
     {
         $path = $file->store('audio', 'public');
-        
+
         return [
             'path' => $path,
             'url' => Storage::disk('public')->url($path),
@@ -190,7 +190,7 @@ class MediaService
     public function uploadGameResource(UploadedFile $file, string $game, string $type): array
     {
         $path = $file->store("resources/{$game}/{$type}", 'public');
-        
+
         return [
             'path' => $path,
             'url' => Storage::disk('public')->url($path),

@@ -45,7 +45,7 @@ class CheapSharkStore extends Model
     public function scopeApplyFilters($query, ?string $search, ?bool $filterActive)
     {
         return $query
-            ->when($search, fn($q) => $q->where('name', 'like', '%' . $search . '%'))
-            ->when($filterActive, fn($q) => $q->where('is_active', true));
+            ->when($search, fn ($q) => $q->where('name', 'like', '%'.$search.'%'))
+            ->when($filterActive, fn ($q) => $q->where('is_active', true));
     }
 }

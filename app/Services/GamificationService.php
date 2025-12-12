@@ -3,8 +3,8 @@
 namespace App\Services;
 
 use App\Models\User;
-use Illuminate\Support\Facades\Cache;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Cache;
 
 class GamificationService
 {
@@ -32,7 +32,7 @@ class GamificationService
         ];
 
         $amount = $xpAmounts[$action] ?? 0;
-        
+
         if ($amount > 0) {
             $this->reputationService->awardXP($user, $amount, $action);
             $this->checkStreaks($user, $action);
@@ -47,7 +47,7 @@ class GamificationService
         if ($action === 'daily_login') {
             $lastLogin = $user->profile->last_login_at;
             $today = Carbon::today();
-            
+
             if ($lastLogin && $lastLogin->isToday()) {
                 // Already logged in today, don't modify streak
                 return;
@@ -58,13 +58,13 @@ class GamificationService
                 // Reset or start streak (no login yesterday or first time)
                 $user->profile->update(['login_streak' => 1]);
             }
-            
+
             $user->profile->update(['last_login_at' => now()]);
-            
+
             // Award streak milestones
             $this->checkStreakMilestones($user);
         }
-        
+
         if (in_array($action, ['create_thread', 'create_post'])) {
             $this->checkPostingStreak($user);
         }
@@ -90,12 +90,12 @@ class GamificationService
             ], [
                 'description' => $milestones[$streak]['description'],
             ]);
-            
+
             // Attach badge to user if not already attached
-            if (!$user->badges()->where('badge_id', $badge->id)->exists()) {
+            if (! $user->badges()->where('badge_id', $badge->id)->exists()) {
                 $user->badges()->attach($badge->id, ['awarded_at' => now()]);
             }
-            
+
             // Bonus XP for milestone
             $this->reputationService->awardXP($user, $streak, 'streak_milestone');
         }
@@ -108,11 +108,11 @@ class GamificationService
     {
         $lastPostDate = $user->posts()->latest()->first()?->created_at;
         $today = Carbon::today();
-        
+
         if ($lastPostDate && $lastPostDate->isToday()) {
             return; // Already posted today
         }
-        
+
         if ($lastPostDate && $lastPostDate->isYesterday()) {
             $user->profile->increment('posting_streak');
         } else {
@@ -126,8 +126,8 @@ class GamificationService
     public function getSeasonalLeaderboard(int $limit = 50)
     {
         $seasonStart = $this->getCurrentSeasonStart();
-        
-        return Cache::remember('leaderboard:seasonal:' . $seasonStart->format('Y-m-d'), 3600, function () use ($seasonStart, $limit) {
+
+        return Cache::remember('leaderboard:seasonal:'.$seasonStart->format('Y-m-d'), 3600, function () use ($seasonStart, $limit) {
             return User::query()
                 ->join('user_profiles', 'users.id', '=', 'user_profiles.user_id')
                 ->select('users.*', 'user_profiles.xp', 'user_profiles.level', 'user_profiles.karma')
@@ -138,7 +138,7 @@ class GamificationService
                 ->withCount([
                     'posts as season_posts' => function ($query) use ($seasonStart) {
                         $query->where('created_at', '>=', $seasonStart);
-                    }
+                    },
                 ])
                 ->orderByDesc('user_profiles.xp')
                 ->limit($limit)
@@ -154,7 +154,7 @@ class GamificationService
         $now = now();
         $quarter = (int) ceil($now->month / 3);
         $seasonMonth = ($quarter - 1) * 3 + 1;
-        
+
         return Carbon::create($now->year, $seasonMonth, 1)->startOfDay();
     }
 
@@ -172,15 +172,15 @@ class GamificationService
         ]);
 
         // Check if user already has this achievement
-        if (!$user->achievements()->where('achievement_id', $achievement->id)->exists()) {
+        if (! $user->achievements()->where('achievement_id', $achievement->id)->exists()) {
             $user->achievements()->attach($achievement->id, [
                 'progress' => 100,
                 'is_unlocked' => true,
                 'unlocked_at' => now(),
             ]);
-            
+
             // Award XP for achievement
-            $this->reputationService->awardXP($user, 50, 'achievement_' . $key);
+            $this->reputationService->awardXP($user, 50, 'achievement_'.$key);
         }
     }
 }

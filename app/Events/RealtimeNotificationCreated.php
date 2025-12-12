@@ -9,9 +9,7 @@ use Illuminate\Notifications\DatabaseNotification;
 
 class RealtimeNotificationCreated implements ShouldBroadcastNow
 {
-    public function __construct(private readonly DatabaseNotification $notification)
-    {
-    }
+    public function __construct(private readonly DatabaseNotification $notification) {}
 
     public function broadcastOn(): array
     {

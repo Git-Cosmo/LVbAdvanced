@@ -6,7 +6,6 @@ use App\Models\Clan;
 use App\Models\GameIntegration;
 use App\Models\GameLibrary;
 use App\Models\RecentlyPlayed;
-use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class GamerIntegrationController extends Controller
@@ -17,7 +16,7 @@ class GamerIntegrationController extends Controller
     public function index(): View
     {
         $user = auth()->user();
-        
+
         $integrations = GameIntegration::where('user_id', $user->id)
             ->where('is_active', true)
             ->get();
@@ -38,7 +37,7 @@ class GamerIntegrationController extends Controller
     public function library(): View
     {
         $user = auth()->user();
-        
+
         $games = GameLibrary::where('user_id', $user->id)
             ->with('integration')
             ->orderBy('playtime_minutes', 'desc')
@@ -53,7 +52,7 @@ class GamerIntegrationController extends Controller
     public function recentlyPlayed(): View
     {
         $user = auth()->user();
-        
+
         $recentGames = RecentlyPlayed::where('user_id', $user->id)
             ->with('gameLibrary')
             ->orderBy('last_played_at', 'desc')
@@ -83,7 +82,7 @@ class GamerIntegrationController extends Controller
     public function showClan(Clan $clan): View
     {
         $clan->load(['owner', 'members.user', 'forums', 'events']);
-        
+
         return view('integrations.clans.show', compact('clan'));
     }
 }

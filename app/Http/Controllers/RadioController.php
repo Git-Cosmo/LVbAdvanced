@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Services\SeoService;
 use App\Services\AzuracastService;
+use App\Services\SeoService;
+use Illuminate\Http\Request;
 
 class RadioController extends Controller
 {
     protected SeoService $seoService;
+
     protected AzuracastService $azuracast;
 
     public function __construct(SeoService $seoService, AzuracastService $azuracast)
@@ -24,7 +25,7 @@ class RadioController extends Controller
     {
         $streamUrl = config('services.icecast.stream_url');
         $nowPlaying = null;
-        
+
         try {
             if (config('services.azuracast.base_url')) {
                 $nowPlaying = $this->azuracast->nowPlaying();
@@ -32,7 +33,7 @@ class RadioController extends Controller
         } catch (\Exception $e) {
             // Silently fail if AzuraCast is not configured
         }
-        
+
         return view('radio.index', [
             'streamUrl' => $streamUrl,
             'nowPlaying' => $nowPlaying,
@@ -51,7 +52,7 @@ class RadioController extends Controller
     {
         $streamUrl = config('services.icecast.stream_url');
         $nowPlaying = null;
-        
+
         try {
             if (config('services.azuracast.base_url')) {
                 $nowPlaying = $this->azuracast->nowPlaying();
@@ -59,7 +60,7 @@ class RadioController extends Controller
         } catch (\Exception $e) {
             // Silently fail if AzuraCast is not configured
         }
-        
+
         return view('radio.popout', [
             'streamUrl' => $streamUrl,
             'nowPlaying' => $nowPlaying,
@@ -72,7 +73,7 @@ class RadioController extends Controller
     public function home()
     {
         $nowPlaying = null;
-        
+
         try {
             if (config('services.azuracast.base_url')) {
                 $nowPlaying = $this->azuracast->nowPlaying();
@@ -80,7 +81,7 @@ class RadioController extends Controller
         } catch (\Exception $e) {
             // Silently fail if AzuraCast is not configured
         }
-        
+
         return view('radio.home', [
             'nowPlaying' => $nowPlaying,
             'page' => (object) [
@@ -97,7 +98,7 @@ class RadioController extends Controller
     public function requests()
     {
         $requestableSongs = [];
-        
+
         try {
             if (config('services.azuracast.base_url')) {
                 $requestableSongs = $this->azuracast->requestableSongs();
@@ -105,7 +106,7 @@ class RadioController extends Controller
         } catch (\Exception $e) {
             // Silently fail if AzuraCast is not configured
         }
-        
+
         return view('radio.requests', [
             'requestableSongs' => $requestableSongs,
             'page' => (object) [
@@ -121,7 +122,7 @@ class RadioController extends Controller
      */
     public function submitRequest(Request $request)
     {
-        if (!auth()->check()) {
+        if (! auth()->check()) {
             return redirect()->back()->with('error', 'You must be logged in to request songs.');
         }
 
@@ -131,11 +132,11 @@ class RadioController extends Controller
 
         try {
             $log = $this->azuracast->requestSong($request->request_id, auth()->id());
-            
+
             if ($log->status === 'success') {
-                return redirect()->back()->with('success', 'Song requested successfully! ' . ($log->api_response_message ?? ''));
+                return redirect()->back()->with('success', 'Song requested successfully! '.($log->api_response_message ?? ''));
             } else {
-                return redirect()->back()->with('error', 'Failed to request song. ' . ($log->api_response_message ?? 'Please try again later.'));
+                return redirect()->back()->with('error', 'Failed to request song. '.($log->api_response_message ?? 'Please try again later.'));
             }
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'An error occurred while requesting the song. Please try again later.');

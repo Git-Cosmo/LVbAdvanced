@@ -6,7 +6,6 @@ use App\Models\Forum\ForumPost;
 use App\Models\Forum\ForumThread;
 use App\Models\News;
 use App\Models\User;
-use Illuminate\Support\Facades\DB;
 
 class SearchService
 {
@@ -27,27 +26,27 @@ class SearchService
     public function searchThreads(string $query, array $filters = [], int $perPage = 15)
     {
         $sanitizedQuery = $this->sanitizeBooleanQuery($query);
-        
+
         $threadsQuery = ForumThread::with(['user', 'forum'])
             ->where('is_hidden', false)
             ->select('forum_threads.*')
-            ->selectRaw("MATCH(title) AGAINST(? IN BOOLEAN MODE) as relevance", [$sanitizedQuery])
-            ->whereRaw("MATCH(title) AGAINST(? IN BOOLEAN MODE)", [$sanitizedQuery]);
+            ->selectRaw('MATCH(title) AGAINST(? IN BOOLEAN MODE) as relevance', [$sanitizedQuery])
+            ->whereRaw('MATCH(title) AGAINST(? IN BOOLEAN MODE)', [$sanitizedQuery]);
 
         // Apply filters
-        if (!empty($filters['forum_id'])) {
+        if (! empty($filters['forum_id'])) {
             $threadsQuery->where('forum_id', $filters['forum_id']);
         }
 
-        if (!empty($filters['user_id'])) {
+        if (! empty($filters['user_id'])) {
             $threadsQuery->where('user_id', $filters['user_id']);
         }
 
-        if (!empty($filters['date_from'])) {
+        if (! empty($filters['date_from'])) {
             $threadsQuery->where('created_at', '>=', $filters['date_from']);
         }
 
-        if (!empty($filters['date_to'])) {
+        if (! empty($filters['date_to'])) {
             $threadsQuery->where('created_at', '<=', $filters['date_to']);
         }
 
@@ -62,23 +61,23 @@ class SearchService
     public function searchPosts(string $query, array $filters = [], int $perPage = 15)
     {
         $sanitizedQuery = $this->sanitizeBooleanQuery($query);
-        
+
         $postsQuery = ForumPost::with(['user', 'thread.forum'])
             ->where('is_hidden', false)
             ->select('forum_posts.*')
-            ->selectRaw("MATCH(content) AGAINST(? IN BOOLEAN MODE) as relevance", [$sanitizedQuery])
-            ->whereRaw("MATCH(content) AGAINST(? IN BOOLEAN MODE)", [$sanitizedQuery]);
+            ->selectRaw('MATCH(content) AGAINST(? IN BOOLEAN MODE) as relevance', [$sanitizedQuery])
+            ->whereRaw('MATCH(content) AGAINST(? IN BOOLEAN MODE)', [$sanitizedQuery]);
 
         // Apply filters
-        if (!empty($filters['user_id'])) {
+        if (! empty($filters['user_id'])) {
             $postsQuery->where('user_id', $filters['user_id']);
         }
 
-        if (!empty($filters['date_from'])) {
+        if (! empty($filters['date_from'])) {
             $postsQuery->where('created_at', '>=', $filters['date_from']);
         }
 
-        if (!empty($filters['date_to'])) {
+        if (! empty($filters['date_to'])) {
             $postsQuery->where('created_at', '<=', $filters['date_to']);
         }
 
@@ -93,12 +92,12 @@ class SearchService
     public function searchNews(string $query, int $perPage = 15)
     {
         $sanitizedQuery = $this->sanitizeBooleanQuery($query);
-        
+
         return News::published()
             ->with('user')
             ->select('news.*')
-            ->selectRaw("MATCH(title, excerpt, content) AGAINST(? IN BOOLEAN MODE) as relevance", [$sanitizedQuery])
-            ->whereRaw("MATCH(title, excerpt, content) AGAINST(? IN BOOLEAN MODE)", [$sanitizedQuery])
+            ->selectRaw('MATCH(title, excerpt, content) AGAINST(? IN BOOLEAN MODE) as relevance', [$sanitizedQuery])
+            ->whereRaw('MATCH(title, excerpt, content) AGAINST(? IN BOOLEAN MODE)', [$sanitizedQuery])
             ->orderByDesc('relevance')
             ->orderByDesc('published_at')
             ->paginate($perPage, ['*'], 'news_page');
@@ -128,9 +127,9 @@ class SearchService
         ];
 
         // Calculate total results
-        $results['total'] = $results['threads']->total() + 
-                           $results['posts']->total() + 
-                           $results['news']->total() + 
+        $results['total'] = $results['threads']->total() +
+                           $results['posts']->total() +
+                           $results['news']->total() +
                            $results['users']->total();
 
         return $results;

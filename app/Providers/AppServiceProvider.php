@@ -3,9 +3,9 @@
 namespace App\Providers;
 
 use App\Events\RealtimeNotificationCreated;
+use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Notifications\DatabaseNotification;
 
 class AppServiceProvider extends ServiceProvider
 {

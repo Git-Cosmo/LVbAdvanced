@@ -18,7 +18,7 @@ return new class extends Migration
             $table->boolean('notify_email')->default(true);
             $table->boolean('notify_push')->default(true);
             $table->timestamps();
-            
+
             $table->unique(['user_id', 'subscribable_id', 'subscribable_type'], 'unique_subscription');
         });
     }

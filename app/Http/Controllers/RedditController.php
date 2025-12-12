@@ -62,7 +62,7 @@ class RedditController extends Controller
         $post->increment('views_count');
 
         $this->seoService->generateMetaTags([
-            'title' => $post->title . ' - FPSociety',
+            'title' => $post->title.' - FPSociety',
             'description' => $post->body ? substr($post->body, 0, 160) : $post->title,
         ]);
 

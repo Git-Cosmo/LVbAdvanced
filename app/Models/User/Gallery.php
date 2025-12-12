@@ -8,15 +8,15 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Spatie\MediaLibrary\HasMedia as HasMediaInterface;
 use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\Searchable\Searchable;
+use Spatie\Searchable\SearchResult;
 use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
 use Spatie\Tags\HasTags;
-use Spatie\Searchable\Searchable;
-use Spatie\Searchable\SearchResult;
 
 class Gallery extends Model implements HasMediaInterface, Searchable
 {
-    use HasTags, HasSlug, InteractsWithMedia;
+    use HasSlug, HasTags, InteractsWithMedia;
 
     protected $fillable = [
         'user_id',
@@ -83,7 +83,7 @@ class Gallery extends Model implements HasMediaInterface, Searchable
     /**
      * Register media conversions for this model.
      */
-    public function registerMediaConversions(\Spatie\MediaLibrary\MediaCollections\Models\Media $media = null): void
+    public function registerMediaConversions(?\Spatie\MediaLibrary\MediaCollections\Models\Media $media = null): void
     {
         $this->addMediaConversion('thumb')
             ->width(300)

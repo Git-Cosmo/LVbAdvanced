@@ -26,7 +26,7 @@ return new class extends Migration
             $table->boolean('is_featured')->default(false);
             $table->unsignedBigInteger('views_count')->default(0);
             $table->timestamps();
-            
+
             // Indexes for performance
             $table->index('game_name');
             $table->index('released_at');

@@ -34,7 +34,7 @@ class SiteTheme extends Model
     public static function getActiveTheme()
     {
         $today = Carbon::today();
-        
+
         return static::where('is_active', true)
             ->where('start_date', '<=', $today)
             ->where('end_date', '>=', $today)
@@ -48,6 +48,7 @@ class SiteTheme extends Model
     public function isCurrentlyValid(): bool
     {
         $today = Carbon::today();
+
         return $this->start_date <= $today && $this->end_date >= $today;
     }
 
@@ -57,6 +58,7 @@ class SiteTheme extends Model
     public function scopeActive($query)
     {
         $today = Carbon::today();
+
         return $query->where('is_active', true)
             ->where('start_date', '<=', $today)
             ->where('end_date', '>=', $today);

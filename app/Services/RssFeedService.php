@@ -30,11 +30,12 @@ class RssFeedService
             foreach ($items as $item) {
                 try {
                     $guid = $this->getElementText($item, 'guid') ?: $this->getElementText($item, 'link');
-                    $guid = $guid ?: sha1($this->getElementText($item, 'title') . $this->getElementText($item, 'pubDate'));
-                    
+                    $guid = $guid ?: sha1($this->getElementText($item, 'title').$this->getElementText($item, 'pubDate'));
+
                     // Check if already imported
                     if (RssImportedItem::where('guid', $guid)->where('rss_feed_id', $feed->id)->exists()) {
                         $results['skipped']++;
+
                         continue;
                     }
 
@@ -91,11 +92,11 @@ class RssFeedService
         libxml_use_internal_errors(true);
         $xml = simplexml_load_string($response->body(), \SimpleXMLElement::class, LIBXML_NOCDATA);
 
-        if (!$xml) {
+        if (! $xml) {
             $errors = libxml_get_errors();
-            $messages = array_map(fn($error) => trim($error->message), $errors);
+            $messages = array_map(fn ($error) => trim($error->message), $errors);
             libxml_clear_errors();
-            throw new \Exception('Unable to parse RSS feed XML: ' . implode('; ', array_filter($messages)));
+            throw new \Exception('Unable to parse RSS feed XML: '.implode('; ', array_filter($messages)));
         }
 
         $items = [];
@@ -111,6 +112,7 @@ class RssFeedService
         }
 
         libxml_clear_errors();
+
         return $items;
     }
 
@@ -123,7 +125,7 @@ class RssFeedService
         [$prefix, $local] = explode(':', $key, 2);
         $namespaces = $item->getNamespaces(true);
 
-        if (!isset($namespaces[$prefix])) {
+        if (! isset($namespaces[$prefix])) {
             return null;
         }
 
@@ -134,7 +136,7 @@ class RssFeedService
 
     protected function parseDate(?string $value): Carbon
     {
-        if (!$value) {
+        if (! $value) {
             return now();
         }
 
@@ -142,6 +144,7 @@ class RssFeedService
             return Carbon::parse($value);
         } catch (\Exception $e) {
             Log::warning('Unable to parse RSS publish date', ['value' => $value]);
+
             return now();
         }
     }
@@ -186,12 +189,12 @@ class RssFeedService
         // Create excerpt from content
         $excerpt = strip_tags($content);
         if (strlen($excerpt) > 400) {
-            $excerpt = substr($excerpt, 0, 400) . '...';
+            $excerpt = substr($excerpt, 0, 400).'...';
         }
 
         // Get first admin user; abort if none found
         $adminUser = User::role('Administrator')->first();
-        if (!$adminUser) {
+        if (! $adminUser) {
             Log::error('RSS import failed: No admin user found to assign as news author.', [
                 'feed_id' => $feed->id,
                 'feed_name' => $feed->name,
@@ -201,7 +204,7 @@ class RssFeedService
             throw new \Exception('No admin user found to assign as news author');
         }
         $userId = $adminUser->id;
-        
+
         $news = News::create([
             'user_id' => $userId, // Use admin user
             'title' => $title,
@@ -218,7 +221,7 @@ class RssFeedService
         ]);
 
         // Add tags from feed settings
-        if (!empty($feed->settings['tags'])) {
+        if (! empty($feed->settings['tags'])) {
             $news->syncTags($feed->settings['tags']);
         }
 
@@ -239,7 +242,7 @@ class RssFeedService
 
         $feeds = RssFeed::where('is_active', true)
             ->get()
-            ->filter(fn($feed) => $feed->needsRefresh());
+            ->filter(fn ($feed) => $feed->needsRefresh());
 
         foreach ($feeds as $feed) {
             $results = $this->importFeed($feed);

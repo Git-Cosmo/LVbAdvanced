@@ -17,7 +17,7 @@ return new class extends Migration
             $table->morphs('reactable'); // Can be post, thread, profile_post, etc.
             $table->string('type'); // like, love, laugh, angry, etc.
             $table->timestamps();
-            
+
             $table->unique(['user_id', 'reactable_id', 'reactable_type'], 'unique_reaction');
             $table->index('type');
         });

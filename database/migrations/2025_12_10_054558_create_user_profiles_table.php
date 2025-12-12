@@ -34,7 +34,7 @@ return new class extends Migration
             $table->integer('following_count')->default(0);
             $table->timestamp('last_activity_at')->nullable();
             $table->timestamps();
-            
+
             $table->unique('user_id');
             $table->index('xp');
             $table->index('level');

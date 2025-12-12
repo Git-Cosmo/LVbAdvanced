@@ -47,6 +47,7 @@ class RedditScrapeCommand extends Command
         }
 
         $this->info('Scrape complete!');
+
         return 0;
     }
 }

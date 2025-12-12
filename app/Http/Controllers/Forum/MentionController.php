@@ -14,7 +14,7 @@ class MentionController extends Controller
     public function search(Request $request)
     {
         $query = $request->get('q', '');
-        
+
         if (strlen($query) < 2) {
             return response()->json([]);
         }
@@ -27,7 +27,7 @@ class MentionController extends Controller
                 return [
                     'id' => $user->id,
                     'name' => $user->name,
-                    'display' => '@' . $user->name,
+                    'display' => '@'.$user->name,
                 ];
             });
 

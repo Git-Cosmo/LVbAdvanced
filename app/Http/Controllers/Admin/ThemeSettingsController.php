@@ -41,7 +41,7 @@ class ThemeSettingsController extends Controller
             'end_date' => 'required|date|after:start_date',
             'priority' => 'nullable|integer|min:0',
             'is_active' => 'boolean',
-            
+
             // Visual effects
             'enable_snow' => 'boolean',
             'enable_lights' => 'boolean',
@@ -100,7 +100,7 @@ class ThemeSettingsController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'slug' => 'nullable|string|max:255|unique:site_themes,slug,' . $theme->id,
+            'slug' => 'nullable|string|max:255|unique:site_themes,slug,'.$theme->id,
             'description' => 'nullable|string',
             'start_date' => 'required|date',
             'end_date' => 'required|date|after:start_date',
@@ -151,7 +151,7 @@ class ThemeSettingsController extends Controller
 
     public function toggle(SiteTheme $theme)
     {
-        $theme->update(['is_active' => !$theme->is_active]);
+        $theme->update(['is_active' => ! $theme->is_active]);
 
         return back()->with('success', 'Theme status updated!');
     }

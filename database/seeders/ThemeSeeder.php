@@ -3,8 +3,8 @@
 namespace Database\Seeders;
 
 use App\Models\SiteTheme;
-use Illuminate\Database\Seeder;
 use Carbon\Carbon;
+use Illuminate\Database\Seeder;
 
 class ThemeSeeder extends Seeder
 {
@@ -14,8 +14,8 @@ class ThemeSeeder extends Seeder
 
         $themes = [
             [
-                'name' => 'Christmas ' . $currentYear,
-                'slug' => 'christmas-' . $currentYear,
+                'name' => 'Christmas '.$currentYear,
+                'slug' => 'christmas-'.$currentYear,
                 'description' => 'Festive Christmas theme with falling snow and twinkling lights',
                 'start_date' => Carbon::create($currentYear, 12, 20),
                 'end_date' => Carbon::create($currentYear, 12, 26),
@@ -40,8 +40,8 @@ class ThemeSeeder extends Seeder
                 'is_active' => true,
             ],
             [
-                'name' => 'New Year ' . ($currentYear + 1),
-                'slug' => 'new-year-' . ($currentYear + 1),
+                'name' => 'New Year '.($currentYear + 1),
+                'slug' => 'new-year-'.($currentYear + 1),
                 'description' => 'Ring in the new year with fireworks and celebration',
                 'start_date' => Carbon::create($currentYear, 12, 31),
                 'end_date' => Carbon::create($currentYear + 1, 1, 2),
@@ -67,8 +67,8 @@ class ThemeSeeder extends Seeder
                 'is_active' => true,
             ],
             [
-                'name' => 'Valentine\'s Day ' . ($currentYear + 1),
-                'slug' => 'valentines-day-' . ($currentYear + 1),
+                'name' => 'Valentine\'s Day '.($currentYear + 1),
+                'slug' => 'valentines-day-'.($currentYear + 1),
                 'description' => 'Celebrate love with hearts and pink confetti',
                 'start_date' => Carbon::create($currentYear + 1, 2, 13),
                 'end_date' => Carbon::create($currentYear + 1, 2, 15),
@@ -93,8 +93,8 @@ class ThemeSeeder extends Seeder
                 'is_active' => true,
             ],
             [
-                'name' => 'Easter ' . ($currentYear + 1),
-                'slug' => 'easter-' . ($currentYear + 1),
+                'name' => 'Easter '.($currentYear + 1),
+                'slug' => 'easter-'.($currentYear + 1),
                 'description' => 'Spring celebration with pastel confetti',
                 'start_date' => Carbon::create($currentYear + 1, 4, 18), // Approximate, adjust as needed
                 'end_date' => Carbon::create($currentYear + 1, 4, 21),
@@ -118,8 +118,8 @@ class ThemeSeeder extends Seeder
                 'is_active' => true,
             ],
             [
-                'name' => 'Halloween ' . ($currentYear + 1),
-                'slug' => 'halloween-' . ($currentYear + 1),
+                'name' => 'Halloween '.($currentYear + 1),
+                'slug' => 'halloween-'.($currentYear + 1),
                 'description' => 'Spooky Halloween theme',
                 'start_date' => Carbon::create($currentYear + 1, 10, 28),
                 'end_date' => Carbon::create($currentYear + 1, 11, 1),

@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Prediction;
-use App\Models\PredictionEntry;
 use Illuminate\Http\Request;
 
 class PredictionManagementController extends Controller

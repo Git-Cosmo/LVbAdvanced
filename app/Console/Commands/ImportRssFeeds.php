@@ -38,7 +38,7 @@ class ImportRssFeeds extends Command
         }
 
         $this->info('RSS import completed!');
-        
+
         return Command::SUCCESS;
     }
 
@@ -52,12 +52,12 @@ class ImportRssFeeds extends Command
         $this->line("  ✓ Successfully imported: {$results['success']}");
         $this->line("  ⊘ Skipped (already exists): {$results['skipped']}");
         $this->line("  ✗ Errors: {$results['errors']}");
-        
+
         if ($results['errors'] > 0) {
             $this->warn('Some errors occurred during import. Check the logs for details or run this command with -v for verbose output.');
         }
-        
-        if (!empty($results['messages']) && $this->output->isVerbose()) {
+
+        if (! empty($results['messages']) && $this->output->isVerbose()) {
             $this->line('');
             $this->line('Details:');
             foreach ($results['messages'] as $message) {

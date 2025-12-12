@@ -98,8 +98,8 @@ class ForumPost extends Model implements Searchable
      */
     public function getSearchResult(): SearchResult
     {
-        $url = route('forum.thread.show', $this->thread->slug) . '#post-' . $this->id;
-        
+        $url = route('forum.thread.show', $this->thread->slug).'#post-'.$this->id;
+
         return new SearchResult(
             $this,
             strip_tags($this->content_html ?? $this->content),

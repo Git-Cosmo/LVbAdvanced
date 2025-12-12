@@ -37,7 +37,7 @@ class UserBadge extends Model
      */
     public function getFormattedAwardedAtAttribute(): ?string
     {
-        if (!$this->pivot || !$this->pivot->awarded_at) {
+        if (! $this->pivot || ! $this->pivot->awarded_at) {
             return null;
         }
 

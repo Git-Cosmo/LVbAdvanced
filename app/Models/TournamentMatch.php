@@ -66,7 +66,7 @@ class TournamentMatch extends Model
 
     public function isBye(): bool
     {
-        return ($this->participant1_id && !$this->participant2_id) ||
-               (!$this->participant1_id && $this->participant2_id);
+        return ($this->participant1_id && ! $this->participant2_id) ||
+               (! $this->participant1_id && $this->participant2_id);
     }
 }

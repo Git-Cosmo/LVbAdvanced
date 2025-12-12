@@ -25,7 +25,7 @@ return new class extends Migration
             $table->integer('posts_count')->default(0);
             $table->unsignedBigInteger('last_post_id')->nullable(); // No FK constraint - circular dependency
             $table->timestamps();
-            
+
             $table->index(['category_id', 'order']);
             $table->index('parent_id');
         });

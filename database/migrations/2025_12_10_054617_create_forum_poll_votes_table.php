@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreignId('option_id')->constrained('forum_poll_options')->onDelete('cascade');
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->timestamps();
-            
+
             $table->unique(['poll_id', 'option_id', 'user_id']);
             $table->index('user_id');
         });

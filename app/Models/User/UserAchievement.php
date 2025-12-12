@@ -49,7 +49,7 @@ class UserAchievement extends Model
      */
     public function getFormattedUnlockedAtAttribute(): ?string
     {
-        if (!$this->pivot || !$this->pivot->unlocked_at) {
+        if (! $this->pivot || ! $this->pivot->unlocked_at) {
             return null;
         }
 

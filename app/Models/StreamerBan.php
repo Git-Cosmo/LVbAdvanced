@@ -88,6 +88,6 @@ class StreamerBan extends Model
      */
     public function getStreamerBansUrlAttribute(): string
     {
-        return $this->profile_url ?? 'https://streamerbans.com/user/' . $this->username;
+        return $this->profile_url ?? 'https://streamerbans.com/user/'.$this->username;
     }
 }

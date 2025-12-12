@@ -2,12 +2,12 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
-use Spatie\Permission\Models\Permission;
-use Spatie\Permission\Models\Role;
 use App\Models\User;
 use App\Models\User\UserProfile;
+use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 class RolesAndPermissionsSeeder extends Seeder
 {
@@ -37,7 +37,7 @@ class RolesAndPermissionsSeeder extends Seeder
             'move threads',
             'merge threads',
             'split threads',
-            
+
             // User Permissions
             'view profiles',
             'edit own profile',
@@ -46,7 +46,7 @@ class RolesAndPermissionsSeeder extends Seeder
             'warn users',
             'view warnings',
             'manage user groups',
-            
+
             // Moderation Permissions
             'view reports',
             'handle reports',
@@ -55,7 +55,7 @@ class RolesAndPermissionsSeeder extends Seeder
             'soft delete posts',
             'restore posts',
             'permanently delete posts',
-            
+
             // Admin Permissions
             'access admin panel',
             'manage forums',
@@ -65,7 +65,7 @@ class RolesAndPermissionsSeeder extends Seeder
             'view system logs',
             'manage settings',
             'manage backups',
-            
+
             // Community Permissions
             'create polls',
             'vote in polls',
@@ -77,7 +77,7 @@ class RolesAndPermissionsSeeder extends Seeder
             'follow users',
             'view member list',
             'search forums',
-            
+
             // Gaming Specific
             'manage clans',
             'create tournaments',
@@ -91,11 +91,11 @@ class RolesAndPermissionsSeeder extends Seeder
         }
 
         // Create roles based on vBulletin structure
-        
+
         // Administrator - Full access
         $adminRole = Role::create(['name' => 'Administrator']);
         $adminRole->givePermissionTo(Permission::all());
-        
+
         // Super Moderator - Almost full moderation access
         $superModRole = Role::create(['name' => 'Super Moderator']);
         $superModRole->givePermissionTo([
@@ -116,7 +116,7 @@ class RolesAndPermissionsSeeder extends Seeder
             'follow users', 'view member list', 'search forums',
             'view leaderboards', 'submit scores',
         ]);
-        
+
         // Moderator - Standard moderation access
         $modRole = Role::create(['name' => 'Moderator']);
         $modRole->givePermissionTo([
@@ -137,7 +137,7 @@ class RolesAndPermissionsSeeder extends Seeder
             'follow users', 'view member list', 'search forums',
             'view leaderboards', 'submit scores',
         ]);
-        
+
         // VIP Member - Premium features
         $vipRole = Role::create(['name' => 'VIP Member']);
         $vipRole->givePermissionTo([
@@ -152,7 +152,7 @@ class RolesAndPermissionsSeeder extends Seeder
             'manage clans', 'create tournaments',
             'view leaderboards', 'submit scores',
         ]);
-        
+
         // Clan Leader - Clan management permissions
         $clanLeaderRole = Role::create(['name' => 'Clan Leader']);
         $clanLeaderRole->givePermissionTo([
@@ -167,7 +167,7 @@ class RolesAndPermissionsSeeder extends Seeder
             'manage clans',
             'view leaderboards', 'submit scores',
         ]);
-        
+
         // Tournament Organizer - Tournament management
         $tournamentOrgRole = Role::create(['name' => 'Tournament Organizer']);
         $tournamentOrgRole->givePermissionTo([
@@ -182,7 +182,7 @@ class RolesAndPermissionsSeeder extends Seeder
             'create tournaments', 'manage tournaments',
             'view leaderboards', 'submit scores',
         ]);
-        
+
         // Registered Member - Standard user
         $memberRole = Role::create(['name' => 'Registered']);
         $memberRole->givePermissionTo([
@@ -196,7 +196,7 @@ class RolesAndPermissionsSeeder extends Seeder
             'follow users', 'view member list', 'search forums',
             'view leaderboards', 'submit scores',
         ]);
-        
+
         // Guest - Read-only access (for reference, but not assigned)
         $guestRole = Role::create(['name' => 'Guest']);
         $guestRole->givePermissionTo([
@@ -216,7 +216,7 @@ class RolesAndPermissionsSeeder extends Seeder
         );
 
         // Create profile for admin user if it doesn't exist
-        if (!$adminUser->profile) {
+        if (! $adminUser->profile) {
             UserProfile::create([
                 'user_id' => $adminUser->id,
                 'user_title' => 'Site Administrator',

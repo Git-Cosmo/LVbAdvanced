@@ -2,7 +2,6 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
@@ -17,9 +16,9 @@ return new class extends Migration
             // Add full-text index on forum_threads (title only).
             // Note: The 'content' column is not included in this index because 'content' is stored in the forum_posts table, not in forum_threads.
             DB::statement('ALTER TABLE forum_threads ADD FULLTEXT ft_forum_threads_search (title)');
-            
+
             // Note: forum_posts already has a fulltext index on content created in its migration
-            
+
             // Add full-text index on news (title, excerpt, content)
             DB::statement('ALTER TABLE news ADD FULLTEXT ft_news_search (title, excerpt, content)');
         }

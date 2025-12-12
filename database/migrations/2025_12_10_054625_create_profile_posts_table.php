@@ -20,7 +20,7 @@ return new class extends Migration
             $table->integer('reactions_count')->default(0);
             $table->timestamps();
             $table->softDeletes();
-            
+
             $table->index(['profile_user_id', 'created_at']);
             $table->index('author_id');
         });

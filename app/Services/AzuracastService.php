@@ -13,7 +13,9 @@ use Illuminate\Support\Facades\Log;
 class AzuracastService
 {
     protected string $baseUrl;
+
     protected string $stationId;
+
     protected ?string $apiKey;
 
     public function __construct()
@@ -44,8 +46,6 @@ class AzuracastService
 
     /**
      * Retrieve requestable songs for the configured station.
-     *
-     * @return array
      */
     public function requestableSongs(): array
     {
@@ -56,10 +56,6 @@ class AzuracastService
 
     /**
      * Submit a song request and log the attempt.
-     *
-     * @param string $requestId
-     * @param int|null $userId
-     * @return AzuracastRequest
      */
     public function requestSong(string $requestId, ?int $userId = null): AzuracastRequest
     {
@@ -111,6 +107,6 @@ class AzuracastService
 
     protected function endpoint(string $path): string
     {
-        return $this->baseUrl . '/' . ltrim($path, '/');
+        return $this->baseUrl.'/'.ltrim($path, '/');
     }
 }

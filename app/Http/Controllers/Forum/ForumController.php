@@ -21,7 +21,7 @@ class ForumController extends Controller
     public function index(): View
     {
         $categories = $this->forumService->getAllCategories();
-        
+
         return view('forum.index', compact('categories'));
     }
 
@@ -31,22 +31,22 @@ class ForumController extends Controller
     public function show(Request $request, string $slug): View
     {
         $forum = $this->forumService->getForumBySlug($slug);
-        
+
         // Get sort and filter parameters
         $sort = $request->input('sort', 'latest'); // latest, popular, views, oldest
         $filter = $request->input('filter', 'all'); // all, pinned, locked
-        
+
         $threadsQuery = $forum->threads()
             ->with(['user', 'forum'])
             ->where('is_hidden', false);
-        
+
         // Apply filters
         if ($filter === 'pinned') {
             $threadsQuery->where('is_pinned', true);
         } elseif ($filter === 'locked') {
             $threadsQuery->where('is_locked', true);
         }
-        
+
         // Apply sorting
         switch ($sort) {
             case 'popular':
@@ -65,10 +65,9 @@ class ForumController extends Controller
                     ->orderByDesc('created_at');
                 break;
         }
-        
+
         $threads = $threadsQuery->paginate(20);
-        
+
         return view('forum.show', compact('forum', 'threads', 'sort', 'filter'));
     }
 }
-

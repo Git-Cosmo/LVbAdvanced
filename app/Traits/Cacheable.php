@@ -9,13 +9,13 @@ trait Cacheable
     /**
      * Cache the result of a query with automatic tag management.
      *
-     * @param string $key Cache key
-     * @param int $ttl Time to live in seconds (default: 1 hour)
-     * @param callable $callback Query callback
-     * @param array $tags Optional cache tags for easier clearing
+     * @param  string  $key  Cache key
+     * @param  int  $ttl  Time to live in seconds (default: 1 hour)
+     * @param  callable  $callback  Query callback
+     * @param  array  $tags  Optional cache tags for easier clearing
      * @return mixed The result returned by the callback
      */
-    protected function cacheQuery(string $key, int $ttl = 3600, callable $callback, array $tags = [])
+    protected function cacheQuery(string $key, int $ttl, callable $callback, array $tags = [])
     {
         if (empty($tags)) {
             return Cache::remember($key, $ttl, $callback);
@@ -26,9 +26,6 @@ trait Cacheable
 
     /**
      * Clear cache by key.
-     *
-     * @param string $key
-     * @return bool
      */
     protected function forgetCache(string $key): bool
     {
@@ -37,9 +34,6 @@ trait Cacheable
 
     /**
      * Clear cache by tags.
-     *
-     * @param array $tags
-     * @return bool
      */
     protected function forgetCacheTags(array $tags): bool
     {
@@ -48,9 +42,6 @@ trait Cacheable
 
     /**
      * Clear multiple cache keys at once.
-     *
-     * @param array $keys
-     * @return void
      */
     protected function forgetMultiple(array $keys): void
     {

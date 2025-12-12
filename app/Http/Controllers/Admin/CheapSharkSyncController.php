@@ -32,7 +32,7 @@ class CheapSharkSyncController extends Controller
 
         $statusMessage = $log->status === 'completed'
             ? 'CheapShark sync completed successfully.'
-            : 'CheapShark sync failed: ' . ($log->message ?? 'Unknown error');
+            : 'CheapShark sync failed: '.($log->message ?? 'Unknown error');
 
         return redirect()
             ->route('admin.deals.index')

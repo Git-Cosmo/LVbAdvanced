@@ -17,23 +17,23 @@ return new class extends Migration
             $table->string('slug')->unique();
             $table->string('profile_url')->nullable();
             $table->string('avatar_url')->nullable();
-            
+
             // Ban statistics
             $table->integer('total_bans')->default(0);
             $table->string('last_ban')->nullable();
             $table->string('longest_ban')->nullable();
-            
+
             // Ban history (stored as JSON array)
             $table->json('ban_history')->nullable();
-            
+
             // Metadata
             $table->timestamp('last_scraped_at')->nullable();
             $table->boolean('is_published')->default(true);
             $table->boolean('is_featured')->default(false);
             $table->integer('views_count')->default(0);
-            
+
             $table->timestamps();
-            
+
             // Indexes for better query performance
             $table->index('username');
             $table->index('total_bans');

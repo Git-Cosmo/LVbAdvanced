@@ -35,10 +35,10 @@ class ThreadService
         $thread = ForumThread::where('slug', $slug)
             ->with(['forum', 'user.profile', 'poll.options'])
             ->firstOrFail();
-        
+
         // Increment views
         $thread->incrementViews();
-        
+
         return $thread;
     }
 
@@ -59,14 +59,14 @@ class ThreadService
      */
     public function createThread(array $data, User $user): ForumThread
     {
-        $data['slug'] = $data['slug'] ?? Str::slug($data['title']) . '-' . Str::random(8);
+        $data['slug'] = $data['slug'] ?? Str::slug($data['title']).'-'.Str::random(8);
         $data['user_id'] = $user->id;
-        
+
         $thread = ForumThread::create($data);
-        
+
         // Update forum counters
         $this->forumService->updateForumCounters($thread->forum);
-        
+
         return $thread;
     }
 
@@ -77,28 +77,28 @@ class ThreadService
     {
         $data['thread_id'] = $thread->id;
         $data['user_id'] = $user->id;
-        
+
         // Convert content to HTML if needed
-        if (!isset($data['content_html'])) {
+        if (! isset($data['content_html'])) {
             $data['content_html'] = $this->convertToHtml($data['content']);
         }
-        
+
         $post = ForumPost::create($data);
-        
+
         // Update thread counters
         $thread->increment('posts_count');
         $thread->last_post_id = $post->id;
         $thread->last_post_at = $post->created_at;
         $thread->save();
-        
+
         // Update forum counters
         $this->forumService->updateForumCounters($thread->forum);
-        
+
         // Award XP to user
         if ($user->profile) {
             $user->profile->addXp(10); // 10 XP per post
         }
-        
+
         return $post;
     }
 
@@ -110,12 +110,12 @@ class ThreadService
         if (isset($data['content'])) {
             $data['content_html'] = $this->convertToHtml($data['content']);
         }
-        
+
         $data['edited_at'] = now();
         $data['edited_by'] = $editor->id;
         $post->increment('edit_count');
         $post->update($data);
-        
+
         return $post;
     }
 
@@ -127,15 +127,15 @@ class ThreadService
     {
         // Escape HTML first to prevent XSS
         $content = htmlspecialchars($content, ENT_QUOTES, 'UTF-8');
-        
+
         // Convert newlines to br tags
         $content = nl2br($content);
-        
+
         // Basic BBCode support with validation
         $content = preg_replace('/\[b\](.*?)\[\/b\]/s', '<strong>$1</strong>', $content);
         $content = preg_replace('/\[i\](.*?)\[\/i\]/s', '<em>$1</em>', $content);
         $content = preg_replace('/\[u\](.*?)\[\/u\]/s', '<u>$1</u>', $content);
-        
+
         // URL with validation - only allow http/https
         $content = preg_replace_callback(
             '/\[url=(https?:\/\/[^\]]+)\](.*?)\[\/url\]/s',
@@ -144,11 +144,12 @@ class ThreadService
                 if ($url === false) {
                     return $matches[0]; // Return original if invalid
                 }
-                return '<a href="' . htmlspecialchars($url, ENT_QUOTES, 'UTF-8') . '" target="_blank" rel="noopener noreferrer">' . $matches[2] . '</a>';
+
+                return '<a href="'.htmlspecialchars($url, ENT_QUOTES, 'UTF-8').'" target="_blank" rel="noopener noreferrer">'.$matches[2].'</a>';
             },
             $content
         );
-        
+
         // Image with validation - only allow http/https
         $content = preg_replace_callback(
             '/\[img\](https?:\/\/[^\[]+)\[\/img\]/s',
@@ -157,11 +158,12 @@ class ThreadService
                 if ($url === false) {
                     return $matches[0]; // Return original if invalid
                 }
-                return '<img src="' . htmlspecialchars($url, ENT_QUOTES, 'UTF-8') . '" class="max-w-full h-auto" alt="User posted image" />';
+
+                return '<img src="'.htmlspecialchars($url, ENT_QUOTES, 'UTF-8').'" class="max-w-full h-auto" alt="User posted image" />';
             },
             $content
         );
-        
+
         return $content;
     }
 }
