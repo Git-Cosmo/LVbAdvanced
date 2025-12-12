@@ -1995,3 +1995,205 @@ Schedule::command('streamerbans:scrape --update --limit=100')
 - **Performance**: The scraper processes requests sequentially with delays to be respectful to the source server.
 - **Error Handling**: Failed scrapes are logged for debugging. Check Laravel logs for any issues.
 
+## Game Server Management
+
+### Overview
+FPSociety includes a comprehensive game server management system allowing administrators to manage, add, edit, and delete game servers displayed on the portal. All changes reflect immediately on the user-facing sidebar and throughout the portal.
+
+### Features
+
+**Admin Backend** (`/admin/game-servers`):
+- ✅ **Full CRUD Operations** - Create, read, update, and delete game servers
+- ✅ **Server Statistics Dashboard** - Total servers, active, online, and featured counts
+- ✅ **Quick Status Management** - Toggle active/inactive states with one click
+- ✅ **Display Order Control** - Organize servers in custom order on the portal
+- ✅ **Featured Server Support** - Highlight important servers
+
+**Server Configuration:**
+- **Basic Info**: Server name, game type, game mode, description
+- **Connection Details**: IP address, port, direct connect URL
+- **Status Management**: Online, offline, maintenance, coming soon
+- **Player Tracking**: Max players, current player count
+- **Visual Branding**: Customizable icon colors (gradient start/end), short codes
+- **Advanced Options**: Featured flag, active/inactive toggle, display order
+
+**Portal Display:**
+- ✅ **Dynamic Sidebar** - Servers pulled from database, not hardcoded
+- ✅ **Status Indicators** - Color-coded status badges (online, offline, maintenance, coming soon)
+- ✅ **Player Counts** - Real-time display of current/max players
+- ✅ **Connect Information** - Display IP:Port or direct connect URLs
+- ✅ **Custom Branding** - Per-server gradient colors and short codes
+- ✅ **Responsive Design** - Beautiful cards with hover effects
+
+### Quick Setup
+
+1. **Access Admin Panel**:
+   ```
+   Navigate to: /admin/game-servers
+   ```
+
+2. **Add a Server**:
+   - Click "Add Server"
+   - Fill in server details (name, game, short code)
+   - Configure connection details (IP, port, or connect URL)
+   - Set status (online/offline/maintenance/coming soon)
+   - Choose custom gradient colors for server icon
+   - Set display order (lower numbers appear first)
+   - Toggle featured and active flags
+   - Click "Add Server"
+
+3. **Manage Existing Servers**:
+   - View all servers with stats in admin panel
+   - Quick toggle active/inactive status
+   - Edit server details anytime
+   - Delete servers no longer needed
+   - Changes reflect immediately on portal
+
+### Database Schema
+
+**`game_servers` table:**
+- **Basic**: id, name, game, game_short_code, description
+- **Connection**: ip_address, port, connect_url
+- **Status**: status (enum: online, offline, maintenance, coming_soon)
+- **Players**: max_players, current_players, map, game_mode
+- **Branding**: icon_color_from, icon_color_to (hex colors)
+- **Management**: display_order, is_featured, is_active, last_ping_at
+- **Metadata**: metadata (JSON), timestamps
+
+### Usage Examples
+
+**Creating a Server:**
+```php
+$server = GameServer::create([
+    'name' => 'FiveM RP Server',
+    'game' => 'GTA V',
+    'game_short_code' => '5M',
+    'description' => 'High-quality roleplay experience',
+    'ip_address' => '127.0.0.1',
+    'port' => 30120,
+    'status' => 'online',
+    'max_players' => 64,
+    'current_players' => 32,
+    'game_mode' => 'Roleplay',
+    'icon_color_from' => '#8B5CF6',
+    'icon_color_to' => '#EC4899',
+    'display_order' => 1,
+    'is_featured' => true,
+    'is_active' => true,
+]);
+```
+
+**Accessing via Routes:**
+- Admin index: `/admin/game-servers`
+- Create server: `/admin/game-servers/create`
+- Edit server: `/admin/game-servers/{id}/edit`
+- Portal display: `/` (home page left sidebar)
+
+### Server Status Options
+
+- **Online**: Server is up and running, players can connect
+- **Offline**: Server is temporarily down
+- **Maintenance**: Server undergoing maintenance
+- **Coming Soon**: Server planned but not yet available
+
+Each status has its own color-coded badge for easy identification.
+
+## Gamer Integrations & Activity
+
+### Overview
+FPSociety provides comprehensive gaming platform integrations with database models and backend support for Steam, Xbox, and PSN account syncing, game library tracking, player statistics, and clan/guild management.
+
+### Features
+
+**Platform Integrations:**
+- ✅ **Database Models**: GameIntegration, GameLibrary, RecentlyPlayed, PlayerStat
+- ✅ **Multi-Platform Support**: Steam, Xbox, PSN account linking
+- ✅ **OAuth Ready**: Token storage for platform authentication
+- ✅ **Sync Tracking**: Last sync timestamps for each integration
+
+**Game Library:**
+- ✅ **Unified Library**: View games across all connected platforms
+- ✅ **Playtime Tracking**: Track total playtime per game
+- ✅ **Recently Played**: Session tracking and activity timeline
+- ✅ **Player Stats**: Game-specific statistics storage
+
+**Clans & Guilds:**
+- ✅ **Database Models**: Clan, ClanMember, ClanForum, ClanEvent
+- ✅ **Clan Management**: Create and join gaming clans/guilds
+- ✅ **Hierarchy System**: Leader, officer, and member roles
+- ✅ **Clan Forums**: Internal discussion boards for members
+- ✅ **Event Calendar**: Schedule clan raids, PvP, tournaments
+- ✅ **Public/Private Clans**: Control clan visibility
+- ✅ **Recruitment System**: Open/close recruiting status
+
+**Activity Feeds:**
+- ✅ **What's New** (`/activity/whats-new`) - Global feed of latest activity
+- ✅ **Trending** (`/activity/trending`) - Hot topics and popular content
+- ✅ **Recent Posts** (`/activity/recent-posts`) - Latest forum replies
+- ✅ **Recommended** (`/activity/recommended`) - Personalized content (auth required)
+
+### Frontend Routes
+
+**Gamer Integrations:**
+- Dashboard: `/integrations` - Overview of connected platforms and stats
+- Game Library: `/integrations/library` - All games across platforms
+- Recently Played: `/integrations/recently-played` - Gaming activity
+
+**Clans:**
+- Clan List: `/clans` - Browse all public clans
+- Clan Detail: `/clans/{slug}` - View clan info, members, forums, events
+
+### Database Schema
+
+**Game Integrations Table:**
+- Platform connections (Steam/Xbox/PSN)
+- OAuth tokens and refresh tokens
+- Platform-specific user IDs
+- Last sync timestamps
+
+**Game Libraries Table:**
+- User's game collection
+- Platform-specific game IDs
+- Playtime tracking
+- Game artwork URLs
+
+**Clans Table:**
+- Clan information and branding
+- Owner and leadership
+- Public/private settings
+- Recruitment status
+- Member limits
+
+**Clan Members Table:**
+- Membership records
+- Member roles
+- Join dates
+- Member-specific stats
+
+### Configuration & Setup
+
+The system is ready for OAuth implementation with these environment variables:
+
+```env
+# Steam Integration
+STEAM_API_KEY=your_steam_api_key
+
+# Xbox Integration
+XBOX_CLIENT_ID=your_xbox_client_id
+XBOX_CLIENT_SECRET=your_xbox_client_secret
+
+# PSN Integration
+PSN_CLIENT_ID=your_psn_client_id
+PSN_CLIENT_SECRET=your_psn_client_secret
+```
+
+### Future Enhancements
+
+- Real OAuth implementations for Steam/Xbox/PSN
+- Automatic library syncing via platform APIs
+- Stat import from platform APIs
+- Clan vs Clan tournaments
+- Clan leaderboards and achievements
+- Event RSVP system with calendar integration
+- Discord bot integration for clans
+

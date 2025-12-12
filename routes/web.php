@@ -350,6 +350,19 @@ Route::prefix('activity')->name('activity.')->group(function () {
     Route::get('/recommended', [ActivityFeedController::class, 'recommended'])->name('recommended')->middleware('auth');
 });
 
+// Gamer Integrations Routes
+Route::middleware('auth')->prefix('integrations')->name('integrations.')->group(function () {
+    Route::get('/', [\App\Http\Controllers\GamerIntegrationController::class, 'index'])->name('index');
+    Route::get('/library', [\App\Http\Controllers\GamerIntegrationController::class, 'library'])->name('library');
+    Route::get('/recently-played', [\App\Http\Controllers\GamerIntegrationController::class, 'recentlyPlayed'])->name('recently-played');
+});
+
+// Clans Routes
+Route::prefix('clans')->name('clans.')->group(function () {
+    Route::get('/', [\App\Http\Controllers\GamerIntegrationController::class, 'clans'])->name('index');
+    Route::get('/{clan}', [\App\Http\Controllers\GamerIntegrationController::class, 'showClan'])->name('show');
+});
+
 // News Routes
 Route::prefix('news')->name('news.')->group(function () {
     Route::get('/', [\App\Http\Controllers\NewsController::class, 'index'])->name('index');
