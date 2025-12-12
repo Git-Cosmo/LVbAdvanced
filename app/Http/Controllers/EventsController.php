@@ -70,6 +70,11 @@ class EventsController extends Controller
      */
     public function rsvp(Request $request, Event $event)
     {
+        // Check if event is in the past
+        if ($event->isPast()) {
+            return back()->with('error', 'Cannot RSVP to past events.');
+        }
+
         $validated = $request->validate([
             'status' => 'required|in:going,interested,not_going',
             'notes' => 'nullable|string|max:500',
@@ -77,16 +82,21 @@ class EventsController extends Controller
 
         $user = auth()->user();
 
-        // Create or update RSVP
-        $event->rsvps()->updateOrCreate(
-            ['user_id' => $user->id],
-            [
-                'status' => $validated['status'],
-                'notes' => $validated['notes'] ?? null,
-            ]
-        );
+        try {
+            // Create or update RSVP
+            $event->rsvps()->updateOrCreate(
+                ['user_id' => $user->id],
+                [
+                    'status' => $validated['status'],
+                    'notes' => $validated['notes'] ?? null,
+                ]
+            );
 
-        return back()->with('success', 'RSVP updated successfully!');
+            return back()->with('success', 'RSVP updated successfully!');
+        } catch (\Exception $e) {
+            \Log::error('RSVP Error: ' . $e->getMessage());
+            return back()->with('error', 'Failed to update RSVP. Please try again.');
+        }
     }
 
     /**

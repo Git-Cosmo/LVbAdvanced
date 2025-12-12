@@ -23,9 +23,38 @@ use App\Http\Controllers\StatusController;
 Route::get('/', [PortalController::class, 'home'])->name('home');
 Route::get('/status', StatusController::class)->name('status');
 
-// Health check endpoint for Docker
+// Health check endpoint for Docker and monitoring
 Route::get('/up', function () {
-    return response()->json(['status' => 'ok'], 200);
+    $health = [
+        'status' => 'ok',
+        'timestamp' => now()->toIso8601String(),
+        'environment' => app()->environment(),
+    ];
+    
+    // Basic checks
+    try {
+        // Database check
+        \DB::connection()->getPdo();
+        $health['database'] = 'ok';
+    } catch (\Exception $e) {
+        $health['database'] = 'error';
+        $health['status'] = 'error';
+    }
+    
+    // Cache check
+    try {
+        \Cache::put('health_check', true, 10);
+        $health['cache'] = \Cache::get('health_check') ? 'ok' : 'error';
+    } catch (\Exception $e) {
+        $health['cache'] = 'error';
+    }
+    
+    // Storage check
+    $health['storage'] = is_writable(storage_path()) ? 'ok' : 'error';
+    
+    $statusCode = $health['status'] === 'ok' ? 200 : 503;
+    
+    return response()->json($health, $statusCode);
 })->name('health');
 
 // Static Pages
