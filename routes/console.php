@@ -19,25 +19,23 @@ Artisan::command('cheapshark:sync {--runType=manual}', function (CheapSharkServi
     $this->info($log->message ?? 'Sync finished with status: ' . $log->status);
 })->purpose('Sync CheapShark stores, games, and deals');
 
-const SCHEDULE_GRACE_MINUTES = 10; // Allow up to 10 minutes for hourly jobs before flagging as late
-
 // NOTE: To enable scheduled automation, ensure that `php artisan schedule:run` is configured to run every minute in your system's cron or task scheduler.
 Schedule::job(new SyncCheapSharkJob())
     ->withoutOverlapping()
     ->monitorName('cheapshark-sync')
-    ->graceTimeInMinutes(SCHEDULE_GRACE_MINUTES)
+    ->graceTimeInMinutes(10) // Allow up to 10 minutes for hourly jobs before flagging as late
     ->hourly();
 
 Schedule::job(new ImportRssFeedsJob())
     ->withoutOverlapping()
     ->monitorName('rss-import')
-    ->graceTimeInMinutes(SCHEDULE_GRACE_MINUTES)
+    ->graceTimeInMinutes(10)
     ->hourly();
 
 Schedule::job(new ImportEventsJob())
     ->withoutOverlapping()
     ->monitorName('events-import')
-    ->graceTimeInMinutes(SCHEDULE_GRACE_MINUTES)
+    ->graceTimeInMinutes(10)
     ->hourly();
 
 // Reddit scraping every 2 hours
@@ -54,5 +52,5 @@ Schedule::command('streamerbans:scrape --update --limit=100')
 Schedule::command('patch-notes:scrape')
     ->withoutOverlapping()
     ->monitorName('patch-notes-scrape')
-    ->graceTimeInMinutes(SCHEDULE_GRACE_MINUTES)
+    ->graceTimeInMinutes(10)
     ->hourly();
