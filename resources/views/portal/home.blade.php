@@ -390,7 +390,7 @@
                                             ${{ number_format($deal->sale_price, 2) }}
                                         </span>
                                         <span class="px-2 py-0.5 bg-accent-red text-white text-xs font-bold rounded">
-                                            -{{ round($deal->savings) }}%
+                                            -{{ number_format($deal->savings, 0) }}%
                                         </span>
                                     </div>
                                     @if($deal->store)
@@ -583,16 +583,19 @@
             </div>
             <div class="space-y-3">
                 @forelse($upcomingEvents as $event)
+                    @php
+                        $eventDate = $event->start_time ? \Carbon\Carbon::parse($event->start_time) : null;
+                    @endphp
                     <a href="{{ route('events.show', $event->slug) }}" class="block dark:bg-dark-bg-tertiary bg-light-bg-tertiary rounded-lg p-3 hover:shadow-lg transition-all border dark:border-dark-border-primary border-light-border-primary hover:border-accent-purple">
                         <div class="flex items-start gap-3">
                             <!-- Date Badge -->
                             <div class="flex-shrink-0 w-12 text-center">
                                 <div class="dark:bg-dark-bg-elevated bg-light-bg-elevated rounded-lg p-2 border-2 border-accent-purple">
                                     <p class="text-xs font-bold text-accent-purple uppercase">
-                                        {{ $event->start_time ? \Carbon\Carbon::parse($event->start_time)->format('M') : 'TBA' }}
+                                        {{ $eventDate ? $eventDate->format('M') : 'TBA' }}
                                     </p>
                                     <p class="text-lg font-bold dark:text-dark-text-bright text-light-text-bright leading-none">
-                                        {{ $event->start_time ? \Carbon\Carbon::parse($event->start_time)->format('d') : '--' }}
+                                        {{ $eventDate ? $eventDate->format('d') : '--' }}
                                     </p>
                                 </div>
                             </div>
@@ -614,9 +617,9 @@
                                         </span>
                                     @endif
                                 </div>
-                                @if($event->start_time)
+                                @if($eventDate)
                                     <p class="text-xs dark:text-dark-text-tertiary text-light-text-tertiary mt-1">
-                                        {{ \Carbon\Carbon::parse($event->start_time)->diffForHumans() }}
+                                        {{ $eventDate->diffForHumans() }}
                                     </p>
                                 @endif
                             </div>

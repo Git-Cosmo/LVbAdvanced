@@ -193,6 +193,10 @@
 
         // Add keyboard shortcuts
         document.addEventListener('keydown', (e) => {
+            // Prevent shortcuts when typing in input or textarea fields
+            const tag = document.activeElement && document.activeElement.tagName;
+            if (tag === 'INPUT' || tag === 'TEXTAREA') return;
+            
             if (e.code === 'Space') {
                 e.preventDefault();
                 playBtn.click();

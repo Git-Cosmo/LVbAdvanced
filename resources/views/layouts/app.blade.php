@@ -223,7 +223,7 @@
                         </button>
                         
                         <!-- Search Dropdown -->
-                        <div x-show="searchOpen" x-transition class="absolute right-0 mt-2 w-96 dark:bg-dark-bg-secondary bg-light-bg-secondary rounded-xl shadow-xl dark:border dark:border-dark-border-primary border-light-border-primary p-4 z-50">
+                        <div x-show="searchOpen" x-transition @keydown.escape.window="searchOpen = false" class="absolute right-0 mt-2 w-96 dark:bg-dark-bg-secondary bg-light-bg-secondary rounded-xl shadow-xl dark:border dark:border-dark-border-primary border-light-border-primary p-4 z-50">
                             <form action="{{ route('search') }}" method="GET" role="search">
                                 <div class="relative">
                                     <input type="text" 
