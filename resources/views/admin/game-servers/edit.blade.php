@@ -79,7 +79,7 @@
 
             <div class="mb-4">
                 <label for="connect_url" class="block text-sm font-medium dark:text-dark-text-primary mb-1">Connect URL</label>
-                <input type="url" name="connect_url" id="connect_url" value="{{ old('connect_url', $gameServer->connect_url) }}"
+                <input type="text" name="connect_url" id="connect_url" value="{{ old('connect_url', $gameServer->connect_url) }}"
                     class="w-full px-3 py-2 border dark:border-dark-border-primary rounded-lg dark:bg-dark-bg-tertiary dark:text-dark-text-bright">
             </div>
 
