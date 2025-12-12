@@ -245,9 +245,9 @@
                                 <!-- Team Roster -->
                                 <div class="mb-6" x-data="{ members: [{ name: '', role: '' }] }">
                                     <label class="block text-sm font-medium dark:text-dark-text-primary mb-2">
-                                        Team Roster (Optional)
+                                        Team Roster (Optional - You are automatically added as Captain)
                                         @if($tournament->team_size)
-                                            <span class="text-xs dark:text-dark-text-muted">Max {{ $tournament->team_size - 1 }} additional members</span>
+                                            <span class="text-xs dark:text-dark-text-muted">Max {{ max(0, $tournament->team_size - 1) }} additional members</span>
                                         @endif
                                     </label>
                                     
