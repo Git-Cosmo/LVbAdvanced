@@ -174,4 +174,49 @@ class Tournament extends Model
     {
         $this->decrement('current_participants');
     }
+
+    /**
+     * Get tournament statistics.
+     */
+    public function getStatistics(): array
+    {
+        $matches = $this->matches;
+        $participants = $this->participants;
+
+        return [
+            'total_matches' => $matches->count(),
+            'completed_matches' => $matches->where('status', 'completed')->count(),
+            'pending_matches' => $matches->where('status', 'pending')->count(),
+            'ready_matches' => $matches->where('status', 'ready')->count(),
+            'total_participants' => $participants->count(),
+            'checked_in' => $participants->where('status', 'checked_in')->count(),
+            'approved' => $participants->where('status', 'approved')->count(),
+            'pending' => $participants->where('status', 'pending')->count(),
+            'completion_percentage' => $matches->count() > 0 
+                ? round(($matches->where('status', 'completed')->count() / $matches->count()) * 100, 1)
+                : 0,
+        ];
+    }
+
+    /**
+     * Get tournament progress.
+     */
+    public function getProgress(): string
+    {
+        $stats = $this->getStatistics();
+        
+        if ($this->status === 'upcoming' || $this->status === 'registration_open') {
+            return "Registration: {$stats['total_participants']}/{$this->max_participants} participants";
+        }
+        
+        if ($this->status === 'in_progress') {
+            return "Matches: {$stats['completed_matches']}/{$stats['total_matches']} completed ({$stats['completion_percentage']}%)";
+        }
+        
+        if ($this->status === 'completed') {
+            return "Tournament completed with {$stats['total_participants']} participants";
+        }
+        
+        return ucfirst(str_replace('_', ' ', $this->status));
+    }
 }

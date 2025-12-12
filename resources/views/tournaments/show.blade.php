@@ -45,12 +45,9 @@
             <div class="flex items-center space-x-4">
                 @auth
                     @if($tournament->canRegister() && !$userParticipant)
-                        <form method="POST" action="{{ route('tournaments.register', $tournament) }}">
-                            @csrf
-                            <button type="submit" class="px-6 py-3 bg-gradient-to-r from-accent-green to-accent-teal text-white rounded-lg font-medium hover:shadow-lg transition-all">
-                                Register Now
-                            </button>
-                        </form>
+                        <button x-data @click="$dispatch('open-register-modal')" class="px-6 py-3 bg-gradient-to-r from-accent-green to-accent-teal text-white rounded-lg font-medium hover:shadow-lg transition-all">
+                            Register Now
+                        </button>
                     @elseif($userParticipant && $userParticipant->status === 'approved' && $tournament->canCheckIn())
                         <form method="POST" action="{{ route('tournaments.check-in', $tournament) }}">
                             @csrf
@@ -217,5 +214,84 @@
             </div>
         </div>
     </div>
+
+    <!-- Registration Modal -->
+    @auth
+        @if($tournament->canRegister() && !$userParticipant)
+            <div x-data="{ open: false }" @open-register-modal.window="open = true" x-show="open" x-cloak class="fixed inset-0 z-50 overflow-y-auto" style="display: none;">
+                <div class="flex items-center justify-center min-h-screen px-4">
+                    <div @click="open = false" class="fixed inset-0 bg-black opacity-50"></div>
+                    
+                    <div class="relative dark:bg-dark-bg-secondary rounded-lg shadow-xl max-w-2xl w-full p-8">
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="text-2xl font-bold dark:text-dark-text-bright">Register for Tournament</h3>
+                            <button @click="open = false" class="dark:text-dark-text-secondary hover:text-dark-text-primary">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                </svg>
+                            </button>
+                        </div>
+
+                        <form method="POST" action="{{ route('tournaments.register', $tournament) }}">
+                            @csrf
+
+                            @if($tournament->type === 'team')
+                                <!-- Team Name -->
+                                <div class="mb-6">
+                                    <label class="block text-sm font-medium dark:text-dark-text-primary mb-2">Team Name *</label>
+                                    <input type="text" name="team_name" required class="w-full px-4 py-2 dark:bg-dark-bg-tertiary dark:text-dark-text-primary rounded-lg border dark:border-dark-border-primary">
+                                </div>
+
+                                <!-- Team Roster -->
+                                <div class="mb-6" x-data="{ members: [{ name: '', role: '' }] }">
+                                    <label class="block text-sm font-medium dark:text-dark-text-primary mb-2">
+                                        Team Roster (Optional)
+                                        @if($tournament->team_size)
+                                            <span class="text-xs dark:text-dark-text-muted">Max {{ $tournament->team_size - 1 }} additional members</span>
+                                        @endif
+                                    </label>
+                                    
+                                    <template x-for="(member, index) in members" :key="index">
+                                        <div class="flex space-x-2 mb-2">
+                                            <input type="text" :name="'roster[' + index + '][name]'" x-model="member.name" placeholder="Player Name" class="flex-1 px-4 py-2 dark:bg-dark-bg-tertiary dark:text-dark-text-primary rounded-lg border dark:border-dark-border-primary">
+                                            <input type="text" :name="'roster[' + index + '][role]'" x-model="member.role" placeholder="Role (optional)" class="w-32 px-4 py-2 dark:bg-dark-bg-tertiary dark:text-dark-text-primary rounded-lg border dark:border-dark-border-primary">
+                                            <button type="button" @click="members.splice(index, 1)" x-show="members.length > 1" class="px-3 py-2 bg-red-600 text-white rounded hover:bg-red-700">
+                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    </template>
+
+                                    <button type="button" @click="members.push({ name: '', role: '' })" class="mt-2 px-4 py-2 dark:bg-dark-bg-tertiary dark:text-dark-text-primary rounded hover:bg-dark-bg-elevated transition-colors text-sm">
+                                        + Add Team Member
+                                    </button>
+                                </div>
+                            @endif
+
+                            <div class="p-4 dark:bg-dark-bg-tertiary rounded-lg mb-6">
+                                <p class="text-sm dark:text-dark-text-secondary">
+                                    @if($tournament->requires_approval)
+                                        <strong>Note:</strong> Your registration will be reviewed by the tournament organizer before approval.
+                                    @else
+                                        You will be automatically registered for this tournament.
+                                    @endif
+                                </p>
+                            </div>
+
+                            <div class="flex items-center space-x-4">
+                                <button type="submit" class="px-6 py-3 bg-gradient-to-r from-accent-green to-accent-teal text-white rounded-lg font-medium hover:shadow-lg transition-all">
+                                    Submit Registration
+                                </button>
+                                <button type="button" @click="open = false" class="px-6 py-3 dark:bg-dark-bg-tertiary rounded-lg dark:text-dark-text-primary hover:bg-dark-bg-elevated transition-colors">
+                                    Cancel
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        @endif
+    @endauth
 </div>
 @endsection

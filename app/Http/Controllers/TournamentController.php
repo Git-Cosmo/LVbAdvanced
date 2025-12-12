@@ -152,10 +152,16 @@ class TournamentController extends Controller
             return back()->with('error', 'Registration is not available for this tournament.');
         }
 
-        $validated = $request->validate([
-            'team_name' => $tournament->type === 'team' ? 'required|string|max:255' : 'nullable',
-            'roster' => $tournament->type === 'team' ? 'nullable|array' : 'nullable',
-        ]);
+        $rules = [];
+        if ($tournament->type === 'team') {
+            $rules['team_name'] = 'required|string|max:255';
+            $rules['roster'] = 'nullable|array|max:' . ($tournament->team_size ?? 10);
+            $rules['roster.*.user_id'] = 'nullable|exists:users,id';
+            $rules['roster.*.name'] = 'required|string|max:255';
+            $rules['roster.*.role'] = 'nullable|string|max:100';
+        }
+
+        $validated = $request->validate($rules);
 
         // Check if already registered
         $existing = $tournament->participants()
@@ -164,6 +170,21 @@ class TournamentController extends Controller
 
         if ($existing) {
             return back()->with('error', 'You are already registered for this tournament.');
+        }
+
+        // For team tournaments, add the captain to roster if not already included
+        if ($tournament->type === 'team') {
+            $roster = $validated['roster'] ?? [];
+            
+            // Add captain as first member if roster is provided
+            if (!empty($roster)) {
+                array_unshift($roster, [
+                    'user_id' => auth()->id(),
+                    'name' => auth()->user()->name,
+                    'role' => 'Captain'
+                ]);
+                $validated['roster'] = $roster;
+            }
         }
 
         $status = $tournament->requires_approval ? 'pending' : 'approved';
