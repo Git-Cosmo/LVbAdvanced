@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
             ForumSeeder::class,
             RssFeedSeeder::class,
             RedditSubredditSeeder::class,
+            ThemeSeeder::class,
         ]);
     }
 }
