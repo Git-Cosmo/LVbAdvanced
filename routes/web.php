@@ -23,6 +23,11 @@ use App\Http\Controllers\StatusController;
 Route::get('/', [PortalController::class, 'home'])->name('home');
 Route::get('/status', StatusController::class)->name('status');
 
+// Health check endpoint for Docker
+Route::get('/up', function () {
+    return response()->json(['status' => 'ok'], 200);
+})->name('health');
+
 // Static Pages
 Route::get('/terms', [\App\Http\Controllers\StaticPageController::class, 'terms'])->name('terms');
 Route::get('/privacy', [\App\Http\Controllers\StaticPageController::class, 'privacy'])->name('privacy');

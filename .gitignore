@@ -3,6 +3,7 @@
 .env
 .env.*
 !.env.testing
+!.env.docker.example
 /.phpunit.result.cache
 /vendor/
 /node_modules/

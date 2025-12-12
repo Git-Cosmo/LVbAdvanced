@@ -1,9 +1,14 @@
 #!/bin/bash
 set -e
 
-# Use the .env.docker as .env
+# Use the .env.docker as .env if it exists, otherwise check for .env
 if [ -f /var/www/.env.docker ]; then
+    echo "Using .env.docker configuration..."
     cp /var/www/.env.docker /var/www/.env
+elif [ ! -f /var/www/.env ]; then
+    echo "No .env file found, copying from .env.example..."
+    cp /var/www/.env.example /var/www/.env
+    echo "WARNING: Please configure your .env file with proper credentials"
 fi
 
 # Install/ensure schedule cron exists
