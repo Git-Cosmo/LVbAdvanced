@@ -48,6 +48,17 @@ php artisan schedule-monitor:sync --force || true
 echo "Starting cron..."
 crond
 
+# Fix Windows-mounted directory permissions
+echo "Fixing permissions on storage and cache directories..."
+
+# Ensure www-data owns them (recursively)
+chown -R www-data:www-data /var/www/storage || true
+chown -R www-data:www-data /var/www/bootstrap/cache || true
+
+# Ensure correct execution + write permissions
+chmod -R ug+rwX /var/www/storage
+chmod -R ug+rwX /var/www/bootstrap/cache
+
 # Ensure storage symlink exists
 if [ ! -L /var/www/public/storage ]; then
     echo "Creating storage symlink..."

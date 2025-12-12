@@ -35,7 +35,7 @@ COPY composer.json composer.lock ./
 COPY package.json package-lock.json ./
 
 # Install PHP dependencies
-RUN composer install --no-dev --prefer-dist --optimize-autoloader --no-interaction --no-scripts
+RUN composer install --prefer-dist --optimize-autoloader --no-interaction --no-scripts
 
 # Install Node.js dependencies (including devDependencies for build)
 RUN npm ci
@@ -44,7 +44,7 @@ RUN npm ci
 COPY . .
 
 # Complete composer setup (run scripts)
-RUN composer dump-autoload --optimize --no-dev
+RUN composer dump-autoload --optimize
 
 # Build frontend assets
 RUN npm run build
