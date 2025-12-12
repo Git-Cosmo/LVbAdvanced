@@ -151,7 +151,7 @@
 - ✅ **DRY & SMART Database** - Normalized schema with venues, ticket links, and info links in separate tables
 - ✅ **Error Handling** - Comprehensive logging and error handling for API failures
 
-### Frontend
+### Frontend & Portal UI
 - ✅ **TailwindCSS** - Modern, responsive design
 - ✅ **Alpine.js** - Lightweight JavaScript framework
 - ✅ **Dynamic Homepage** - Real-time content from News, Deals, Downloads, and Forum sections
@@ -160,6 +160,37 @@
 - ✅ **SEO Friendly** - Meta tags, clean URLs, sitemap support
 - ✅ **Dark Mode** - Modern dark theme throughout the application
 - ✅ **Tabbed Settings Interface** - Easy-to-navigate settings with multiple tabs
+- ✅ **Enhanced Popout Radio Player**:
+  - Sleek, modern UI with gradient background
+  - Album artwork display with animations
+  - Advanced volume controls with visual feedback
+  - Keyboard shortcuts (Space to play/pause, Arrow keys for volume)
+  - Responsive design with smooth transitions
+- ✅ **Game Servers Section** (Portal Left Sidebar):
+  - FiveM Server placeholder with status badges
+  - Counter Strike 2 Server placeholder
+  - Minecraft Server placeholder
+  - Attractive server cards with game-specific branding
+  - Coming soon indicators
+- ✅ **Latest Game Deals** (Portal Middle Section):
+  - Replaced "Latest Downloads" with game deals display
+  - Shows current deals from CheapShark API
+  - Game thumbnails with price comparisons
+  - Savings percentage badges
+  - Store attribution
+- ✅ **Upcoming Events** (Portal Right Sidebar):
+  - Displays next 3 upcoming gaming events
+  - Date badges with month and day
+  - Event type indicators (tournaments, expos, releases)
+  - Virtual/In-person badges
+  - Compact, attractive card layout
+- ✅ **Enhanced Navbar**:
+  - Search replaced with expandable search icon
+  - Beautiful dropdown search interface
+  - Live clock displaying current time
+  - Auto-updating every second
+  - Keyboard shortcuts (ESC to close search)
+  - Responsive design
 
 ### Admin Panel
 - ✅ **Custom Admin Interface** - No external UI packages
@@ -792,11 +823,15 @@ FPSociety includes a built-in radio player for streaming audio to your community
 
 **Features:**
 - 🎵 **Full-featured audio player** with play/pause/stop controls
-- 🔊 **Volume control** with visual feedback
-- 🪟 **Popout window** - Open radio in a separate window for continuous playback
+- 🔊 **Volume control** with visual feedback and range slider
+- 🪟 **Enhanced Popout window** - Sleek, modern player with gradient background
 - 📱 **Responsive design** - Works on desktop and mobile
-- 🎨 **Attractive UI** - Animated "Now Playing" display with gradient effects
+- 🎨 **Modern UI** - Album artwork display, animated effects, and glassmorphism cards
 - 🔗 **Easy access** - Available in main navigation menu
+- ⌨️ **Keyboard shortcuts** - Space bar to play/pause, Arrow keys for volume control
+- 🎨 **Track Information** - Displays title, artist, and album with scrolling text
+- 🔄 **Live Updates** - Real-time now playing information from AzuraCast
+- 🎯 **Floating Controls** - Minimize player while browsing other pages
 
 **Accessing the Radio:**
 - Main player: `http://localhost:8000/radio`
