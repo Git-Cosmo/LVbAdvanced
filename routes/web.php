@@ -337,6 +337,16 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
         Route::patch('/{gameServer}/toggle-active', [\App\Http\Controllers\Admin\GameServerController::class, 'toggleActive'])->name('toggle-active');
         Route::patch('/{gameServer}/toggle-featured', [\App\Http\Controllers\Admin\GameServerController::class, 'toggleFeatured'])->name('toggle-featured');
     });
+    
+    // Tournament Management
+    Route::prefix('tournaments')->name('tournaments.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Admin\TournamentManagementController::class, 'index'])->name('index');
+        Route::get('/{tournament}', [\App\Http\Controllers\Admin\TournamentManagementController::class, 'show'])->name('show');
+        Route::post('/{tournament}/generate-brackets', [\App\Http\Controllers\Admin\TournamentManagementController::class, 'generateBrackets'])->name('generate-brackets');
+        Route::post('/participants/{participant}/approve', [\App\Http\Controllers\Admin\TournamentManagementController::class, 'approveParticipant'])->name('participants.approve');
+        Route::post('/participants/{participant}/reject', [\App\Http\Controllers\Admin\TournamentManagementController::class, 'rejectParticipant'])->name('participants.reject');
+        Route::post('/matches/{match}/result', [\App\Http\Controllers\Admin\TournamentManagementController::class, 'updateMatchResult'])->name('matches.result');
+    });
 });
 
 // Public Leaderboard Route
@@ -417,6 +427,22 @@ Route::prefix('downloads')->name('downloads.')->group(function () {
 Route::prefix('achievements')->name('achievements.')->group(function () {
     Route::get('/', [\App\Http\Controllers\AchievementController::class, 'index'])->name('index');
     Route::get('/user/{user}', [\App\Http\Controllers\AchievementController::class, 'user'])->name('user');
+});
+
+// Tournament Routes
+Route::prefix('tournaments')->name('tournaments.')->group(function () {
+    Route::get('/', [\App\Http\Controllers\TournamentController::class, 'index'])->name('index');
+    Route::get('/create', [\App\Http\Controllers\TournamentController::class, 'create'])->name('create')->middleware('auth');
+    Route::post('/', [\App\Http\Controllers\TournamentController::class, 'store'])->name('store')->middleware('auth');
+    Route::get('/{tournament}', [\App\Http\Controllers\TournamentController::class, 'show'])->name('show');
+    Route::get('/{tournament}/bracket', [\App\Http\Controllers\TournamentController::class, 'bracket'])->name('bracket');
+    Route::get('/{tournament}/participants', [\App\Http\Controllers\TournamentController::class, 'participants'])->name('participants');
+    
+    Route::middleware('auth')->group(function () {
+        Route::post('/{tournament}/register', [\App\Http\Controllers\TournamentController::class, 'register'])->name('register');
+        Route::post('/{tournament}/check-in', [\App\Http\Controllers\TournamentController::class, 'checkIn'])->name('check-in');
+        Route::post('/{tournament}/announcements', [\App\Http\Controllers\TournamentController::class, 'postAnnouncement'])->name('announcements.store');
+    });
 });
 
 // Sitemap Route
