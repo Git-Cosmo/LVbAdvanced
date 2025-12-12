@@ -173,42 +173,34 @@ class PatchNotesScraperService
 
             $crawler = new Crawler($response->body());
             
-            // Look for common patch note patterns in HTML
-            $selectors = [
-                'article[class*="patch"]',
-                'div[class*="patch"]',
-                'article[class*="update"]',
-                'div[class*="update"]',
-                '.post',
-                'article',
-            ];
-
-            foreach ($selectors as $selector) {
-                try {
-                    $crawler->filter($selector)->each(function (Crawler $node) use ($gameName, &$count) {
-                        $title = $this->extractTitle($node);
-                        $content = $this->extractContent($node);
-                        $link = $this->extractLink($node);
-
-                        if ($title && $this->isPatchNoteItem($title, $content)) {
-                            $this->storePatchNote($gameName, [
-                                'title' => $title,
-                                'description' => Str::limit(strip_tags($content), 200),
-                                'content' => $content,
-                                'source_url' => $link,
-                                'released_at' => now(),
-                                'external_id' => md5($link ?: $title),
-                            ]);
-                            $count++;
-                        }
-                    });
-
-                    if ($count > 0) {
-                        break; // Found valid selector, stop trying others
+            // Look for common patch note patterns in HTML - combine selectors for efficiency
+            $combinedSelector = 'article[class*="patch"], div[class*="patch"], article[class*="update"], div[class*="update"], .post, article';
+            
+            try {
+                $crawler->filter($combinedSelector)->each(function (Crawler $node) use ($gameName, &$count) {
+                    // Limit to reasonable amount to avoid processing too many items
+                    if ($count >= 10) {
+                        return;
                     }
-                } catch (\Exception $e) {
-                    continue;
-                }
+                    
+                    $title = $this->extractTitle($node);
+                    $content = $this->extractContent($node);
+                    $link = $this->extractLink($node);
+
+                    if ($title && $this->isPatchNoteItem($title, $content)) {
+                        $this->storePatchNote($gameName, [
+                            'title' => $title,
+                            'description' => Str::limit(strip_tags($content), 200),
+                            'content' => $content,
+                            'source_url' => $link,
+                            'released_at' => now(),
+                            'external_id' => md5($link ?: $title),
+                        ]);
+                        $count++;
+                    }
+                });
+            } catch (\Exception $e) {
+                Log::warning("HTML selector parsing failed for {$gameName}: {$e->getMessage()}");
             }
         } catch (\Exception $e) {
             Log::warning("HTML scraping failed for {$gameName}: {$e->getMessage()}");

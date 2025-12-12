@@ -60,7 +60,7 @@
             <!-- Songs Grid -->
             <div id="songs-container" class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 @foreach($requestableSongs as $song)
-                    <div class="song-item p-4 rounded-lg dark:bg-dark-bg-tertiary bg-light-bg-tertiary hover:bg-dark-bg-elevated transition-all"
+                    <div class="song-item p-4 rounded-lg dark:bg-dark-bg-tertiary bg-light-bg-tertiary dark:hover:bg-dark-bg-elevated hover:bg-light-bg-elevated transition-all"
                          data-search-text="{{ strtolower(($song['song']['title'] ?? '') . ' ' . ($song['song']['artist'] ?? '') . ' ' . ($song['song']['album'] ?? '')) }}">
                         <div class="flex items-center space-x-4">
                             @if(isset($song['song']['art']))

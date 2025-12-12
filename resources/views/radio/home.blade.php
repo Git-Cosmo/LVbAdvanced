@@ -83,7 +83,7 @@
                         </svg>
                         Launch Player
                     </button>
-                    <a href="{{ route('radio.requests') }}" class="flex-1 bg-dark-bg-tertiary hover:bg-dark-bg-elevated text-dark-text-bright rounded-lg px-6 py-3 font-semibold transition-all text-center">
+                    <a href="{{ route('radio.requests') }}" class="flex-1 dark:bg-dark-bg-tertiary bg-light-bg-tertiary dark:hover:bg-dark-bg-elevated hover:bg-light-bg-elevated dark:text-dark-text-bright text-light-text-bright rounded-lg px-6 py-3 font-semibold transition-all text-center">
                         Request Song
                     </a>
                 </div>
