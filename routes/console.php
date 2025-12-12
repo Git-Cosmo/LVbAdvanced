@@ -49,3 +49,10 @@ Schedule::command('reddit:scrape')
 Schedule::command('streamerbans:scrape --update --limit=100')
     ->withoutOverlapping()
     ->daily();
+
+// Patch Notes scraping hourly
+Schedule::command('patch-notes:scrape')
+    ->withoutOverlapping()
+    ->monitorName('patch-notes-scrape')
+    ->graceTimeInMinutes(SCHEDULE_GRACE_MINUTES)
+    ->hourly();
