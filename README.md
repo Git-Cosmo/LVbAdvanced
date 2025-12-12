@@ -233,6 +233,42 @@
 
 ## Installation
 
+### Docker Deployment (Recommended for Production)
+
+The easiest way to deploy FPSociety is using Docker and Docker Compose. See [DOCKER.md](DOCKER.md) for complete documentation.
+
+**Quick Start:**
+```bash
+# Clone repository
+git clone https://github.com/Git-Cosmo/LVbAdvanced.git
+cd LVbAdvanced
+
+# Create Docker environment configuration
+cp .env.docker.example .env.docker
+# Edit .env.docker with your settings (APP_KEY, DB_PASSWORD, etc.)
+
+# Start services
+docker compose up -d
+
+# Access the application at http://localhost:8067
+```
+
+The Docker setup includes:
+- ✅ PHP 8.4 with all required extensions
+- ✅ Nginx web server
+- ✅ MySQL 8.0 database
+- ✅ Redis for caching and queues
+- ✅ Supervisor for queue workers and cron
+- ✅ Health checks for all services
+- ✅ Automatic migrations on startup
+- ✅ Built-in Laravel scheduler
+
+For detailed Docker documentation, troubleshooting, and production deployment, see [DOCKER.md](DOCKER.md).
+
+---
+
+### Manual Installation
+
 1. **Clone repository**
    ```bash
    git clone https://github.com/Git-Cosmo/LVbAdvanced.git
