@@ -261,6 +261,18 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
         Route::delete('/{news}', [\App\Http\Controllers\Admin\NewsManagementController::class, 'destroy'])->name('destroy');
     });
     
+    // Patch Notes Management
+    Route::prefix('patch-notes')->name('patch-notes.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Admin\PatchNoteController::class, 'index'])->name('index');
+        Route::get('/create', [\App\Http\Controllers\Admin\PatchNoteController::class, 'create'])->name('create');
+        Route::post('/', [\App\Http\Controllers\Admin\PatchNoteController::class, 'store'])->name('store');
+        Route::get('/{patchNote}/edit', [\App\Http\Controllers\Admin\PatchNoteController::class, 'edit'])->name('edit');
+        Route::patch('/{patchNote}', [\App\Http\Controllers\Admin\PatchNoteController::class, 'update'])->name('update');
+        Route::delete('/{patchNote}', [\App\Http\Controllers\Admin\PatchNoteController::class, 'destroy'])->name('destroy');
+        Route::patch('/{patchNote}/toggle-publish', [\App\Http\Controllers\Admin\PatchNoteController::class, 'togglePublish'])->name('toggle-publish');
+        Route::patch('/{patchNote}/toggle-featured', [\App\Http\Controllers\Admin\PatchNoteController::class, 'toggleFeatured'])->name('toggle-featured');
+    });
+    
     // RSS Feed Management
     Route::prefix('rss')->name('rss.')->group(function () {
         Route::get('/', [\App\Http\Controllers\Admin\RssFeedController::class, 'index'])->name('index');
@@ -326,6 +338,16 @@ Route::prefix('news')->name('news.')->group(function () {
     Route::get('/', [\App\Http\Controllers\NewsController::class, 'index'])->name('index');
     Route::get('/{news}', [\App\Http\Controllers\NewsController::class, 'show'])->name('show');
 });
+
+// Patch Notes Routes
+Route::prefix('patch-notes')->name('patch-notes.')->group(function () {
+    Route::get('/', [\App\Http\Controllers\PatchNoteController::class, 'index'])->name('index');
+    Route::get('/{patchNote}', [\App\Http\Controllers\PatchNoteController::class, 'show'])->name('show');
+});
+
+// Radio Routes
+Route::get('/radio', [\App\Http\Controllers\RadioController::class, 'index'])->name('radio.index');
+Route::get('/radio/popout', [\App\Http\Controllers\RadioController::class, 'popout'])->name('radio.popout');
 
 // Reddit Content Routes
 Route::get('/clips', [\App\Http\Controllers\RedditController::class, 'clips'])->name('clips.index');

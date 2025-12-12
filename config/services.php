@@ -75,4 +75,8 @@ return [
         'password' => env('REDDIT_PASSWORD'),
     ],
 
+    'icecast' => [
+        'stream_url' => env('ICECAST_STREAM_URL'),
+    ],
+
 ];
