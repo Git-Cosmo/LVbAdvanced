@@ -516,3 +516,36 @@ Route::prefix('tournaments')->name('tournaments.')->group(function () {
 
 // Sitemap Route
 Route::get('/sitemap.xml', [\App\Http\Controllers\SitemapController::class, 'index'])->name('sitemap');
+
+// Activity Log Routes (Admin)
+Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/activity-log', [App\Http\Controllers\Admin\ActivityLogController::class, 'index'])->name('activity-log.index');
+    Route::get('/activity-log/{activity}', [App\Http\Controllers\Admin\ActivityLogController::class, 'show'])->name('activity-log.show');
+    Route::delete('/activity-log/{activity}', [App\Http\Controllers\Admin\ActivityLogController::class, 'destroy'])->name('activity-log.destroy');
+    Route::post('/activity-log/clean', [App\Http\Controllers\Admin\ActivityLogController::class, 'clean'])->name('activity-log.clean');
+
+    // Backup Routes
+    Route::get('/backups', [App\Http\Controllers\Admin\BackupController::class, 'index'])->name('backups.index');
+    Route::post('/backups/create', [App\Http\Controllers\Admin\BackupController::class, 'create'])->name('backups.create');
+    Route::get('/backups/{disk}/{path}/download', [App\Http\Controllers\Admin\BackupController::class, 'download'])->name('backups.download');
+    Route::delete('/backups/{disk}/{path}', [App\Http\Controllers\Admin\BackupController::class, 'destroy'])->name('backups.destroy');
+    Route::post('/backups/clean', [App\Http\Controllers\Admin\BackupController::class, 'clean'])->name('backups.clean');
+});
+
+// Public Casual Games Routes
+Route::middleware(['auth'])->prefix('casual-games')->name('casual-games.')->group(function () {
+    // Trivia
+    Route::get('/trivia', [App\Http\Controllers\CasualGamesController::class, 'triviaIndex'])->name('trivia.index');
+    Route::get('/trivia/{game}', [App\Http\Controllers\CasualGamesController::class, 'triviaShow'])->name('trivia.show');
+    Route::post('/trivia/{game}/submit', [App\Http\Controllers\CasualGamesController::class, 'triviaSubmit'])->name('trivia.submit');
+    
+    // Predictions
+    Route::get('/predictions', [App\Http\Controllers\CasualGamesController::class, 'predictionsIndex'])->name('predictions.index');
+    Route::get('/predictions/{prediction}', [App\Http\Controllers\CasualGamesController::class, 'predictionsShow'])->name('predictions.show');
+    Route::post('/predictions/{prediction}/submit', [App\Http\Controllers\CasualGamesController::class, 'predictionsSubmit'])->name('predictions.submit');
+    
+    // Challenges
+    Route::get('/challenges', [App\Http\Controllers\CasualGamesController::class, 'challengesIndex'])->name('challenges.index');
+    Route::get('/challenges/{challenge}', [App\Http\Controllers\CasualGamesController::class, 'challengesShow'])->name('challenges.show');
+    Route::post('/challenges/{challenge}/complete', [App\Http\Controllers\CasualGamesController::class, 'challengesComplete'])->name('challenges.complete');
+});

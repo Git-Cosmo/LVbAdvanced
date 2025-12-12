@@ -45,7 +45,7 @@ class CasualGamesController extends Controller
     public function triviaIndex()
     {
         $games = TriviaGame::active()
-            ->withCount('questions', 'attempts')
+            ->withCount('questions')
             ->orderByDesc('created_at')
             ->paginate(12);
 

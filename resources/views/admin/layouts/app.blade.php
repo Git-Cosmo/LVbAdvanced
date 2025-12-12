@@ -167,6 +167,20 @@
                     Theme Settings
                 </a>
                 
+                <a href="{{ route('admin.activity-log.index') }}" class="flex items-center px-6 py-3 {{ request()->routeIs('admin.activity-log.*') ? 'bg-gradient-to-r from-accent-blue to-accent-purple text-white' : 'dark:text-dark-text-primary text-light-text-primary dark:hover:bg-dark-bg-tertiary hover:bg-light-bg-tertiary' }} transition-colors">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                    </svg>
+                    Activity Log
+                </a>
+                
+                <a href="{{ route('admin.backups.index') }}" class="flex items-center px-6 py-3 {{ request()->routeIs('admin.backups.*') ? 'bg-gradient-to-r from-accent-blue to-accent-purple text-white' : 'dark:text-dark-text-primary text-light-text-primary dark:hover:bg-dark-bg-tertiary hover:bg-light-bg-tertiary' }} transition-colors">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"/>
+                    </svg>
+                    Backup Management
+                </a>
+                
                 <a href="{{ route('admin.schedule-monitor.index') }}" class="flex items-center px-6 py-3 {{ request()->routeIs('admin.schedule-monitor.*') ? 'bg-gradient-to-r from-accent-blue to-accent-purple text-white' : 'dark:text-dark-text-primary text-light-text-primary dark:hover:bg-dark-bg-tertiary hover:bg-light-bg-tertiary' }} transition-colors">
                     <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>

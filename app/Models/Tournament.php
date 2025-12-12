@@ -8,10 +8,13 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Tags\HasTags;
 
 class Tournament extends Model
 {
-    use HasSlug, SoftDeletes;
+    use HasSlug, SoftDeletes, LogsActivity, HasTags;
 
     protected $fillable = [
         'user_id',
@@ -218,5 +221,22 @@ class Tournament extends Model
         }
         
         return ucfirst(str_replace('_', ' ', $this->status));
+    }
+
+    /**
+     * Activity log configuration.
+     */
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly(['name', 'status', 'format', 'type', 'max_participants', 'prize_pool', 'starts_at'])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs()
+            ->setDescriptionForEvent(fn(string $eventName) => match($eventName) {
+                'created' => "Tournament '{$this->name}' was created",
+                'updated' => "Tournament '{$this->name}' was updated",
+                'deleted' => "Tournament '{$this->name}' was deleted",
+                default => "Tournament '{$this->name}' was {$eventName}",
+            });
     }
 }
