@@ -1,0 +1,74 @@
+# Git
+.git
+.github
+.gitignore
+.gitattributes
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Node modules and build artifacts
+node_modules
+npm-debug.log
+yarn-error.log
+public/hot
+public/build
+public/storage
+
+# Composer
+vendor
+composer.lock
+
+# Laravel
+storage/app/*
+!storage/app/.gitignore
+!storage/app/public
+storage/framework/cache/*
+!storage/framework/cache/.gitignore
+storage/framework/sessions/*
+!storage/framework/sessions/.gitignore
+storage/framework/testing/*
+!storage/framework/testing/.gitignore
+storage/framework/views/*
+!storage/framework/views/.gitignore
+storage/logs/*
+!storage/logs/.gitignore
+bootstrap/cache/*
+!bootstrap/cache/.gitignore
+
+# IDE
+.idea
+.vscode
+.fleet
+.zed
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Testing
+.phpunit.result.cache
+tests
+phpunit.xml
+
+# Documentation
+README.md
+INSTALLATION.md
+EVENTS_SETUP.md
+*.md
+
+# Docker files (no need to copy these into the image)
+docker-compose.yml
+Dockerfile
+docker-entrypoint.sh
+
+# Other
+*.log
+.editorconfig
+.styleci.yml
+auth.json

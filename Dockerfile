@@ -29,25 +29,36 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www
 
-# Copy full application first
-COPY . .
+# Copy dependency files first for better layer caching
+COPY composer.json composer.lock ./
+COPY package.json package-lock.json ./
 
 # Install PHP dependencies
-RUN composer install --no-dev --prefer-dist --optimize-autoloader --no-interaction
+RUN composer install --no-dev --prefer-dist --optimize-autoloader --no-interaction --no-scripts
 
-# Install Node.js dependencies and build assets
-RUN npm install && npm run build
+# Install Node.js dependencies
+RUN npm ci --only=production
+
+# Copy application files
+COPY . .
+
+# Complete composer setup (run scripts)
+RUN composer dump-autoload --optimize --no-dev
+
+# Build frontend assets
+RUN npm run build
 
 # ──────────────────────────────
 # Stage 2: Runtime
 # ──────────────────────────────
 FROM php:8.4-fpm-alpine
 
-# Install runtime dependencies
+# Install runtime dependencies including dcron (Alpine's cron)
 RUN apk add --no-cache \
     nginx \
     supervisor \
     bash \
+    dcron \
     libpng \
     libjpeg-turbo \
     libwebp \
@@ -105,5 +116,10 @@ RUN mkdir -p /var/log/supervisor \
 RUN mkdir -p /var/log/nginx /run/nginx \
     && chown -R www-data:www-data /var/log/nginx /run/nginx
 
+# Add health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+    CMD curl -f http://localhost/up || exit 1
+
 EXPOSE 80
+
 ENTRYPOINT ["docker-entrypoint.sh"]
