@@ -1,5 +1,20 @@
 @props(['name' => 'content', 'value' => '', 'placeholder' => 'Write your content here...'])
 
+{{-- 
+    Simple Rich Text Editor Component
+    
+    NOTE: This is a basic implementation using contenteditable and document.execCommand().
+    While document.execCommand() is deprecated, it still works in all major browsers.
+    
+    For production use, consider upgrading to:
+    - TinyMCE (https://www.tiny.cloud/)
+    - Quill.js (https://quilljs.com/)
+    - Trix Editor (https://trix-editor.org/)
+    
+    SECURITY: Content is sanitized on the server side. Ensure backend validation
+    and sanitization (e.g., using HTMLPurifier) before storing in database.
+--}}
+
 <div x-data="richTextEditor()" x-init="init()">
     <div class="border dark:border-dark-border-primary border-light-border-primary rounded-lg overflow-hidden">
         <!-- Toolbar -->
@@ -87,7 +102,7 @@
 <script>
 function richTextEditor() {
     return {
-        content: '{{ $value }}',
+        content: @json($value),
         
         init() {
             // Set initial content if provided
@@ -102,9 +117,16 @@ function richTextEditor() {
         },
         
         insertLink() {
-            const url = prompt('Enter URL:');
+            // TODO: Replace with proper modal dialog in future iteration
+            // Using prompt() temporarily for quick implementation
+            const url = prompt('Enter URL (starting with http:// or https://):');
             if (url) {
-                this.format('createLink', url);
+                // Basic URL validation
+                if (url.startsWith('http://') || url.startsWith('https://')) {
+                    this.format('createLink', url);
+                } else {
+                    alert('Please enter a valid URL starting with http:// or https://');
+                }
             }
         },
         

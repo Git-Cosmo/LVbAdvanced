@@ -112,6 +112,14 @@ class SettingsController extends Controller
     public function updateStatus(Request $request)
     {
         $user = auth()->user();
+        
+        // Ensure profile exists
+        if (!$user->profile) {
+            $user->profile()->create([
+                'status' => 'online',
+            ]);
+        }
+        
         $profile = $user->profile;
 
         $validated = $request->validate([
