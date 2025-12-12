@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Event;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
+use Illuminate\Support\Facades\Log;
 
 class EventsController extends Controller
 {
@@ -94,7 +95,7 @@ class EventsController extends Controller
 
             return back()->with('success', 'RSVP updated successfully!');
         } catch (\Exception $e) {
-            \Log::error('RSVP Error: ' . $e->getMessage());
+            Log::error('RSVP Error: ' . $e->getMessage());
             return back()->with('error', 'Failed to update RSVP. Please try again.');
         }
     }

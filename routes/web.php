@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\ActivityFeedController;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Cache;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Auth\EmailVerificationController;
 use App\Http\Controllers\Auth\LoginController;
@@ -34,7 +36,7 @@ Route::get('/up', function () {
     // Basic checks
     try {
         // Database check
-        \DB::connection()->getPdo();
+        DB::connection()->getPdo();
         $health['database'] = 'ok';
     } catch (\Exception $e) {
         $health['database'] = 'error';
@@ -43,8 +45,8 @@ Route::get('/up', function () {
     
     // Cache check
     try {
-        \Cache::put('health_check', true, 10);
-        $health['cache'] = \Cache::get('health_check') ? 'ok' : 'error';
+        Cache::put('health_check', true, 10);
+        $health['cache'] = Cache::get('health_check') ? 'ok' : 'error';
     } catch (\Exception $e) {
         $health['cache'] = 'error';
     }
