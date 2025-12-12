@@ -1,64 +1,74 @@
-<x-admin-layout>
-    <div class="container mx-auto px-4 py-8">
-        <div class="flex justify-between items-center mb-6">
-            <h1 class="text-3xl font-bold text-white">Backup Management</h1>
-            <form method="POST" action="{{ route('admin.backups.create') }}">
-                @csrf
-                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded">
-                    Create Backup
-                </button>
-            </form>
-        </div>
+@extends('admin.layouts.app')
 
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
-            <div class="bg-gray-800 rounded-lg p-6">
-                <div class="text-gray-400 text-sm">Total Backups</div>
-                <div class="text-white text-2xl font-bold">{{ $stats['total_backups'] }}</div>
-            </div>
-            <div class="bg-gray-800 rounded-lg p-6">
-                <div class="text-gray-400 text-sm">Total Size</div>
-                <div class="text-white text-2xl font-bold">{{ number_format($stats['total_size'] / 1024 / 1024, 2) }} MB</div>
-            </div>
-            <div class="bg-gray-800 rounded-lg p-6">
-                <div class="text-gray-400 text-sm">Latest Backup</div>
-                <div class="text-white text-sm">{{ $stats['latest_backup'] ? $stats['latest_backup']['date']->diffForHumans() : 'None' }}</div>
-            </div>
-            <div class="bg-gray-800 rounded-lg p-6">
-                <div class="text-gray-400 text-sm">Health Status</div>
-                <div class="text-xl font-bold {{ $stats['health_status'] == 'healthy' ? 'text-green-400' : 'text-red-400' }}">
-                    {{ ucfirst($stats['health_status']) }}
-                </div>
-            </div>
-        </div>
+@section('header', 'Backup Management')
 
-        <div class="bg-gray-800 rounded-lg overflow-hidden">
-            <table class="w-full">
-                <thead class="bg-gray-700">
-                    <tr>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase">Date</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase">Size</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase">Disk</th>
-                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-300 uppercase">Actions</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-700">
-                    @foreach($backups as $backup)
-                        <tr class="hover:bg-gray-700">
-                            <td class="px-6 py-4 text-white">{{ $backup['date']->format('Y-m-d H:i:s') }}</td>
-                            <td class="px-6 py-4 text-gray-300">{{ number_format($backup['size'] / 1024 / 1024, 2) }} MB</td>
-                            <td class="px-6 py-4 text-gray-300">{{ $backup['disk'] }}</td>
-                            <td class="px-6 py-4 text-right">
-                                <a href="{{ route('admin.backups.download', [$backup['disk'], basename($backup['path'])]) }}" class="text-blue-400 hover:text-blue-300 mr-4">Download</a>
-                                <form method="POST" action="{{ route('admin.backups.destroy', [$backup['disk'], basename($backup['path'])]) }}" class="inline">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" onclick="return confirm('Delete this backup?')" class="text-red-400 hover:text-red-300">Delete</button>
-                                </form>
-                            </td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
+@section('content')
+<div class="max-w-7xl">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-bold dark:text-dark-text-bright">Backup Management</h1>
+        <form method="POST" action="{{ route('admin.backups.create') }}">
+            @csrf
+            <button type="submit" class="px-6 py-2 bg-gradient-to-r from-accent-blue to-accent-purple text-white rounded-lg hover:opacity-90 transition-opacity">
+                Create Backup
+            </button>
+        </form>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+        <div class="dark:bg-dark-bg-secondary rounded-lg border dark:border-dark-border-primary p-6">
+            <div class="dark:text-dark-text-secondary text-sm">Total Backups</div>
+            <div class="dark:text-dark-text-bright text-2xl font-bold mt-2">{{ $stats['total_backups'] }}</div>
+        </div>
+        <div class="dark:bg-dark-bg-secondary rounded-lg border dark:border-dark-border-primary p-6">
+            <div class="dark:text-dark-text-secondary text-sm">Total Size</div>
+            <div class="dark:text-dark-text-bright text-2xl font-bold mt-2">{{ number_format($stats['total_size'] / 1024 / 1024, 2) }} MB</div>
+        </div>
+        <div class="dark:bg-dark-bg-secondary rounded-lg border dark:border-dark-border-primary p-6">
+            <div class="dark:text-dark-text-secondary text-sm">Latest Backup</div>
+            <div class="dark:text-dark-text-primary text-sm mt-2">{{ $stats['latest_backup'] ? $stats['latest_backup']['date']->diffForHumans() : 'None' }}</div>
+        </div>
+        <div class="dark:bg-dark-bg-secondary rounded-lg border dark:border-dark-border-primary p-6">
+            <div class="dark:text-dark-text-secondary text-sm">Health Status</div>
+            <div class="text-xl font-bold mt-2 {{ $stats['health_status'] == 'healthy' ? 'text-green-400' : 'text-red-400' }}">
+                {{ ucfirst($stats['health_status']) }}
+            </div>
         </div>
     </div>
-</x-admin-layout>
+
+    <div class="dark:bg-dark-bg-secondary rounded-lg border dark:border-dark-border-primary overflow-hidden">
+        <table class="w-full">
+            <thead class="dark:bg-dark-bg-tertiary">
+                <tr>
+                    <th class="px-6 py-3 text-left text-xs font-medium dark:text-dark-text-secondary uppercase tracking-wider">Date</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium dark:text-dark-text-secondary uppercase tracking-wider">Size</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium dark:text-dark-text-secondary uppercase tracking-wider">Disk</th>
+                    <th class="px-6 py-3 text-right text-xs font-medium dark:text-dark-text-secondary uppercase tracking-wider">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y dark:divide-dark-border-primary">
+                @forelse($backups as $backup)
+                    <tr class="hover:dark:bg-dark-bg-elevated transition-colors">
+                        <td class="px-6 py-4 dark:text-dark-text-primary">{{ $backup['date']->format('Y-m-d H:i:s') }}</td>
+                        <td class="px-6 py-4 dark:text-dark-text-secondary">{{ number_format($backup['size'] / 1024 / 1024, 2) }} MB</td>
+                        <td class="px-6 py-4 dark:text-dark-text-secondary">{{ $backup['disk'] }}</td>
+                        <td class="px-6 py-4 text-right">
+                            <a href="{{ route('admin.backups.download', [$backup['disk'], basename($backup['path'])]) }}" class="text-accent-blue hover:text-accent-blue/80 mr-4">Download</a>
+                            <form method="POST" action="{{ route('admin.backups.destroy', [$backup['disk'], basename($backup['path'])]) }}" class="inline">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" onclick="return confirm('Delete this backup?')" class="text-red-400 hover:text-red-300">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="4" class="px-6 py-8 text-center dark:text-dark-text-tertiary">
+                            No backups found. Create your first backup to get started.
+                        </td>
+                    </tr>
+                @endforelse
+            </tbody>
+        </table>
+    </div>
+</div>
+@endsection

@@ -6,25 +6,38 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Storage;
-use Spatie\Backup\BackupDestination\BackupDestination;
-use Spatie\Backup\Tasks\Monitor\BackupDestinationStatusFactory;
+use Spatie\Backup\Tasks\Monitor\BackupDestinationStatus;
 
 class BackupController extends Controller
 {
     public function index()
     {
-        $backupDestinations = BackupDestinationStatusFactory::create()->backupDestinationStatuses();
-
         $backups = [];
-        foreach ($backupDestinations as $backupDestination) {
-            foreach ($backupDestination->backups() as $backup) {
-                $backups[] = [
-                    'path' => $backup->path(),
-                    'date' => $backup->date(),
-                    'size' => $backup->sizeInBytes(),
-                    'disk' => $backupDestination->diskName(),
-                ];
+        $allHealthy = true;
+        
+        try {
+            // Get backup statuses using the correct v9 API
+            $backupDestinationStatuses = BackupDestinationStatus::all();
+
+            foreach ($backupDestinationStatuses as $backupDestinationStatus) {
+                if (!$backupDestinationStatus->isHealthy()) {
+                    $allHealthy = false;
+                }
+                
+                $backupDestination = $backupDestinationStatus->backupDestination();
+                
+                foreach ($backupDestination->backups() as $backup) {
+                    $backups[] = [
+                        'path' => $backup->path(),
+                        'date' => $backup->date(),
+                        'size' => $backup->sizeInBytes(),
+                        'disk' => $backupDestination->diskName(),
+                    ];
+                }
             }
+        } catch (\Exception $e) {
+            // If backup monitoring fails, just show empty list
+            $allHealthy = false;
         }
 
         // Sort by date descending
@@ -36,7 +49,7 @@ class BackupController extends Controller
             'total_backups' => count($backups),
             'total_size' => array_sum(array_column($backups, 'size')),
             'latest_backup' => $backups[0] ?? null,
-            'health_status' => $this->getHealthStatus($backupDestinations),
+            'health_status' => $allHealthy ? 'healthy' : 'unhealthy',
         ];
 
         return view('admin.backups.index', compact('backups', 'stats'));
@@ -97,17 +110,4 @@ class BackupController extends Controller
         }
     }
 
-    private function getHealthStatus($backupDestinations)
-    {
-        $healthy = true;
-        
-        foreach ($backupDestinations as $destination) {
-            if (!$destination->isHealthy()) {
-                $healthy = false;
-                break;
-            }
-        }
-
-        return $healthy ? 'healthy' : 'unhealthy';
-    }
 }
