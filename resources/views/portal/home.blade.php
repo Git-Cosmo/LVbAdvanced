@@ -105,56 +105,49 @@
                 </div>
             </h3>
             <div class="space-y-3">
-                <!-- FiveM Server -->
-                <div class="dark:bg-dark-bg-tertiary bg-light-bg-tertiary rounded-lg p-3 border dark:border-dark-border-primary border-light-border-primary hover:border-accent-blue transition-colors">
-                    <div class="flex items-center justify-between mb-2">
-                        <div class="flex items-center space-x-2">
-                            <div class="w-8 h-8 bg-gradient-to-br from-accent-purple to-accent-pink rounded flex items-center justify-center">
-                                <span class="text-white font-bold text-xs">5M</span>
+                @forelse($gameServers as $server)
+                    <div class="dark:bg-dark-bg-tertiary bg-light-bg-tertiary rounded-lg p-3 border dark:border-dark-border-primary border-light-border-primary hover:border-accent-blue transition-colors">
+                        <div class="flex items-center justify-between mb-2">
+                            <div class="flex items-center space-x-2">
+                                <div class="w-8 h-8 rounded flex items-center justify-center" style="background: linear-gradient(to bottom right, {{ $server->icon_color_from }}, {{ $server->icon_color_to }});">
+                                    <span class="text-white font-bold text-xs">{{ $server->game_short_code }}</span>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold dark:text-dark-text-primary text-light-text-primary text-sm">{{ $server->name }}</h4>
+                                    <p class="text-xs dark:text-dark-text-tertiary text-light-text-tertiary">{{ $server->game_mode ?? $server->game }}</p>
+                                </div>
                             </div>
-                            <div>
-                                <h4 class="font-semibold dark:text-dark-text-primary text-light-text-primary text-sm">FiveM Server</h4>
-                                <p class="text-xs dark:text-dark-text-tertiary text-light-text-tertiary">GTA V RP</p>
-                            </div>
+                            <span class="px-2 py-1 text-xs rounded font-semibold
+                                @if($server->status === 'online') bg-emerald-500/20 text-emerald-600 dark:text-emerald-400
+                                @elseif($server->status === 'offline') bg-rose-500/20 text-rose-600 dark:text-rose-400
+                                @elseif($server->status === 'maintenance') bg-amber-500/20 text-amber-600 dark:text-amber-400
+                                @else bg-yellow-500/20 text-yellow-600 dark:text-yellow-400
+                                @endif">
+                                {{ $server->status_label }}
+                            </span>
                         </div>
-                        <span class="px-2 py-1 bg-yellow-500/20 text-yellow-600 dark:text-yellow-400 text-xs rounded font-semibold">Soon</span>
+                        @if($server->description)
+                            <p class="text-xs dark:text-dark-text-secondary text-light-text-secondary mb-2">{{ $server->description }}</p>
+                        @endif
+                        @if($server->connect_address && $server->status === 'online')
+                            <div class="flex items-center justify-between">
+                                <code class="text-xs bg-gray-100 dark:bg-dark-bg-elevated px-2 py-1 rounded">{{ $server->connect_address }}</code>
+                                @if($server->max_players)
+                                    <span class="text-xs dark:text-dark-text-tertiary text-light-text-tertiary">{{ $server->current_players }}/{{ $server->max_players }}</span>
+                                @endif
+                            </div>
+                        @endif
                     </div>
-                    <p class="text-xs dark:text-dark-text-secondary text-light-text-secondary">High-quality roleplay experience coming soon</p>
-                </div>
-
-                <!-- Counter Strike 2 Server -->
-                <div class="dark:bg-dark-bg-tertiary bg-light-bg-tertiary rounded-lg p-3 border dark:border-dark-border-primary border-light-border-primary hover:border-accent-blue transition-colors">
-                    <div class="flex items-center justify-between mb-2">
-                        <div class="flex items-center space-x-2">
-                            <div class="w-8 h-8 bg-gradient-to-br from-accent-blue to-accent-teal rounded flex items-center justify-center">
-                                <span class="text-white font-bold text-xs">CS2</span>
-                            </div>
-                            <div>
-                                <h4 class="font-semibold dark:text-dark-text-primary text-light-text-primary text-sm">CS2 Server</h4>
-                                <p class="text-xs dark:text-dark-text-tertiary text-light-text-tertiary">Competitive</p>
-                            </div>
-                        </div>
-                        <span class="px-2 py-1 bg-yellow-500/20 text-yellow-600 dark:text-yellow-400 text-xs rounded font-semibold">Soon</span>
+                @empty
+                    <div class="text-center py-6">
+                        <svg class="w-12 h-12 mx-auto mb-3 dark:text-dark-text-tertiary text-light-text-tertiary opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01"/>
+                        </svg>
+                        <p class="dark:text-dark-text-secondary text-light-text-secondary text-sm">
+                            No game servers available yet.
+                        </p>
                     </div>
-                    <p class="text-xs dark:text-dark-text-secondary text-light-text-secondary">Custom maps and competitive matches</p>
-                </div>
-
-                <!-- Minecraft Server -->
-                <div class="dark:bg-dark-bg-tertiary bg-light-bg-tertiary rounded-lg p-3 border dark:border-dark-border-primary border-light-border-primary hover:border-accent-blue transition-colors">
-                    <div class="flex items-center justify-between mb-2">
-                        <div class="flex items-center space-x-2">
-                            <div class="w-8 h-8 bg-gradient-to-br from-accent-green to-accent-teal rounded flex items-center justify-center">
-                                <span class="text-white font-bold text-xs">MC</span>
-                            </div>
-                            <div>
-                                <h4 class="font-semibold dark:text-dark-text-primary text-light-text-primary text-sm">Minecraft Server</h4>
-                                <p class="text-xs dark:text-dark-text-tertiary text-light-text-tertiary">Survival/Creative</p>
-                            </div>
-                        </div>
-                        <span class="px-2 py-1 bg-yellow-500/20 text-yellow-600 dark:text-yellow-400 text-xs rounded font-semibold">Soon</span>
-                    </div>
-                    <p class="text-xs dark:text-dark-text-secondary text-light-text-secondary">Community-driven world building</p>
-                </div>
+                @endforelse
             </div>
         </div>
 

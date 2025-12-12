@@ -325,6 +325,18 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
         Route::post('/{event}/toggle-published', [\App\Http\Controllers\Admin\EventsManagementController::class, 'togglePublished'])->name('toggle-published');
         Route::delete('/{event}', [\App\Http\Controllers\Admin\EventsManagementController::class, 'destroy'])->name('destroy');
     });
+    
+    // Game Server Management
+    Route::prefix('game-servers')->name('game-servers.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Admin\GameServerController::class, 'index'])->name('index');
+        Route::get('/create', [\App\Http\Controllers\Admin\GameServerController::class, 'create'])->name('create');
+        Route::post('/', [\App\Http\Controllers\Admin\GameServerController::class, 'store'])->name('store');
+        Route::get('/{gameServer}/edit', [\App\Http\Controllers\Admin\GameServerController::class, 'edit'])->name('edit');
+        Route::put('/{gameServer}', [\App\Http\Controllers\Admin\GameServerController::class, 'update'])->name('update');
+        Route::delete('/{gameServer}', [\App\Http\Controllers\Admin\GameServerController::class, 'destroy'])->name('destroy');
+        Route::patch('/{gameServer}/toggle-active', [\App\Http\Controllers\Admin\GameServerController::class, 'toggleActive'])->name('toggle-active');
+        Route::patch('/{gameServer}/toggle-featured', [\App\Http\Controllers\Admin\GameServerController::class, 'toggleFeatured'])->name('toggle-featured');
+    });
 });
 
 // Public Leaderboard Route

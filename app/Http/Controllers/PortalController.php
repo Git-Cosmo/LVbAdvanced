@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\CheapSharkDeal;
 use App\Models\Event;
 use App\Models\Forum\ForumThread;
+use App\Models\GameServer;
 use App\Models\News;
 use App\Models\User\Gallery;
 use App\Services\AzuracastService;
@@ -57,6 +58,11 @@ class PortalController extends Controller
             ->take(3)
             ->get();
 
+        // Get active game servers
+        $gameServers = GameServer::active()
+            ->ordered()
+            ->get();
+
         return view('portal.home', [
             'nowPlaying' => $payload['now_playing'] ?? null,
             'upNext' => $payload['playing_next'] ?? null,
@@ -67,6 +73,7 @@ class PortalController extends Controller
             'latestDownloads' => $latestDownloads,
             'recentThreads' => $recentThreads,
             'upcomingEvents' => $upcomingEvents,
+            'gameServers' => $gameServers,
         ]);
     }
 }
