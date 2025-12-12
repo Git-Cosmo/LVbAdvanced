@@ -15,7 +15,7 @@ trait Cacheable
      * @param  array  $tags  Optional cache tags for easier clearing
      * @return mixed The result returned by the callback
      */
-    protected function cacheQuery(string $key, int $ttl, callable $callback, array $tags = [])
+    protected function cacheQuery(string $key, int $ttl = 3600, callable $callback, array $tags = [])
     {
         if (empty($tags)) {
             return Cache::remember($key, $ttl, $callback);
