@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\ActivityFeedController;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Cache;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Auth\EmailVerificationController;
 use App\Http\Controllers\Auth\LoginController;
@@ -23,9 +25,38 @@ use App\Http\Controllers\StatusController;
 Route::get('/', [PortalController::class, 'home'])->name('home');
 Route::get('/status', StatusController::class)->name('status');
 
-// Health check endpoint for Docker
+// Health check endpoint for Docker and monitoring
 Route::get('/up', function () {
-    return response()->json(['status' => 'ok'], 200);
+    $health = [
+        'status' => 'ok',
+        'timestamp' => now()->toIso8601String(),
+        'environment' => app()->environment(),
+    ];
+    
+    // Basic checks
+    try {
+        // Database check
+        DB::connection()->getPdo();
+        $health['database'] = 'ok';
+    } catch (\Exception $e) {
+        $health['database'] = 'error';
+        $health['status'] = 'error';
+    }
+    
+    // Cache check
+    try {
+        Cache::put('health_check', true, 10);
+        $health['cache'] = Cache::get('health_check') ? 'ok' : 'error';
+    } catch (\Exception $e) {
+        $health['cache'] = 'error';
+    }
+    
+    // Storage check
+    $health['storage'] = is_writable(storage_path()) ? 'ok' : 'error';
+    
+    $statusCode = $health['status'] === 'ok' ? 200 : 503;
+    
+    return response()->json($health, $statusCode);
 })->name('health');
 
 // Static Pages
@@ -94,6 +125,7 @@ Route::middleware('auth')->prefix('settings')->name('settings.')->group(function
     Route::patch('/password', [\App\Http\Controllers\SettingsController::class, 'updatePassword'])->name('update.password');
     Route::patch('/privacy', [\App\Http\Controllers\SettingsController::class, 'updatePrivacy'])->name('update.privacy');
     Route::patch('/notifications', [\App\Http\Controllers\SettingsController::class, 'updateNotifications'])->name('update.notifications');
+    Route::patch('/status', [\App\Http\Controllers\SettingsController::class, 'updateStatus'])->name('update.status');
 });
 
 // Notification Routes
@@ -476,6 +508,12 @@ Route::prefix('casual-games')->name('casual-games.')->group(function () {
 Route::prefix('events')->name('events.')->group(function () {
     Route::get('/', [\App\Http\Controllers\EventsController::class, 'index'])->name('index');
     Route::get('/{event}', [\App\Http\Controllers\EventsController::class, 'show'])->name('show');
+    
+    // RSVP routes (requires authentication)
+    Route::middleware('auth')->group(function () {
+        Route::post('/{event}/rsvp', [\App\Http\Controllers\EventsController::class, 'rsvp'])->name('rsvp');
+        Route::delete('/{event}/rsvp', [\App\Http\Controllers\EventsController::class, 'cancelRsvp'])->name('rsvp.cancel');
+    });
 });
 
 // Downloads Routes (formerly Media & Gallery)

@@ -166,6 +166,36 @@
             </div>
             @endif
             
+            <!-- Achievements -->
+            @if($user->achievements->isNotEmpty())
+            <div class="dark:bg-dark-bg-secondary bg-light-bg-secondary rounded-xl p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-bold dark:text-dark-text-bright text-light-text-bright">Achievements</h3>
+                    <a href="{{ route('achievements.user', $user) }}" class="text-sm text-accent-blue hover:text-accent-purple transition-colors">
+                        View All ({{ $user->achievements->count() }})
+                    </a>
+                </div>
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                    @foreach($user->achievements->take(6) as $achievement)
+                    <div class="relative group dark:bg-dark-bg-tertiary bg-light-bg-tertiary rounded-lg p-3 hover:scale-105 transition-transform">
+                        <div class="text-center">
+                            <div class="text-4xl mb-2">{{ $achievement->icon ?? '🏆' }}</div>
+                            <div class="text-xs font-semibold dark:text-dark-text-bright text-light-text-bright mb-1">
+                                {{ $achievement->name }}
+                            </div>
+                            <div class="text-xs dark:text-dark-text-tertiary text-light-text-tertiary">
+                                {{ $achievement->description }}
+                            </div>
+                        </div>
+                        @if($achievement->pivot->unlocked_at)
+                        <div class="absolute top-1 right-1 w-2 h-2 bg-accent-blue rounded-full" title="Unlocked {{ $achievement->pivot->unlocked_at->diffForHumans() }}"></div>
+                        @endif
+                    </div>
+                    @endforeach
+                </div>
+            </div>
+            @endif
+            
             <!-- Followers/Following -->
             <div class="dark:bg-dark-bg-secondary bg-light-bg-secondary rounded-xl p-6">
                 <h3 class="text-lg font-bold dark:text-dark-text-bright text-light-text-bright mb-4">Community</h3>

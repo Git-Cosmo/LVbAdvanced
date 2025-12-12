@@ -40,6 +40,11 @@
                     class="px-4 py-2 font-medium transition-colors">
                 Notifications
             </button>
+            <button @click="activeTab = 'status'" 
+                    :class="activeTab === 'status' ? 'border-b-2 border-accent-blue text-accent-blue' : 'dark:text-dark-text-secondary text-light-text-secondary'"
+                    class="px-4 py-2 font-medium transition-colors">
+                Status
+            </button>
         </div>
 
         <!-- Account Settings -->
@@ -330,6 +335,127 @@
                 <div class="mt-6 flex justify-end">
                     <button type="submit" class="px-6 py-2 bg-gradient-to-r from-accent-blue to-accent-purple text-white rounded-lg font-medium hover:shadow-lg hover:scale-105 transition-all">
                         Save Notification Settings
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Status Settings -->
+        <div x-show="activeTab === 'status'" class="mt-6">
+            <form action="{{ route('settings.update.status') }}" method="POST" class="dark:bg-dark-bg-secondary bg-light-bg-secondary rounded-lg shadow-md p-6">
+                @csrf
+                @method('PATCH')
+
+                <h2 class="text-xl font-bold dark:text-dark-text-bright text-light-text-bright mb-4">
+                    User Status
+                </h2>
+
+                <div class="space-y-6">
+                    <!-- Status Selection -->
+                    <div>
+                        <label class="block text-sm font-medium dark:text-dark-text-bright text-light-text-bright mb-3">
+                            Current Status
+                        </label>
+                        <div class="space-y-3">
+                            <label class="flex items-center p-3 dark:bg-dark-bg-tertiary bg-light-bg-tertiary rounded-lg cursor-pointer hover:opacity-80 transition-opacity">
+                                <input type="radio" 
+                                       name="status" 
+                                       value="online"
+                                       {{ ($user->profile?->status ?? 'online') === 'online' ? 'checked' : '' }}
+                                       class="w-4 h-4 text-accent-blue focus:ring-2 focus:ring-accent-blue">
+                                <div class="ml-3 flex items-center space-x-3">
+                                    <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+                                    <div>
+                                        <div class="font-medium dark:text-dark-text-bright text-light-text-bright">Online</div>
+                                        <div class="text-sm dark:text-dark-text-tertiary text-light-text-tertiary">Available for chat and gaming</div>
+                                    </div>
+                                </div>
+                            </label>
+
+                            <label class="flex items-center p-3 dark:bg-dark-bg-tertiary bg-light-bg-tertiary rounded-lg cursor-pointer hover:opacity-80 transition-opacity">
+                                <input type="radio" 
+                                       name="status" 
+                                       value="away"
+                                       {{ ($user->profile?->status ?? 'online') === 'away' ? 'checked' : '' }}
+                                       class="w-4 h-4 text-accent-blue focus:ring-2 focus:ring-accent-blue">
+                                <div class="ml-3 flex items-center space-x-3">
+                                    <div class="w-3 h-3 bg-yellow-500 rounded-full"></div>
+                                    <div>
+                                        <div class="font-medium dark:text-dark-text-bright text-light-text-bright">Away</div>
+                                        <div class="text-sm dark:text-dark-text-tertiary text-light-text-tertiary">I'll be back soon</div>
+                                    </div>
+                                </div>
+                            </label>
+
+                            <label class="flex items-center p-3 dark:bg-dark-bg-tertiary bg-light-bg-tertiary rounded-lg cursor-pointer hover:opacity-80 transition-opacity">
+                                <input type="radio" 
+                                       name="status" 
+                                       value="busy"
+                                       {{ ($user->profile?->status ?? 'online') === 'busy' ? 'checked' : '' }}
+                                       class="w-4 h-4 text-accent-blue focus:ring-2 focus:ring-accent-blue">
+                                <div class="ml-3 flex items-center space-x-3">
+                                    <div class="w-3 h-3 bg-red-500 rounded-full"></div>
+                                    <div>
+                                        <div class="font-medium dark:text-dark-text-bright text-light-text-bright">Busy</div>
+                                        <div class="text-sm dark:text-dark-text-tertiary text-light-text-tertiary">Do not disturb</div>
+                                    </div>
+                                </div>
+                            </label>
+
+                            <label class="flex items-center p-3 dark:bg-dark-bg-tertiary bg-light-bg-tertiary rounded-lg cursor-pointer hover:opacity-80 transition-opacity">
+                                <input type="radio" 
+                                       name="status" 
+                                       value="offline"
+                                       {{ ($user->profile?->status ?? 'online') === 'offline' ? 'checked' : '' }}
+                                       class="w-4 h-4 text-accent-blue focus:ring-2 focus:ring-accent-blue">
+                                <div class="ml-3 flex items-center space-x-3">
+                                    <div class="w-3 h-3 bg-gray-500 rounded-full"></div>
+                                    <div>
+                                        <div class="font-medium dark:text-dark-text-bright text-light-text-bright">Offline</div>
+                                        <div class="text-sm dark:text-dark-text-tertiary text-light-text-tertiary">Appear offline to everyone</div>
+                                    </div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Status Message -->
+                    <div>
+                        <label for="status_message" class="block text-sm font-medium dark:text-dark-text-bright text-light-text-bright mb-2">
+                            Custom Status Message <span class="text-xs dark:text-dark-text-tertiary text-light-text-tertiary">(Optional)</span>
+                        </label>
+                        <input type="text" 
+                               name="status_message" 
+                               id="status_message" 
+                               value="{{ old('status_message', $user->profile?->status_message) }}"
+                               maxlength="140"
+                               placeholder="What are you up to? (e.g., Playing CS2, In a tournament, etc.)"
+                               class="w-full px-4 py-2 rounded-lg dark:bg-dark-bg-tertiary bg-light-bg-tertiary dark:text-dark-text-primary text-light-text-primary focus:outline-none focus:ring-2 focus:ring-accent-blue">
+                        <p class="mt-1 text-xs dark:text-dark-text-tertiary text-light-text-tertiary">
+                            Max 140 characters. This will be visible to others when they view your profile.
+                        </p>
+                        @error('status_message')
+                            <p class="mt-1 text-sm text-accent-red">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <!-- Info Box -->
+                    <div class="p-4 dark:bg-dark-bg-tertiary bg-light-bg-tertiary rounded-lg border dark:border-dark-border-primary border-light-border-primary">
+                        <div class="flex items-start space-x-3">
+                            <svg class="w-5 h-5 dark:text-dark-text-accent text-light-text-accent flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            <div class="text-sm dark:text-dark-text-secondary text-light-text-secondary">
+                                <p class="font-medium mb-1">About Status</p>
+                                <p>Your status will be automatically set to "Away" after 5 minutes of inactivity and "Offline" after 15 minutes. You can manually change it anytime.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-6 flex justify-end">
+                    <button type="submit" class="px-6 py-2 bg-gradient-to-r from-accent-blue to-accent-purple text-white rounded-lg font-medium hover:shadow-lg hover:scale-105 transition-all">
+                        Update Status
                     </button>
                 </div>
             </form>

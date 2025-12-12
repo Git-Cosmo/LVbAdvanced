@@ -105,4 +105,34 @@ class SettingsController extends Controller
 
         return redirect()->route('settings.index')->with('success', 'Notification preferences updated successfully!');
     }
+
+    /**
+     * Update user status.
+     */
+    public function updateStatus(Request $request)
+    {
+        $user = auth()->user();
+        
+        // Ensure profile exists
+        if (!$user->profile) {
+            $user->profile()->create([
+                'status' => 'online',
+            ]);
+        }
+        
+        $profile = $user->profile;
+
+        $validated = $request->validate([
+            'status' => 'required|in:online,away,busy,offline',
+            'status_message' => 'nullable|string|max:140',
+        ]);
+
+        $profile->update([
+            'status' => $validated['status'],
+            'status_message' => $validated['status_message'],
+            'status_updated_at' => now(),
+        ]);
+
+        return redirect()->route('settings.index')->with('success', 'Status updated successfully!');
+    }
 }
