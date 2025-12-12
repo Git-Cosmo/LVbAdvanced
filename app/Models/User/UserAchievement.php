@@ -43,4 +43,16 @@ class UserAchievement extends Model
     {
         return $this->is_active;
     }
+
+    /**
+     * Get formatted unlocked at date from pivot.
+     */
+    public function getFormattedUnlockedAtAttribute(): ?string
+    {
+        if (!$this->pivot || !$this->pivot->unlocked_at) {
+            return null;
+        }
+
+        return \Carbon\Carbon::parse($this->pivot->unlocked_at)->diffForHumans();
+    }
 }

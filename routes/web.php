@@ -337,6 +337,60 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
         Route::patch('/{gameServer}/toggle-active', [\App\Http\Controllers\Admin\GameServerController::class, 'toggleActive'])->name('toggle-active');
         Route::patch('/{gameServer}/toggle-featured', [\App\Http\Controllers\Admin\GameServerController::class, 'toggleFeatured'])->name('toggle-featured');
     });
+    
+    // Tournament Management
+    Route::prefix('tournaments')->name('tournaments.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Admin\TournamentManagementController::class, 'index'])->name('index');
+        Route::get('/{tournament}', [\App\Http\Controllers\Admin\TournamentManagementController::class, 'show'])->name('show');
+        Route::post('/{tournament}/generate-brackets', [\App\Http\Controllers\Admin\TournamentManagementController::class, 'generateBrackets'])->name('generate-brackets');
+        Route::post('/participants/{participant}/approve', [\App\Http\Controllers\Admin\TournamentManagementController::class, 'approveParticipant'])->name('participants.approve');
+        Route::post('/participants/{participant}/reject', [\App\Http\Controllers\Admin\TournamentManagementController::class, 'rejectParticipant'])->name('participants.reject');
+        Route::post('/matches/{match}/result', [\App\Http\Controllers\Admin\TournamentManagementController::class, 'updateMatchResult'])->name('matches.result');
+    });
+    
+    // Theme Settings
+    Route::prefix('themes')->name('themes.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Admin\ThemeSettingsController::class, 'index'])->name('index');
+        Route::get('/create', [\App\Http\Controllers\Admin\ThemeSettingsController::class, 'create'])->name('create');
+        Route::post('/', [\App\Http\Controllers\Admin\ThemeSettingsController::class, 'store'])->name('store');
+        Route::get('/{theme}/edit', [\App\Http\Controllers\Admin\ThemeSettingsController::class, 'edit'])->name('edit');
+        Route::patch('/{theme}', [\App\Http\Controllers\Admin\ThemeSettingsController::class, 'update'])->name('update');
+        Route::delete('/{theme}', [\App\Http\Controllers\Admin\ThemeSettingsController::class, 'destroy'])->name('destroy');
+        Route::post('/{theme}/toggle', [\App\Http\Controllers\Admin\ThemeSettingsController::class, 'toggle'])->name('toggle');
+    });
+    
+    // Casual Games Management
+    Route::prefix('casual-games')->name('casual-games.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Admin\CasualGamesController::class, 'index'])->name('index');
+        
+        // Trivia Management
+        Route::prefix('trivia')->name('trivia.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\Admin\TriviaManagementController::class, 'index'])->name('index');
+            Route::get('/create', [\App\Http\Controllers\Admin\TriviaManagementController::class, 'create'])->name('create');
+            Route::post('/', [\App\Http\Controllers\Admin\TriviaManagementController::class, 'store'])->name('store');
+            Route::get('/{triviaGame}/edit', [\App\Http\Controllers\Admin\TriviaManagementController::class, 'edit'])->name('edit');
+            Route::patch('/{triviaGame}', [\App\Http\Controllers\Admin\TriviaManagementController::class, 'update'])->name('update');
+            Route::delete('/{triviaGame}', [\App\Http\Controllers\Admin\TriviaManagementController::class, 'destroy'])->name('destroy');
+            Route::post('/{triviaGame}/questions', [\App\Http\Controllers\Admin\TriviaManagementController::class, 'addQuestion'])->name('questions.add');
+            Route::delete('/questions/{question}', [\App\Http\Controllers\Admin\TriviaManagementController::class, 'deleteQuestion'])->name('questions.delete');
+        });
+        
+        // Predictions Management
+        Route::prefix('predictions')->name('predictions.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\Admin\PredictionManagementController::class, 'index'])->name('index');
+            Route::get('/create', [\App\Http\Controllers\Admin\PredictionManagementController::class, 'create'])->name('create');
+            Route::post('/', [\App\Http\Controllers\Admin\PredictionManagementController::class, 'store'])->name('store');
+            Route::post('/{prediction}/resolve', [\App\Http\Controllers\Admin\PredictionManagementController::class, 'resolve'])->name('resolve');
+        });
+        
+        // Daily Challenges Management
+        Route::prefix('challenges')->name('challenges.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\Admin\DailyChallengeManagementController::class, 'index'])->name('index');
+            Route::get('/create', [\App\Http\Controllers\Admin\DailyChallengeManagementController::class, 'create'])->name('create');
+            Route::post('/', [\App\Http\Controllers\Admin\DailyChallengeManagementController::class, 'store'])->name('store');
+            Route::delete('/{challenge}', [\App\Http\Controllers\Admin\DailyChallengeManagementController::class, 'destroy'])->name('destroy');
+        });
+    });
 });
 
 // Public Leaderboard Route
@@ -393,6 +447,31 @@ Route::get('/reddit/{post}', [\App\Http\Controllers\RedditController::class, 'sh
 Route::get('/streamerbans', [\App\Http\Controllers\StreamerBansController::class, 'index'])->name('streamerbans.index');
 Route::get('/streamerbans/{streamerBan}', [\App\Http\Controllers\StreamerBansController::class, 'show'])->name('streamerbans.show');
 
+// Casual Games Routes
+Route::prefix('casual-games')->name('casual-games.')->group(function () {
+    Route::get('/', [\App\Http\Controllers\CasualGamesController::class, 'index'])->name('index');
+    
+    // Trivia
+    Route::prefix('trivia')->name('trivia.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\CasualGamesController::class, 'triviaIndex'])->name('index');
+        Route::get('/{triviaGame}', [\App\Http\Controllers\CasualGamesController::class, 'triviaShow'])->name('show');
+        Route::post('/{triviaGame}/submit', [\App\Http\Controllers\CasualGamesController::class, 'triviaSubmit'])->name('submit')->middleware('auth');
+        Route::get('/result/{attempt}', [\App\Http\Controllers\CasualGamesController::class, 'triviaResult'])->name('result')->middleware('auth');
+    });
+    
+    // Predictions
+    Route::prefix('predictions')->name('predictions.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\CasualGamesController::class, 'predictionsIndex'])->name('index');
+        Route::get('/{prediction}', [\App\Http\Controllers\CasualGamesController::class, 'predictionShow'])->name('show');
+        Route::post('/{prediction}/submit', [\App\Http\Controllers\CasualGamesController::class, 'predictionSubmit'])->name('submit')->middleware('auth');
+    });
+    
+    // Daily Challenges
+    Route::prefix('challenges')->name('challenges.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\CasualGamesController::class, 'challengesIndex'])->name('index');
+    });
+});
+
 // Events Routes
 Route::prefix('events')->name('events.')->group(function () {
     Route::get('/', [\App\Http\Controllers\EventsController::class, 'index'])->name('index');
@@ -413,5 +492,60 @@ Route::prefix('downloads')->name('downloads.')->group(function () {
     });
 });
 
+// Achievements Routes
+Route::prefix('achievements')->name('achievements.')->group(function () {
+    Route::get('/', [\App\Http\Controllers\AchievementController::class, 'index'])->name('index');
+    Route::get('/user/{user}', [\App\Http\Controllers\AchievementController::class, 'user'])->name('user');
+});
+
+// Tournament Routes
+Route::prefix('tournaments')->name('tournaments.')->group(function () {
+    Route::get('/', [\App\Http\Controllers\TournamentController::class, 'index'])->name('index');
+    Route::get('/create', [\App\Http\Controllers\TournamentController::class, 'create'])->name('create')->middleware('auth');
+    Route::post('/', [\App\Http\Controllers\TournamentController::class, 'store'])->name('store')->middleware('auth');
+    Route::get('/{tournament}', [\App\Http\Controllers\TournamentController::class, 'show'])->name('show');
+    Route::get('/{tournament}/bracket', [\App\Http\Controllers\TournamentController::class, 'bracket'])->name('bracket');
+    Route::get('/{tournament}/participants', [\App\Http\Controllers\TournamentController::class, 'participants'])->name('participants');
+    
+    Route::middleware('auth')->group(function () {
+        Route::post('/{tournament}/register', [\App\Http\Controllers\TournamentController::class, 'register'])->name('register');
+        Route::post('/{tournament}/check-in', [\App\Http\Controllers\TournamentController::class, 'checkIn'])->name('check-in');
+        Route::post('/{tournament}/announcements', [\App\Http\Controllers\TournamentController::class, 'postAnnouncement'])->name('announcements.store');
+    });
+});
+
 // Sitemap Route
 Route::get('/sitemap.xml', [\App\Http\Controllers\SitemapController::class, 'index'])->name('sitemap');
+
+// Activity Log Routes (Admin)
+Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/activity-log', [App\Http\Controllers\Admin\ActivityLogController::class, 'index'])->name('activity-log.index');
+    Route::get('/activity-log/{activity}', [App\Http\Controllers\Admin\ActivityLogController::class, 'show'])->name('activity-log.show');
+    Route::delete('/activity-log/{activity}', [App\Http\Controllers\Admin\ActivityLogController::class, 'destroy'])->name('activity-log.destroy');
+    Route::post('/activity-log/clean', [App\Http\Controllers\Admin\ActivityLogController::class, 'clean'])->name('activity-log.clean');
+
+    // Backup Routes
+    Route::get('/backups', [App\Http\Controllers\Admin\BackupController::class, 'index'])->name('backups.index');
+    Route::post('/backups/create', [App\Http\Controllers\Admin\BackupController::class, 'create'])->name('backups.create');
+    Route::get('/backups/{disk}/{path}/download', [App\Http\Controllers\Admin\BackupController::class, 'download'])->name('backups.download');
+    Route::delete('/backups/{disk}/{path}', [App\Http\Controllers\Admin\BackupController::class, 'destroy'])->name('backups.destroy');
+    Route::post('/backups/clean', [App\Http\Controllers\Admin\BackupController::class, 'clean'])->name('backups.clean');
+});
+
+// Public Casual Games Routes
+Route::middleware(['auth'])->prefix('casual-games')->name('casual-games.')->group(function () {
+    // Trivia
+    Route::get('/trivia', [App\Http\Controllers\CasualGamesController::class, 'triviaIndex'])->name('trivia.index');
+    Route::get('/trivia/{game}', [App\Http\Controllers\CasualGamesController::class, 'triviaShow'])->name('trivia.show');
+    Route::post('/trivia/{game}/submit', [App\Http\Controllers\CasualGamesController::class, 'triviaSubmit'])->name('trivia.submit');
+    
+    // Predictions
+    Route::get('/predictions', [App\Http\Controllers\CasualGamesController::class, 'predictionsIndex'])->name('predictions.index');
+    Route::get('/predictions/{prediction}', [App\Http\Controllers\CasualGamesController::class, 'predictionsShow'])->name('predictions.show');
+    Route::post('/predictions/{prediction}/submit', [App\Http\Controllers\CasualGamesController::class, 'predictionsSubmit'])->name('predictions.submit');
+    
+    // Challenges
+    Route::get('/challenges', [App\Http\Controllers\CasualGamesController::class, 'challengesIndex'])->name('challenges.index');
+    Route::get('/challenges/{challenge}', [App\Http\Controllers\CasualGamesController::class, 'challengesShow'])->name('challenges.show');
+    Route::post('/challenges/{challenge}/complete', [App\Http\Controllers\CasualGamesController::class, 'challengesComplete'])->name('challenges.complete');
+});

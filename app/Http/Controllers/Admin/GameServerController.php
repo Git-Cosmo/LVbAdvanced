@@ -9,11 +9,6 @@ use Illuminate\Support\Facades\Log;
 
 class GameServerController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware(['auth', 'role:Administrator|Super Moderator']);
-    }
-
     /**
      * Display a listing of game servers.
      */

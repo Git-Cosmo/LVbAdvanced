@@ -31,4 +31,16 @@ class UserBadge extends Model
             ->withTimestamps()
             ->withPivot('awarded_at');
     }
+
+    /**
+     * Get formatted awarded at date from pivot.
+     */
+    public function getFormattedAwardedAtAttribute(): ?string
+    {
+        if (!$this->pivot || !$this->pivot->awarded_at) {
+            return null;
+        }
+
+        return \Carbon\Carbon::parse($this->pivot->awarded_at)->diffForHumans();
+    }
 }

@@ -125,6 +125,23 @@
                     StreamerBans
                 </a>
                 
+                <div class="mt-6 px-6 py-3 text-xs uppercase dark:text-dark-text-tertiary text-light-text-tertiary font-semibold">Community</div>
+                
+                <a href="{{ route('admin.tournaments.index') }}" class="flex items-center px-6 py-3 {{ request()->routeIs('admin.tournaments.*') ? 'bg-gradient-to-r from-accent-blue to-accent-purple text-white' : 'dark:text-dark-text-primary text-light-text-primary dark:hover:bg-dark-bg-tertiary hover:bg-light-bg-tertiary' }} transition-colors">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    Tournaments
+                </a>
+                
+                <a href="{{ route('admin.casual-games.index') }}" class="flex items-center px-6 py-3 {{ request()->routeIs('admin.casual-games.*') ? 'bg-gradient-to-r from-accent-blue to-accent-purple text-white' : 'dark:text-dark-text-primary text-light-text-primary dark:hover:bg-dark-bg-tertiary hover:bg-light-bg-tertiary' }} transition-colors">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    Casual Games
+                </a>
+                
                 <div class="mt-6 px-6 py-3 text-xs uppercase dark:text-dark-text-tertiary text-light-text-tertiary font-semibold">Gamification</div>
                 
                 <a href="{{ route('admin.reputation.index') }}" class="flex items-center px-6 py-3 {{ request()->routeIs('admin.reputation.*') ? 'bg-gradient-to-r from-accent-blue to-accent-purple text-white' : 'dark:text-dark-text-primary text-light-text-primary dark:hover:bg-dark-bg-tertiary hover:bg-light-bg-tertiary' }} transition-colors">
@@ -142,6 +159,27 @@
                 </a>
                 
                 <div class="mt-6 px-6 py-3 text-xs uppercase dark:text-dark-text-tertiary text-light-text-tertiary font-semibold">System</div>
+                
+                <a href="{{ route('admin.themes.index') }}" class="flex items-center px-6 py-3 {{ request()->routeIs('admin.themes.*') ? 'bg-gradient-to-r from-accent-blue to-accent-purple text-white' : 'dark:text-dark-text-primary text-light-text-primary dark:hover:bg-dark-bg-tertiary hover:bg-light-bg-tertiary' }} transition-colors">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"/>
+                    </svg>
+                    Theme Settings
+                </a>
+                
+                <a href="{{ route('admin.activity-log.index') }}" class="flex items-center px-6 py-3 {{ request()->routeIs('admin.activity-log.*') ? 'bg-gradient-to-r from-accent-blue to-accent-purple text-white' : 'dark:text-dark-text-primary text-light-text-primary dark:hover:bg-dark-bg-tertiary hover:bg-light-bg-tertiary' }} transition-colors">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                    </svg>
+                    Activity Log
+                </a>
+                
+                <a href="{{ route('admin.backups.index') }}" class="flex items-center px-6 py-3 {{ request()->routeIs('admin.backups.*') ? 'bg-gradient-to-r from-accent-blue to-accent-purple text-white' : 'dark:text-dark-text-primary text-light-text-primary dark:hover:bg-dark-bg-tertiary hover:bg-light-bg-tertiary' }} transition-colors">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"/>
+                    </svg>
+                    Backup Management
+                </a>
                 
                 <a href="{{ route('admin.schedule-monitor.index') }}" class="flex items-center px-6 py-3 {{ request()->routeIs('admin.schedule-monitor.*') ? 'bg-gradient-to-r from-accent-blue to-accent-purple text-white' : 'dark:text-dark-text-primary text-light-text-primary dark:hover:bg-dark-bg-tertiary hover:bg-light-bg-tertiary' }} transition-colors">
                     <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">

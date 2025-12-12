@@ -105,7 +105,6 @@
                         <div x-data="{ open: false }" @click.away="open = false" class="relative">
                             <button @click="open = !open" 
                                     aria-label="Games menu"
-                                    aria-expanded="false"
                                     aria-haspopup="true"
                                     :aria-expanded="open.toString()"
                                     class="px-4 py-2 rounded-lg dark:text-dark-text-primary text-light-text-primary dark:hover:bg-dark-bg-tertiary hover:bg-light-bg-tertiary dark:hover:text-dark-text-accent hover:text-light-text-accent transition-all font-medium">
@@ -150,11 +149,88 @@
                                 <span>Events</span>
                             </div>
                         </a>
+
+                        <!-- Community Dropdown -->
+                        <div x-data="{ open: false }" @click.away="open = false" class="relative">
+                            <button @click="open = !open" 
+                                    aria-label="Community menu"
+                                    aria-haspopup="true"
+                                    :aria-expanded="open.toString()"
+                                    class="px-4 py-2 rounded-lg dark:text-dark-text-primary text-light-text-primary dark:hover:bg-dark-bg-tertiary hover:bg-light-bg-tertiary dark:hover:text-dark-text-accent hover:text-light-text-accent transition-all font-medium">
+                                <div class="flex items-center space-x-2">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                                    </svg>
+                                    <span>Community</span>
+                                    <svg class="w-4 h-4" :class="{'rotate-180': open}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                                    </svg>
+                                </div>
+                            </button>
+                            
+                            <div x-show="open" x-transition class="absolute left-0 mt-2 w-48 dark:bg-dark-bg-secondary bg-light-bg-secondary rounded-xl shadow-xl dark:border dark:border-dark-border-primary border-light-border-primary py-2 z-50">
+                                <a href="{{ route('downloads.index') }}" class="flex items-center space-x-2 px-4 py-2 dark:hover:bg-dark-bg-tertiary hover:bg-light-bg-tertiary dark:text-dark-text-primary text-light-text-primary transition-colors">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10"/>
+                                    </svg>
+                                    <span>Downloads</span>
+                                </a>
+                                <a href="{{ route('clans.index') }}" class="flex items-center space-x-2 px-4 py-2 dark:hover:bg-dark-bg-tertiary hover:bg-light-bg-tertiary dark:text-dark-text-primary text-light-text-primary transition-colors">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                                    </svg>
+                                    <span>Clans</span>
+                                </a>
+                                <a href="{{ route('achievements.index') }}" class="flex items-center space-x-2 px-4 py-2 dark:hover:bg-dark-bg-tertiary hover:bg-light-bg-tertiary dark:text-dark-text-primary text-light-text-primary transition-colors">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/>
+                                    </svg>
+                                    <span>Achievements</span>
+                                </a>
+                                <a href="{{ route('leaderboard.index') }}" class="flex items-center space-x-2 px-4 py-2 dark:hover:bg-dark-bg-tertiary hover:bg-light-bg-tertiary dark:text-dark-text-primary text-light-text-primary transition-colors">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                                    </svg>
+                                    <span>Leaderboard</span>
+                                </a>
+                                <a href="{{ route('activity.whats-new') }}" class="flex items-center space-x-2 px-4 py-2 dark:hover:bg-dark-bg-tertiary hover:bg-light-bg-tertiary dark:text-dark-text-primary text-light-text-primary transition-colors">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                                    </svg>
+                                    <span>What's New</span>
+                                </a>
+                                <a href="{{ route('tournaments.index') }}" class="flex items-center space-x-2 px-4 py-2 dark:hover:bg-dark-bg-tertiary hover:bg-light-bg-tertiary dark:text-dark-text-primary text-light-text-primary transition-colors">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/>
+                                    </svg>
+                                    <span>Tournaments</span>
+                                </a>
+                                <a href="{{ route('casual-games.index') }}" class="flex items-center space-x-2 px-4 py-2 dark:hover:bg-dark-bg-tertiary hover:bg-light-bg-tertiary dark:text-dark-text-primary text-light-text-primary transition-colors">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                    <span>Casual Games</span>
+                                </a>
+                                @auth
+                                <a href="{{ route('integrations.index') }}" class="flex items-center space-x-2 px-4 py-2 dark:hover:bg-dark-bg-tertiary hover:bg-light-bg-tertiary dark:text-dark-text-primary text-light-text-primary transition-colors">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 10-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 00-1-1H4a2 2 0 110-4h1a1 1 0 001-1V7a1 1 0 011-1h3a1 1 0 001-1V4z"/>
+                                    </svg>
+                                    <span>Integrations</span>
+                                </a>
+                                @endauth
+                            </div>
+                        </div>
                         
 
                         <!-- Streamers Dropdown -->
                         <div x-data="{ open: false }" @click.away="open = false" class="relative">
-                            <button @click="open = !open" class="px-4 py-2 rounded-lg dark:text-dark-text-primary text-light-text-primary dark:hover:bg-dark-bg-tertiary hover:bg-light-bg-tertiary dark:hover:text-dark-text-accent hover:text-light-text-accent transition-all font-medium">
+                            <button @click="open = !open" 
+                                    aria-label="Streamers menu"
+                                    aria-haspopup="true"
+                                    :aria-expanded="open.toString()"
+                                    class="px-4 py-2 rounded-lg dark:text-dark-text-primary text-light-text-primary dark:hover:bg-dark-bg-tertiary hover:bg-light-bg-tertiary dark:hover:text-dark-text-accent hover:text-light-text-accent transition-all font-medium">
                                 <div class="flex items-center space-x-2">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
@@ -186,12 +262,22 @@
                                     </svg>
                                     <span>Bans</span>
                                 </a>
+                                <a href="{{ route('aitah.index') }}" class="flex items-center space-x-2 px-4 py-2 dark:hover:bg-dark-bg-tertiary hover:bg-light-bg-tertiary dark:text-dark-text-primary text-light-text-primary transition-colors">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                                    </svg>
+                                    <span>AITAH</span>
+                                </a>
                             </div>
                         </div>
                         
                         <!-- Radio Dropdown -->
                         <div x-data="{ open: false }" @click.away="open = false" class="relative">
-                            <button @click="open = !open" class="px-4 py-2 rounded-lg dark:text-dark-text-primary text-light-text-primary dark:hover:bg-dark-bg-tertiary hover:bg-light-bg-tertiary dark:hover:text-dark-text-accent hover:text-light-text-accent transition-all font-medium">
+                            <button @click="open = !open" 
+                                    aria-label="Radio menu"
+                                    aria-haspopup="true"
+                                    :aria-expanded="open.toString()"
+                                    class="px-4 py-2 rounded-lg dark:text-dark-text-primary text-light-text-primary dark:hover:bg-dark-bg-tertiary hover:bg-light-bg-tertiary dark:hover:text-dark-text-accent hover:text-light-text-accent transition-all font-medium">
                                 <div class="flex items-center space-x-2">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"/>
@@ -664,5 +750,8 @@
 
     <!-- Cookie Consent -->
     @include('cookie-consent::index')
+    
+    {{-- Theme Effects (Snow, Lights, etc.) --}}
+    <x-theme-effects />
 </body>
 </html>
