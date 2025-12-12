@@ -151,14 +151,15 @@
                             </div>
                         </a>
                         
-                        <!-- Reddit Content Dropdown -->
+
+                        <!-- Streamers Dropdown -->
                         <div x-data="{ open: false }" @click.away="open = false" class="relative">
                             <button @click="open = !open" class="px-4 py-2 rounded-lg dark:text-dark-text-primary text-light-text-primary dark:hover:bg-dark-bg-tertiary hover:bg-light-bg-tertiary dark:hover:text-dark-text-accent hover:text-light-text-accent transition-all font-medium">
                                 <div class="flex items-center space-x-2">
-                                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                                        <path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.49 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .238-.042l2.906.617a1.214 1.214 0 0 1 1.108-.701zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.561-1.248 1.25 0 .687.561 1.248 1.249 1.248.688 0 1.249-.561 1.249-1.249 0-.687-.562-1.249-1.25-1.249zm-5.466 3.99a.327.327 0 0 0-.231.094.33.33 0 0 0 0 .463c.842.842 2.484.913 2.961.913.477 0 2.105-.056 2.961-.913a.361.361 0 0 0 .029-.463.33.33 0 0 0-.464 0c-.547.533-1.684.73-2.512.73-.828 0-1.979-.196-2.512-.73a.326.326 0 0 0-.232-.095z"/>
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
                                     </svg>
-                                    <span>Reddit</span>
+                                    <span>Streamers</span>
                                     <svg class="w-4 h-4" :class="{'rotate-180': open}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                                     </svg>
@@ -166,6 +167,12 @@
                             </button>
                             
                             <div x-show="open" x-transition class="absolute left-0 mt-2 w-48 dark:bg-dark-bg-secondary bg-light-bg-secondary rounded-xl shadow-xl dark:border dark:border-dark-border-primary border-light-border-primary py-2 z-50">
+                                <a href="{{ route('streamerbans.index') }}" class="flex items-center space-x-2 px-4 py-2 dark:hover:bg-dark-bg-tertiary hover:bg-light-bg-tertiary dark:text-dark-text-primary text-light-text-primary transition-colors">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+                                    </svg>
+                                    <span>Streamers</span>
+                                </a>
                                 <a href="{{ route('clips.index') }}" class="flex items-center space-x-2 px-4 py-2 dark:hover:bg-dark-bg-tertiary hover:bg-light-bg-tertiary dark:text-dark-text-primary text-light-text-primary transition-colors">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/>
@@ -173,34 +180,51 @@
                                     </svg>
                                     <span>Clips</span>
                                 </a>
-                                <a href="{{ route('aitah.index') }}" class="flex items-center space-x-2 px-4 py-2 dark:hover:bg-dark-bg-tertiary hover:bg-light-bg-tertiary dark:text-dark-text-primary text-light-text-primary transition-colors">
+                                <a href="{{ route('streamerbans.index') }}" class="flex items-center space-x-2 px-4 py-2 dark:hover:bg-dark-bg-tertiary hover:bg-light-bg-tertiary dark:text-dark-text-primary text-light-text-primary transition-colors">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 75.636 5.636m12.728 12.728L5.636 5.636"/>
                                     </svg>
-                                    <span>AITAH</span>
+                                    <span>Bans</span>
                                 </a>
                             </div>
                         </div>
                         
-                        <!-- StreamerBans Link -->
-                        <a href="{{ route('streamerbans.index') }}" class="px-4 py-2 rounded-lg dark:text-dark-text-primary text-light-text-primary dark:hover:bg-dark-bg-tertiary hover:bg-light-bg-tertiary dark:hover:text-dark-text-accent hover:text-light-text-accent transition-all font-medium">
-                            <div class="flex items-center space-x-2">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/>
-                                </svg>
-                                <span>Bans</span>
+                        <!-- Radio Dropdown -->
+                        <div x-data="{ open: false }" @click.away="open = false" class="relative">
+                            <button @click="open = !open" class="px-4 py-2 rounded-lg dark:text-dark-text-primary text-light-text-primary dark:hover:bg-dark-bg-tertiary hover:bg-light-bg-tertiary dark:hover:text-dark-text-accent hover:text-light-text-accent transition-all font-medium">
+                                <div class="flex items-center space-x-2">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"/>
+                                    </svg>
+                                    <span>Radio</span>
+                                    <svg class="w-4 h-4" :class="{'rotate-180': open}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                                    </svg>
+                                </div>
+                            </button>
+                            
+                            <div x-show="open" x-transition class="absolute left-0 mt-2 w-48 dark:bg-dark-bg-secondary bg-light-bg-secondary rounded-xl shadow-xl dark:border dark:border-dark-border-primary border-light-border-primary py-2 z-50">
+                                <a href="{{ route('radio.home') }}" class="flex items-center space-x-2 px-4 py-2 dark:hover:bg-dark-bg-tertiary hover:bg-light-bg-tertiary dark:text-dark-text-primary text-light-text-primary transition-colors">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                                    </svg>
+                                    <span>Home</span>
+                                </a>
+                                <button onclick="window.open('{{ route('radio.popout') }}', 'RadioPopout', 'width=400,height=500,resizable=yes,scrollbars=no')" class="flex items-center space-x-2 px-4 py-2 dark:hover:bg-dark-bg-tertiary hover:bg-light-bg-tertiary dark:text-dark-text-primary text-light-text-primary transition-colors w-full text-left">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                    <span>Radio Player</span>
+                                </button>
+                                <a href="{{ route('radio.requests') }}" class="flex items-center space-x-2 px-4 py-2 dark:hover:bg-dark-bg-tertiary hover:bg-light-bg-tertiary dark:text-dark-text-primary text-light-text-primary transition-colors">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                                    </svg>
+                                    <span>Requests</span>
+                                </a>
                             </div>
-                        </a>
-                        
-                        <!-- Radio Link -->
-                        <button onclick="window.open('{{ route('radio.popout') }}', 'RadioPopout', 'width=400,height=500,resizable=yes,scrollbars=no')" class="px-4 py-2 rounded-lg dark:text-dark-text-primary text-light-text-primary dark:hover:bg-dark-bg-tertiary hover:bg-light-bg-tertiary dark:hover:text-dark-text-accent hover:text-light-text-accent transition-all font-medium">
-                            <div class="flex items-center space-x-2">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"/>
-                                </svg>
-                                <span>Radio</span>
-                            </div>
-                        </button>
+                        </div>
                     </nav>
                 </div>
 
