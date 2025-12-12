@@ -191,6 +191,9 @@
   - Auto-updating every second
   - Keyboard shortcuts (ESC to close search)
   - Responsive design
+  - **Radio Dropdown**: Home, Radio Player (popout), Song Requests
+  - **Streamers Dropdown**: Streamers, Clips, Bans
+  - Organized navigation structure for better UX
 
 ### Admin Panel
 - ✅ **Custom Admin Interface** - No external UI packages
@@ -469,7 +472,7 @@ For detailed Docker documentation, troubleshooting, and production deployment, s
 ## Game Patch Notes System
 
 ### Overview
-The patch notes system allows you to track, manage, and display game updates and patch notes for all the games your community plays.
+The patch notes system allows you to track, manage, and display game updates and patch notes for all the games your community plays. It includes both manual management and automated scraping capabilities.
 
 ### Features
 
@@ -496,6 +499,16 @@ The patch notes system allows you to track, manage, and display game updates and
   - Featured count
   - Number of games covered
 
+**Automated Scraping:**
+- ✅ **Hourly automated scraper** - Automatically fetches patch notes from official game sources
+- ✅ **Multi-game support** - Covers Counter Strike 2, GTA V, Fortnite, Call of Duty, Valorant, Apex Legends, League of Legends, Dota 2
+- ✅ **RSS/Atom feed parsing** - Intelligent feed detection and parsing
+- ✅ **HTML scraping fallback** - Uses advanced HTML parsing when RSS feeds aren't available
+- ✅ **Deduplication** - Prevents duplicate patch notes using external IDs
+- ✅ **Version extraction** - Automatically extracts version numbers from titles
+- ✅ **Keyword detection** - Identifies patch notes using intelligent keyword matching
+- ✅ **Scheduled execution** - Runs hourly via Laravel scheduler
+
 ### Creating Patch Notes
 
 **Via Admin Panel:**
@@ -513,11 +526,36 @@ The patch notes system allows you to track, manage, and display game updates and
    - **Feature** - Highlight on the patch notes page
 4. Click "Create Patch Note"
 
+**Via Automated Scraping:**
+1. **Automatic (Hourly):**
+   - Patch notes are automatically scraped every hour
+   - No manual intervention required
+   - Scheduler runs `php artisan patch-notes:scrape` automatically
+
+2. **Manual Trigger:**
+   ```bash
+   # Scrape all games
+   php artisan patch-notes:scrape
+   
+   # View results with statistics
+   # The command displays a table showing patch notes found per game
+   ```
+
+**Supported Games for Scraping:**
+- Counter Strike 2 (CS2)
+- GTA V (Rockstar Games)
+- Fortnite (Epic Games)
+- Call of Duty (Activision)
+- Valorant (Riot Games)
+- Apex Legends (EA)
+- League of Legends (Riot Games)
+- Dota 2 (Valve)
+
 **Managing Patch Notes:**
 - **View All** - See all patch notes with statistics
 - **Filter** - Filter by game name
 - **Quick Actions** - Publish/unpublish, feature/unfeature from listing page
-- **Edit** - Update any patch note details
+- **Edit** - Update any patch note details (even scraped ones)
 - **Delete** - Remove outdated patch notes
 
 ### Accessing Patch Notes
@@ -537,16 +575,36 @@ The patch notes system allows you to track, manage, and display game updates and
 
 The `patch_notes` table includes:
 - `game_name` - Game this patch belongs to
-- `version` - Version number or identifier
+- `version` - Version number or identifier (auto-extracted)
 - `title` - Patch title
 - `slug` - SEO-friendly URL slug (auto-generated)
 - `description` - Brief summary
 - `content` - Full patch notes
 - `source_url` - Official patch notes URL
+- `external_id` - External ID for deduplication (scraper use)
 - `released_at` - Release date
 - `is_published` - Visibility control
 - `is_featured` - Featured status
 - `views_count` - View counter
+
+### Scraper Architecture
+
+**How It Works:**
+1. **RSS/Atom Detection** - Attempts to find and parse RSS/Atom feeds
+2. **HTML Fallback** - If RSS unavailable, uses HTML parsing with Symfony DomCrawler
+3. **Keyword Matching** - Identifies patch-related content using keywords (patch, update, notes, changelog, etc.)
+4. **Version Extraction** - Extracts version numbers from titles (v1.2.3, Season 5, etc.)
+5. **Deduplication** - Checks `external_id` to prevent duplicates
+6. **Auto-Publishing** - All scraped patch notes are automatically published
+
+**Configuration:**
+The scraper is pre-configured with base URLs for each game. No additional configuration needed unless you want to customize the sources in `app/Services/PatchNotesScraperService.php`.
+
+**Scheduling:**
+The scraper runs hourly via Laravel scheduler. Ensure `php artisan schedule:run` is set up in your cron:
+```bash
+* * * * * cd /path-to-your-project && php artisan schedule:run >> /dev/null 2>&1
+```
 
 ### Best Practices
 
@@ -557,7 +615,9 @@ The `patch_notes` table includes:
 - Use clear, descriptive titles
 - Include release dates for historical tracking
 - Organize content with headings and lists
-- Update regularly to keep community informed
+- Let the automated scraper run for continuous updates
+- Review scraped content periodically in admin panel
+- Edit or enhance scraped content as needed
 
 ## Gaming Events Workflow (OpenWebNinja API Integration)
 
@@ -808,7 +868,15 @@ OpenWebNinja API → EventsService → Database (normalized) → Frontend Views
 
 ## Radio Streaming
 
-FPSociety includes a built-in radio player for streaming audio to your community.
+FPSociety includes a comprehensive radio system with multiple pages and features for streaming audio to your community.
+
+### Radio Navigation Structure
+
+The radio system is organized into a dropdown menu with three main sections:
+
+1. **Radio Home** (`/radio/home`) - Central hub with now playing, history, and quick links
+2. **Radio Player** - Opens the enhanced popout player in a new window
+3. **Song Requests** (`/radio/requests`) - Browse and request songs from the music library
 
 ### Icecast Radio Integration
 
@@ -819,24 +887,43 @@ FPSociety includes a built-in radio player for streaming audio to your community
    ICECAST_STREAM_URL=http://your-icecast-server.com:8000/stream
    ```
 
-2. Access the radio player at `/radio`
+2. Access the radio pages:
+   - Radio Home: `http://localhost:8000/radio/home`
+   - Radio Player: `http://localhost:8000/radio`
+   - Song Requests: `http://localhost:8000/radio/requests`
+   - Popout Player: `http://localhost:8000/radio/popout`
 
 **Features:**
+- 🏠 **Radio Home Page**:
+  - Now playing with album artwork
+  - Playing next preview
+  - Recently played history (last 5 tracks)
+  - Station status (live/offline indicator)
+  - Quick links to player and requests
+  - Launch popout player button
 - 🎵 **Full-featured audio player** with play/pause/stop controls
 - 🔊 **Volume control** with visual feedback and range slider
 - 🪟 **Enhanced Popout window** - Sleek, modern player with gradient background
 - 📱 **Responsive design** - Works on desktop and mobile
 - 🎨 **Modern UI** - Album artwork display, animated effects, and glassmorphism cards
-- 🔗 **Easy access** - Available in main navigation menu
+- 🔗 **Easy access** - Available in main navigation dropdown menu
 - ⌨️ **Keyboard shortcuts** - Space bar to play/pause, Arrow keys for volume control
 - 🎨 **Track Information** - Displays title, artist, and album with scrolling text
 - 🔄 **Live Updates** - Real-time now playing information from AzuraCast
 - 🎯 **Floating Controls** - Minimize player while browsing other pages
+- 🎤 **Song Requests**:
+  - Browse all requestable songs from music library
+  - Search functionality by title, artist, or album
+  - Album artwork display
+  - Login required to submit requests
+  - Request success/error feedback
 
 **Accessing the Radio:**
+- Radio Home: `http://localhost:8000/radio/home`
 - Main player: `http://localhost:8000/radio`
+- Song Requests: `http://localhost:8000/radio/requests`
 - Popout player: `http://localhost:8000/radio/popout`
-- Navigation: Click "Radio" in the top menu
+- Navigation: Click "Radio" dropdown in the top menu
 
 **Popout Window:**
 The popout window allows users to:
@@ -1571,6 +1658,207 @@ Each subreddit can be configured independently:
 - name, display_name, is_enabled
 - content_type, scrape_limit
 - last_scraped_at
+
+## Gamer Integrations
+
+### Overview
+FPSociety provides comprehensive gaming platform integrations allowing users to sync their gaming accounts, display their game libraries, track stats, and create/join gaming clans.
+
+### Features
+
+**Platform Integrations:**
+- 🎮 **Steam Integration** - Sync Steam account and library
+- 🎮 **Xbox Integration** - Connect Xbox Live account
+- 🎮 **PSN Integration** - Link PlayStation Network account
+- 🔄 **Auto-Sync** - Automatically update game libraries and playtime
+- 🔐 **OAuth Authentication** - Secure token-based authentication
+- 📊 **Multi-Platform Support** - Link multiple gaming platforms to one account
+
+**Game Library:**
+- 📚 **Unified Library** - View all games across all platforms in one place
+- 🕐 **Playtime Tracking** - Track total playtime per game
+- 🖼️ **Game Artwork** - Display game covers and artwork
+- 🔍 **Search & Filter** - Find games by name, platform, or playtime
+- 📈 **Statistics** - View library statistics (total games, total playtime, etc.)
+
+**Recently Played:**
+- 🎮 **Recent Activity** - See what you've been playing recently
+- ⏱️ **Session Tracking** - Track individual gaming sessions
+- 📊 **Activity Timeline** - Visual timeline of gaming activity
+- 🎯 **Quick Access** - Jump back into recently played games
+
+**Player Stats:**
+- 📊 **Game Statistics** - Track kills, wins, levels, achievements
+- 🏆 **Achievements** - Display unlocked achievements
+- 📈 **Progress Tracking** - Monitor stat progression over time
+- 🎮 **Multi-Game Stats** - Compare stats across different games
+- 🔄 **Auto-Update** - Stats sync automatically from platforms
+
+**Clans & Guilds:**
+- 👥 **Create Clans** - Start your own gaming clan or guild
+- 🏷️ **Clan Tags** - Unique clan tags (e.g., [CLAN])
+- 👑 **Leadership Roles** - Leader, Officer, Member hierarchy
+- 📝 **Clan Description** - Rich text clan profiles
+- 🖼️ **Clan Branding** - Custom logos and banners
+- 🎮 **Game-Specific Clans** - Clans for specific games
+- 🔒 **Public/Private** - Control clan visibility
+- 📢 **Recruitment** - Open/close clan recruiting
+- 👥 **Member Limit** - Set maximum member count
+- ✅ **Join Requirements** - Define requirements for joining
+
+**Clan Forums:**
+- 💬 **Clan Discussions** - Internal forum for clan members
+- 📌 **Pinned Threads** - Important announcements
+- 🔒 **Lock Threads** - Prevent further replies
+- 👁️ **View Tracking** - Track thread popularity
+- ✍️ **Rich Content** - Full text formatting support
+
+**Clan Events:**
+- 📅 **Event Calendar** - Schedule clan events and activities
+- 🎯 **Event Types** - Raids, PvP, tournaments, meetings, etc.
+- 👥 **Participant Tracking** - Track who's attending
+- 🔢 **Max Participants** - Set event capacity
+- ⏰ **Start/End Times** - Schedule with precise timing
+- 📝 **Event Details** - Full descriptions and requirements
+
+### Database Structure
+
+**Game Integrations Table:**
+- Platform connection data (Steam/Xbox/PSN)
+- OAuth tokens and refresh tokens
+- Platform-specific user IDs
+- Last sync timestamps
+- Active status
+
+**Game Libraries Table:**
+- User's game collection across platforms
+- Platform-specific game IDs
+- Game names and artwork
+- Playtime tracking
+- Addition dates
+
+**Recently Played Table:**
+- Recent gaming activity
+- Last played timestamps
+- Session duration tracking
+- Quick access to recent games
+
+**Player Stats Table:**
+- Game-specific statistics
+- Stat names and values (kills, wins, levels, etc.)
+- Stat types (integer, float, string, json)
+- Recording timestamps
+- Historical tracking
+
+**Clans Table:**
+- Clan information and branding
+- Owner and leadership
+- Public/private settings
+- Recruitment status
+- Member limits
+- Join requirements
+
+**Clan Members Table:**
+- Clan membership records
+- Member roles (member, officer, leader)
+- Join dates
+- Member-specific clan stats
+
+**Clan Forums Table:**
+- Internal clan discussions
+- Thread management (pin, lock)
+- View tracking
+- Author attribution
+
+**Clan Events Table:**
+- Scheduled clan activities
+- Event types and descriptions
+- Start/end times
+- Participant lists
+- Max capacity
+- Creator tracking
+
+### Usage Examples
+
+**Link Gaming Account:**
+```php
+// Create a Steam integration
+$integration = GameIntegration::create([
+    'user_id' => auth()->id(),
+    'platform' => 'steam',
+    'platform_id' => $steamId,
+    'username' => $steamUsername,
+    'access_token' => $accessToken,
+    'is_active' => true,
+]);
+```
+
+**Add Games to Library:**
+```php
+// Add a game from Steam
+$game = GameLibrary::create([
+    'user_id' => auth()->id(),
+    'integration_id' => $integration->id,
+    'game_id' => $steamGameId,
+    'game_name' => 'Counter Strike 2',
+    'platform' => 'steam',
+    'playtime_minutes' => 1200,
+]);
+```
+
+**Track Recent Play:**
+```php
+// Record a gaming session
+$recentPlay = RecentlyPlayed::create([
+    'user_id' => auth()->id(),
+    'game_library_id' => $game->id,
+    'last_played_at' => now(),
+    'session_minutes' => 120,
+]);
+```
+
+**Create a Clan:**
+```php
+// Create a new clan
+$clan = Clan::create([
+    'name' => 'Elite Gamers',
+    'tag' => '[ELITE]',
+    'description' => 'Competitive CS2 clan',
+    'game' => 'Counter Strike 2',
+    'owner_id' => auth()->id(),
+    'is_public' => true,
+    'is_recruiting' => true,
+    'member_limit' => 50,
+]);
+```
+
+**Schedule Clan Event:**
+```php
+// Create a clan raid event
+$event = ClanEvent::create([
+    'clan_id' => $clan->id,
+    'title' => 'Weekend Raid',
+    'description' => 'Let\'s take down the boss!',
+    'event_type' => 'raid',
+    'start_time' => now()->addDays(2),
+    'end_time' => now()->addDays(2)->addHours(3),
+    'max_participants' => 10,
+    'created_by' => auth()->id(),
+]);
+```
+
+### Future Enhancements
+
+- Real OAuth implementations for Steam/Xbox/PSN
+- Automatic library syncing via platform APIs
+- Stat import from platform APIs
+- Clan vs Clan tournaments
+- Clan leaderboards
+- Clan achievements
+- Event RSVP system
+- Calendar integration
+- Discord bot integration for clans
+- In-game overlay integration
 
 ## StreamerBans Integration
 
