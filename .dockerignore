@@ -17,9 +17,8 @@ public/hot
 public/build
 public/storage
 
-# Composer
+# Composer (exclude vendor but keep composer.lock for reproducible builds)
 vendor
-composer.lock
 
 # Laravel
 storage/app/*
@@ -62,10 +61,9 @@ INSTALLATION.md
 EVENTS_SETUP.md
 *.md
 
-# Docker files (no need to copy these into the image)
+# Docker files (don't copy docker-compose.yml into the image)
 docker-compose.yml
-Dockerfile
-docker-entrypoint.sh
+# Note: Dockerfile and docker-entrypoint.sh need to be available during build
 
 # Other
 *.log

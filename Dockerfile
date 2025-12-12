@@ -15,11 +15,12 @@ RUN apk add --no-cache \
     freetype-dev \
     libxml2-dev \
     oniguruma-dev \
+    libzip-dev \
     $PHPIZE_DEPS \
     nodejs \
     npm \
     && docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
-    && docker-php-ext-install pdo_mysql mbstring bcmath pcntl gd opcache exif \
+    && docker-php-ext-install pdo_mysql mbstring bcmath pcntl gd opcache exif zip \
     && pecl install redis \
     && docker-php-ext-enable redis \
     && apk del $PHPIZE_DEPS
@@ -36,8 +37,8 @@ COPY package.json package-lock.json ./
 # Install PHP dependencies
 RUN composer install --no-dev --prefer-dist --optimize-autoloader --no-interaction --no-scripts
 
-# Install Node.js dependencies
-RUN npm ci --only=production
+# Install Node.js dependencies (including devDependencies for build)
+RUN npm ci
 
 # Copy application files
 COPY . .
@@ -47,6 +48,9 @@ RUN composer dump-autoload --optimize --no-dev
 
 # Build frontend assets
 RUN npm run build
+
+# Clean up dev dependencies to save space
+RUN npm prune --production
 
 # ──────────────────────────────
 # Stage 2: Runtime
@@ -64,6 +68,7 @@ RUN apk add --no-cache \
     libwebp \
     freetype \
     oniguruma \
+    libzip \
     mysql-client \
     curl
 
@@ -76,8 +81,9 @@ RUN apk add --no-cache \
     freetype-dev \
     libxml2-dev \
     oniguruma-dev \
+    libzip-dev \
     && docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
-    && docker-php-ext-install pdo_mysql mbstring bcmath pcntl gd opcache exif \
+    && docker-php-ext-install pdo_mysql mbstring bcmath pcntl gd opcache exif zip \
     && pecl install redis \
     && docker-php-ext-enable redis \
     && apk del $PHPIZE_DEPS
