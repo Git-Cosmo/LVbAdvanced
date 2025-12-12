@@ -366,7 +366,7 @@
                     </a>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    @forelse($latestDeals->take(4) as $deal)
+                    @forelse($latestDeals as $deal)
                         <div class="dark:bg-dark-bg-tertiary bg-light-bg-tertiary rounded-lg p-3 hover:shadow-lg transition-all border dark:border-dark-border-primary border-light-border-primary hover:border-accent-green">
                             <div class="flex items-center gap-3">
                                 @if($deal->game && $deal->game->thumb)

@@ -36,7 +36,7 @@ class PortalController extends Controller
         $latestDeals = CheapSharkDeal::with('game', 'store')
             ->where('on_sale', true)
             ->orderBy('savings', 'desc')
-            ->take(6)
+            ->take(4)
             ->get();
 
         $latestDownloads = Gallery::with(['user', 'galleryMedia'])
