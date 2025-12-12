@@ -109,7 +109,7 @@
                     <div class="dark:bg-dark-bg-tertiary bg-light-bg-tertiary rounded-lg p-3 border dark:border-dark-border-primary border-light-border-primary hover:border-accent-blue transition-colors">
                         <div class="flex items-center justify-between mb-2">
                             <div class="flex items-center space-x-2">
-                                <div class="w-8 h-8 rounded flex items-center justify-center" style="background: linear-gradient(to bottom right, {{ $server->icon_color_from }}, {{ $server->icon_color_to }});">
+                                <div class="w-8 h-8 rounded flex items-center justify-center" style="background: linear-gradient(to bottom right, {{ e($server->icon_color_from) }}, {{ e($server->icon_color_to) }});">
                                     <span class="text-white font-bold text-xs">{{ $server->game_short_code }}</span>
                                 </div>
                                 <div>

@@ -113,13 +113,13 @@
 
             <div class="flex items-center space-x-6 mb-4">
                 <label class="flex items-center">
-                    <input type="checkbox" name="is_featured" value="1" {{ old('is_featured', $gameServer->is_featured) ? 'checked' : '' }}
+                    <input type="checkbox" name="is_featured" value="1" {{ old('is_featured', $gameServer->is_featured ? '1' : '0') == '1' ? 'checked' : '' }}
                         class="rounded border-gray-300 text-primary-600 focus:ring-primary-500">
                     <span class="ml-2 text-sm dark:text-dark-text-primary">Featured</span>
                 </label>
 
                 <label class="flex items-center">
-                    <input type="checkbox" name="is_active" value="1" {{ old('is_active', $gameServer->is_active) ? 'checked' : '' }}
+                    <input type="checkbox" name="is_active" value="1" {{ old('is_active', $gameServer->is_active ? '1' : '0') == '1' ? 'checked' : '' }}
                         class="rounded border-gray-300 text-primary-600 focus:ring-primary-500">
                     <span class="ml-2 text-sm dark:text-dark-text-primary">Active</span>
                 </label>

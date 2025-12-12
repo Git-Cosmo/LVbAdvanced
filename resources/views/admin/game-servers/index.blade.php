@@ -52,7 +52,7 @@
                 <tr>
                     <td class="px-6 py-4">
                         <div class="flex items-center space-x-3">
-                            <div class="w-10 h-10 rounded flex items-center justify-center flex-shrink-0" style="background: linear-gradient(to bottom right, {{ $server->icon_color_from }}, {{ $server->icon_color_to }});">
+                            <div class="w-10 h-10 rounded flex items-center justify-center flex-shrink-0" style="background: linear-gradient(to bottom right, {{ e($server->icon_color_from) }}, {{ e($server->icon_color_to) }});">
                                 <span class="text-white font-bold text-xs">{{ $server->game_short_code }}</span>
                             </div>
                             <div>
