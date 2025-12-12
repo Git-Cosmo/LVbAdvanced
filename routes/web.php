@@ -477,6 +477,12 @@ Route::prefix('casual-games')->name('casual-games.')->group(function () {
 Route::prefix('events')->name('events.')->group(function () {
     Route::get('/', [\App\Http\Controllers\EventsController::class, 'index'])->name('index');
     Route::get('/{event}', [\App\Http\Controllers\EventsController::class, 'show'])->name('show');
+    
+    // RSVP routes (requires authentication)
+    Route::middleware('auth')->group(function () {
+        Route::post('/{event}/rsvp', [\App\Http\Controllers\EventsController::class, 'rsvp'])->name('rsvp');
+        Route::delete('/{event}/rsvp', [\App\Http\Controllers\EventsController::class, 'cancelRsvp'])->name('rsvp.cancel');
+    });
 });
 
 // Downloads Routes (formerly Media & Gallery)

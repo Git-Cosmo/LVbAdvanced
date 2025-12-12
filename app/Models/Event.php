@@ -196,4 +196,53 @@ class Event extends Model
 
         return 'unknown';
     }
+
+    /**
+     * Get RSVPs for this event.
+     */
+    public function rsvps(): HasMany
+    {
+        return $this->hasMany(EventRsvp::class);
+    }
+
+    /**
+     * Get count of users going to this event.
+     */
+    public function goingCount(): int
+    {
+        return $this->rsvps()->where('status', 'going')->count();
+    }
+
+    /**
+     * Get count of users interested in this event.
+     */
+    public function interestedCount(): int
+    {
+        return $this->rsvps()->where('status', 'interested')->count();
+    }
+
+    /**
+     * Check if a user has RSVPed to this event.
+     */
+    public function hasUserRsvped(?int $userId): bool
+    {
+        if (!$userId) {
+            return false;
+        }
+
+        return $this->rsvps()->where('user_id', $userId)->exists();
+    }
+
+    /**
+     * Get user's RSVP status for this event.
+     */
+    public function getUserRsvpStatus(?int $userId): ?string
+    {
+        if (!$userId) {
+            return null;
+        }
+
+        $rsvp = $this->rsvps()->where('user_id', $userId)->first();
+        return $rsvp?->status;
+    }
 }
