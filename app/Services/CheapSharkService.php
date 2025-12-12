@@ -81,34 +81,64 @@ class CheapSharkService
 
     protected function syncStores(): int
     {
-        $response = Http::timeout(15)->get($this->endpoint('/stores'));
+        try {
+            $response = Http::timeout(15)
+                ->retry(3, 1000) // Retry up to 3 times with 1 second delay
+                ->get($this->endpoint('/stores'));
 
-        if ($response->failed()) {
-            throw new \RuntimeException('Failed to fetch CheapShark stores');
+            if ($response->failed()) {
+                $statusCode = $response->status();
+                $body = $response->body();
+                
+                Log::error('CheapShark stores fetch failed', [
+                    'status' => $statusCode,
+                    'body' => substr($body, 0, 500),
+                    'url' => $this->endpoint('/stores'),
+                ]);
+                
+                throw new \RuntimeException("Failed to fetch CheapShark stores (HTTP {$statusCode})");
+            }
+
+            $stores = collect($response->json());
+
+            if ($stores->isEmpty()) {
+                Log::warning('CheapShark returned empty stores list');
+                return 0;
+            }
+
+            $payload = $stores->map(function (array $store) {
+                return [
+                    'cheapshark_id' => $store['storeID'],
+                    'name' => $store['storeName'] ?? $store['storeID'],
+                    'is_active' => (bool) ($store['isActive'] ?? true),
+                    'logo' => $store['images']['logo'] ?? null,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ];
+            })->all();
+
+            if (! empty($payload)) {
+                CheapSharkStore::upsert(
+                    $payload,
+                    ['cheapshark_id'],
+                    ['name', 'is_active', 'logo', 'updated_at']
+                );
+            }
+
+            return $stores->count();
+        } catch (\Illuminate\Http\Client\ConnectionException $e) {
+            Log::error('CheapShark connection failed', [
+                'error' => $e->getMessage(),
+                'url' => $this->endpoint('/stores'),
+            ]);
+            throw new \RuntimeException('Failed to connect to CheapShark API: ' . $e->getMessage());
+        } catch (\Illuminate\Http\Client\RequestException $e) {
+            Log::error('CheapShark request exception', [
+                'error' => $e->getMessage(),
+                'response' => $e->response ? $e->response->body() : null,
+            ]);
+            throw new \RuntimeException('CheapShark API request failed: ' . $e->getMessage());
         }
-
-        $stores = collect($response->json());
-
-        $payload = $stores->map(function (array $store) {
-            return [
-                'cheapshark_id' => $store['storeID'],
-                'name' => $store['storeName'] ?? $store['storeID'],
-                'is_active' => (bool) ($store['isActive'] ?? true),
-                'logo' => $store['images']['logo'] ?? null,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ];
-        })->all();
-
-        if (! empty($payload)) {
-            CheapSharkStore::upsert(
-                $payload,
-                ['cheapshark_id'],
-                ['name', 'is_active', 'logo', 'updated_at']
-            );
-        }
-
-        return $stores->count();
     }
 
     protected function collectDeals(array $storeExternalIds): array

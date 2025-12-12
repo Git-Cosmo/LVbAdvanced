@@ -101,7 +101,12 @@ class RadioController extends Controller
 
         try {
             if (config('services.azuracast.base_url')) {
-                $requestableSongs = $this->azuracast->requestableSongs();
+                // Cache requestable songs for 5 minutes to improve performance
+                $requestableSongs = cache()->remember(
+                    'radio.requestable_songs',
+                    now()->addMinutes(5),
+                    fn () => $this->azuracast->requestableSongs()
+                );
             }
         } catch (\Exception $e) {
             // Silently fail if AzuraCast is not configured
@@ -132,6 +137,9 @@ class RadioController extends Controller
 
         try {
             $log = $this->azuracast->requestSong($request->request_id, auth()->id());
+
+            // Invalidate the cache after a request is submitted to reflect updated availability
+            cache()->forget('radio.requestable_songs');
 
             if ($log->status === 'success') {
                 return redirect()->back()->with('success', 'Song requested successfully! '.($log->api_response_message ?? ''));
