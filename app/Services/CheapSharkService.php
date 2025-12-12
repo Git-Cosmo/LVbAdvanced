@@ -83,7 +83,7 @@ class CheapSharkService
     {
         try {
             $response = Http::timeout(15)
-                ->retry(3, 1000) // Retry up to 3 times with 1 second delay
+                ->retry(3, 1000) // Retry up to 3 times with 1000ms (1 second) delay
                 ->get($this->endpoint('/stores'));
 
             if ($response->failed()) {
