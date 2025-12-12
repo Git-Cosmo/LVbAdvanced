@@ -44,7 +44,11 @@
                             <p class="text-sm dark:text-dark-text-secondary mb-4 line-clamp-2">{{ $tournament->description }}</p>
                             <div class="flex items-center justify-between text-sm mb-4">
                                 <span class="dark:text-dark-text-secondary">{{ $tournament->current_participants }}/{{ $tournament->max_participants }} players</span>
-                                <span class="text-accent-green font-semibold">${{ number_format($tournament->prize_pool, 0) }}</span>
+                                @if($tournament->prize_pool)
+                                    <span class="text-accent-green font-semibold">${{ number_format($tournament->prize_pool, 0) }}</span>
+                                @else
+                                    <span class="dark:text-dark-text-secondary">No prize</span>
+                                @endif
                             </div>
                             <a href="{{ route('tournaments.show', $tournament) }}" class="block w-full px-4 py-2 bg-gradient-to-r from-accent-blue to-accent-purple text-white text-center rounded-lg font-medium hover:shadow-lg transition-all">
                                 View Tournament

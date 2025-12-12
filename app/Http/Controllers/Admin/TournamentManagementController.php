@@ -194,9 +194,14 @@ class TournamentManagementController extends Controller
             'participant2_score' => 'required|integer|min:0',
         ]);
 
-        $winner_id = $validated['participant1_score'] > $validated['participant2_score']
-            ? $match->participant1_id
-            : $match->participant2_id;
+        // Determine winner, handle ties
+        $winner_id = null;
+        if ($validated['participant1_score'] > $validated['participant2_score']) {
+            $winner_id = $match->participant1_id;
+        } elseif ($validated['participant2_score'] > $validated['participant1_score']) {
+            $winner_id = $match->participant2_id;
+        }
+        // If scores are equal, winner_id remains null (tie/needs resolution)
 
         $match->update([
             'participant1_score' => $validated['participant1_score'],
