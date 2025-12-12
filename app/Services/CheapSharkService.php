@@ -13,6 +13,11 @@ use Illuminate\Support\Str;
 
 class CheapSharkService
 {
+    /**
+     * Maximum length of response body to log for debugging
+     */
+    protected const MAX_LOG_BODY_LENGTH = 500;
+
     protected string $baseUrl;
 
     public function __construct()
@@ -83,7 +88,7 @@ class CheapSharkService
     {
         try {
             $response = Http::timeout(15)
-                ->retry(3, 1000) // Retry up to 3 times with 1000ms (1 second) delay
+                ->retry(3, 1000) // Retry up to 3 times with 1000ms (1 second) delay between attempts
                 ->get($this->endpoint('/stores'));
 
             if ($response->failed()) {
@@ -92,7 +97,7 @@ class CheapSharkService
                 
                 Log::error('CheapShark stores fetch failed', [
                     'status' => $statusCode,
-                    'body' => substr($body, 0, 500),
+                    'body' => substr($body, 0, self::MAX_LOG_BODY_LENGTH),
                     'url' => $this->endpoint('/stores'),
                 ]);
                 
