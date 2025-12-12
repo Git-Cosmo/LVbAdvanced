@@ -161,6 +161,30 @@ class User extends Authenticatable implements MustVerifyEmail, HasMediaInterface
     }
 
     /**
+     * Get user's clan memberships.
+     */
+    public function clanMembers(): HasMany
+    {
+        return $this->hasMany(ClanMember::class);
+    }
+
+    /**
+     * Get user's game integrations.
+     */
+    public function gameIntegrations(): HasMany
+    {
+        return $this->hasMany(GameIntegration::class);
+    }
+
+    /**
+     * Get user's game library.
+     */
+    public function gameLibrary(): HasMany
+    {
+        return $this->hasMany(GameLibrary::class);
+    }
+
+    /**
      * Scope to get online users (active within last 15 minutes).
      */
     public function scopeOnline($query)
