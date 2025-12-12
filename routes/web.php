@@ -413,5 +413,11 @@ Route::prefix('downloads')->name('downloads.')->group(function () {
     });
 });
 
+// Achievements Routes
+Route::prefix('achievements')->name('achievements.')->group(function () {
+    Route::get('/', [\App\Http\Controllers\AchievementController::class, 'index'])->name('index');
+    Route::get('/user/{user}', [\App\Http\Controllers\AchievementController::class, 'user'])->name('user');
+});
+
 // Sitemap Route
 Route::get('/sitemap.xml', [\App\Http\Controllers\SitemapController::class, 'index'])->name('sitemap');
