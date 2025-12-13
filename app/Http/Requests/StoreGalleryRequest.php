@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\GalleryCategory;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreGalleryRequest extends FormRequest
@@ -25,7 +26,7 @@ class StoreGalleryRequest extends FormRequest
             'title' => 'required|max:255',
             'description' => 'nullable|max:1000',
             'game' => 'required|max:100',
-            'category' => 'required|in:map,skin,mod,texture,sound,other',
+            'category' => ['required', GalleryCategory::validationRule()],
             'files.*' => 'required|file|max:102400', // 100MB max
         ];
     }

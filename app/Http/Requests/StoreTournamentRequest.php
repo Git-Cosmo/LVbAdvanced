@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\TournamentFormat;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreTournamentRequest extends FormRequest
@@ -25,7 +26,7 @@ class StoreTournamentRequest extends FormRequest
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'game' => 'nullable|string|max:255',
-            'format' => 'required|in:single_elimination,double_elimination,round_robin,swiss',
+            'format' => ['required', TournamentFormat::validationRule()],
             'type' => 'required|in:solo,team',
             'team_size' => 'nullable|integer|min:2|max:32',
             'max_participants' => 'required|integer|min:2|max:512',

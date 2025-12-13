@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\UserStatus;
 use App\Http\Requests\UpdateAccountRequest;
 use App\Http\Requests\UpdatePasswordRequest;
 use Illuminate\Http\RedirectResponse;
@@ -118,7 +119,7 @@ class SettingsController extends Controller
         $profile = $user->profile;
 
         $validated = $request->validate([
-            'status' => 'required|in:online,away,busy,offline',
+            'status' => ['required', UserStatus::validationRule()],
             'status_message' => 'nullable|string|max:140',
         ]);
 

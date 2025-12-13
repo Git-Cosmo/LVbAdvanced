@@ -12,6 +12,11 @@ class ReputationService
      */
     public function awardXP(User $user, int $amount, string $reason = ''): void
     {
+        // Ensure profile exists
+        if (! $user->profile) {
+            $user->profile()->create(['xp' => 0, 'level' => 1]);
+        }
+
         $user->profile->increment('xp', $amount);
 
         // Check for level up
@@ -73,6 +78,11 @@ class ReputationService
      */
     public function updateKarma(User $user): void
     {
+        // Ensure profile exists
+        if (! $user->profile) {
+            $user->profile()->create(['karma' => 0]);
+        }
+
         // Count likes received on posts by this user
         $karma = ForumReaction::where('reactable_type', \App\Models\Forum\ForumPost::class)
             ->where('type', 'like')
