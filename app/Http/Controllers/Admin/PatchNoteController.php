@@ -3,9 +3,10 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\StorePatchNoteRequest;
+use App\Http\Requests\Admin\UpdatePatchNoteRequest;
 use App\Models\PatchNote;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class PatchNoteController extends Controller
@@ -40,20 +41,9 @@ class PatchNoteController extends Controller
     /**
      * Store a newly created patch note.
      */
-    public function store(Request $request): RedirectResponse
+    public function store(StorePatchNoteRequest $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'game_name' => 'required|string|max:255',
-            'version' => 'nullable|string|max:255',
-            'title' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'content' => 'required|string',
-            'source_url' => 'nullable|url|max:500',
-            'released_at' => 'nullable|date',
-            'is_published' => 'boolean',
-            'is_featured' => 'boolean',
-        ]);
-
+        $validated = $request->validated();
         $validated['is_published'] = $request->boolean('is_published');
         $validated['is_featured'] = $request->boolean('is_featured');
         $validated['released_at'] = $validated['released_at'] ?? now();
@@ -82,20 +72,9 @@ class PatchNoteController extends Controller
     /**
      * Update the specified patch note.
      */
-    public function update(Request $request, PatchNote $patchNote): RedirectResponse
+    public function update(UpdatePatchNoteRequest $request, PatchNote $patchNote): RedirectResponse
     {
-        $validated = $request->validate([
-            'game_name' => 'required|string|max:255',
-            'version' => 'nullable|string|max:255',
-            'title' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'content' => 'required|string',
-            'source_url' => 'nullable|url|max:500',
-            'released_at' => 'nullable|date',
-            'is_published' => 'boolean',
-            'is_featured' => 'boolean',
-        ]);
-
+        $validated = $request->validated();
         $validated['is_published'] = $request->boolean('is_published');
         $validated['is_featured'] = $request->boolean('is_featured');
 
