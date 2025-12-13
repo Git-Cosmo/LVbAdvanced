@@ -17,9 +17,9 @@ Discord\Builders\MessageBuilder
 ```
 
 **Fix**: Created a composer patch that adds the proper type hint to the trait's abstract method:
-- Installed `cweagans/composer-patches` package
 - Created patch file: `patches/discord-php-components-trait-type-fix.patch`
-- Patch is automatically applied during `composer install`
+- Patch is automatically applied during `composer install` and `composer update` via composer scripts
+- No external dependencies required - uses native `patch` command
 
 **Technical Details**:
 ```patch
@@ -169,8 +169,7 @@ Created test suite for bot commands:
 
 ### Vendor Patches
 - `patches/discord-php-components-trait-type-fix.patch` - **NEW** Fixes ComponentsTrait type mismatch
-- `patches.lock.json` - **NEW** Tracks applied patches
-- `composer.json` - Updated with patches configuration and cweagans/composer-patches
+- `composer.json` - Updated with post-install/post-update scripts to auto-apply patches
 
 ### Core Bot Services
 - `app/DiscordBot/Services/ChannelManager.php` - Channel creation with ChannelBuilder API
