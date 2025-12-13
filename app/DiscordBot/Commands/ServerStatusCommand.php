@@ -12,6 +12,11 @@ class ServerStatusCommand extends BaseCommand
 {
     protected Discord $discord;
 
+    /**
+     * Create a new server status command instance.
+     *
+     * @param Discord $discord The Discord client instance for creating embeds
+     */
     public function __construct(Discord $discord)
     {
         $this->discord = $discord;

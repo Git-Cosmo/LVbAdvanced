@@ -68,7 +68,7 @@ class FeedbackCommand extends BaseCommand
         // - Contact Email (optional text input)
         
         // For now, we'll send a simple response
-        $contactUrl = config('app.url') . route('contact', [], false);
+        $contactUrl = route('contact', [], true); // Generate absolute URL
         $interaction->respondWithMessage(
             MessageBuilder::new()
                 ->setContent('✅ Thank you for your interest in providing feedback! ' . 

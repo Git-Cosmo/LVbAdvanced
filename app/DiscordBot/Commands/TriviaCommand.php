@@ -11,6 +11,11 @@ class TriviaCommand extends BaseCommand
 {
     protected Discord $discord;
 
+    /**
+     * Create a new trivia command instance.
+     *
+     * @param Discord $discord The Discord client instance for timer functionality
+     */
     public function __construct(Discord $discord)
     {
         $this->discord = $discord;
