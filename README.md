@@ -2525,7 +2525,7 @@ Navigate to: /admin/announcements
 - Bot sends heartbeat every 30 seconds
 - Stored in cache with 90-second TTL
 - Website checks heartbeat to determine online status
-- Automatic fallback to process check if cache unavailable
+- Status determined solely by cache (no process checking for security)
 
 **Integration Benefits:**
 - Seamless cross-platform experience

@@ -777,7 +777,7 @@
                 },
                 async checkStatus() {
                     try {
-                        const response = await fetch('/api/discord-bot/status', {
+                        const response = await fetch('{{ route('api.discord.status') }}', {
                             headers: {
                                 'X-Requested-With': 'XMLHttpRequest',
                                 'Accept': 'application/json',
