@@ -11,6 +11,7 @@ use App\Models\User;
 use App\Models\User\UserBan;
 use App\Models\User\UserWarning;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class ModerationController extends Controller
