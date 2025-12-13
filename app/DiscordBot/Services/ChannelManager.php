@@ -80,25 +80,25 @@ class ChannelManager
             return \React\Promise\resolve($existingCategory);
         }
 
-        // Create the category
-        $promise = $guild->channels->create([
-            'name' => $name,
-            'type' => Channel::TYPE_CATEGORY,
-            'position' => $settings['position'] ?? 0,
-        ]);
-
-        return $promise->then(function (Channel $category) use ($name) {
+        // Create the category - this returns a promise in Discord-PHP v10
+        try {
+            $category = $guild->channels->create([
+                'name' => $name,
+                'type' => Channel::TYPE_CATEGORY,
+                'position' => $settings['position'] ?? 0,
+            ]);
+            
             $this->categoryCache[$name] = $category;
             Log::info('Created category', ['category' => $name]);
 
-            return $category;
-        }, function ($error) use ($name) {
+            return \React\Promise\resolve($category);
+        } catch (\Exception $e) {
             Log::error('Failed to create category', [
                 'category' => $name,
-                'error' => $error,
+                'error' => $e->getMessage(),
             ]);
-            throw $error;
-        });
+            return \React\Promise\reject($e);
+        }
     }
 
     /**
@@ -144,9 +144,9 @@ class ChannelManager
             $createParams['parent_id'] = $this->categoryCache[$config['category']]->id;
         }
 
-        $promise = $guild->channels->create($createParams);
-        
-        $promise->then(function (Channel $channel) use ($channelName, $config) {
+        try {
+            $channel = $guild->channels->create($createParams);
+            
             $this->channelCache[$channelName] = $channel;
             Log::info('Created channel', ['channel' => $channelName]);
 
@@ -154,12 +154,12 @@ class ChannelManager
             if (isset($config['permissions'])) {
                 $this->applyChannelPermissions($channel, $config['permissions']);
             }
-        }, function ($error) use ($channelName) {
+        } catch (\Exception $e) {
             Log::error('Failed to create channel', [
                 'channel' => $channelName,
-                'error' => $error,
+                'error' => $e->getMessage(),
             ]);
-        });
+        }
     }
 
     /**
