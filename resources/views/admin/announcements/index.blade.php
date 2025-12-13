@@ -1,3 +1,4 @@
+@php use Illuminate\Support\Str; @endphp
 @extends('admin.layouts.app')
 
 @section('title', 'Announcements Management')
@@ -36,7 +37,7 @@
                 <tr>
                     <td class="px-6 py-4">
                         <div class="text-sm font-medium dark:text-dark-text-bright text-light-text-bright">{{ $announcement->title }}</div>
-                        <div class="text-sm dark:text-dark-text-secondary text-light-text-secondary">{{ \Illuminate\Support\Str::limit($announcement->message, 100) }}</div>
+                        <div class="text-sm dark:text-dark-text-secondary text-light-text-secondary">{{ Str::limit($announcement->message, 100) }}</div>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
                         <div class="text-sm dark:text-dark-text-primary text-light-text-primary">

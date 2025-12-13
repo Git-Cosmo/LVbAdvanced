@@ -142,11 +142,13 @@ return [
     |--------------------------------------------------------------------------
     |
     | Define role-based permissions for bot commands.
+    | Role names are matched against Discord role names in your guild.
+    | Matching is case-insensitive (e.g., 'Admin', 'admin', 'ADMIN' all match).
     |
     */
 
     'permissions' => [
-        'announce' => ['admin', 'moderator'],
-        'manage_channels' => ['admin'],
+        'announce' => ['admin', 'moderator'], // Only users with 'admin' or 'moderator' Discord roles
+        'manage_channels' => ['admin'],        // Only users with 'admin' Discord role
     ],
 ];
