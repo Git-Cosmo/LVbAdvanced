@@ -8,6 +8,7 @@ use App\DiscordBot\Commands\CoinFlipCommand;
 use App\DiscordBot\Commands\CommandInterface;
 use App\DiscordBot\Commands\DiceRollCommand;
 use App\DiscordBot\Commands\EightBallCommand;
+use App\DiscordBot\Commands\FeedbackCommand;
 use App\DiscordBot\Commands\HelpCommand;
 use App\DiscordBot\Commands\PingCommand;
 use App\DiscordBot\Commands\ServerStatusCommand;
@@ -54,6 +55,7 @@ class MessageHandler
         $eightBallCommand = new EightBallCommand();
         $triviaCommand = new TriviaCommand();
         $serverStatusCommand = new ServerStatusCommand($this->discord);
+        $feedbackCommand = new FeedbackCommand();
 
         // Register commands
         $this->commands = [
@@ -66,6 +68,7 @@ class MessageHandler
             $eightBallCommand->getName() => $eightBallCommand,
             $triviaCommand->getName() => $triviaCommand,
             $serverStatusCommand->getName() => $serverStatusCommand,
+            $feedbackCommand->getName() => $feedbackCommand,
         ];
 
         // Set available commands for help command

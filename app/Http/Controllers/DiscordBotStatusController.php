@@ -38,6 +38,7 @@ class DiscordBotStatusController extends Controller
                 '!8ball' => 'Ask the magic 8-ball a question',
                 '!trivia' => 'Get a random gaming trivia question',
                 '!servers' => 'Show game server status',
+                '!feedback' => 'Submit feedback with interactive button',
             ],
         ]);
     }
@@ -101,6 +102,12 @@ class DiscordBotStatusController extends Controller
                     'name' => '!servers',
                     'description' => 'Show game server status from the website',
                     'usage' => '!servers',
+                    'permission' => 'Everyone',
+                ],
+                [
+                    'name' => '!feedback',
+                    'description' => 'Submit feedback with interactive button',
+                    'usage' => '!feedback',
                     'permission' => 'Everyone',
                 ],
             ],
