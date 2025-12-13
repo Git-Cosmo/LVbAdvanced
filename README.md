@@ -2443,52 +2443,58 @@ MessageHandler Processes Command
 
 ### Running in Production
 
+**⚠️ Important:** The Discord bot is a long-running process that must be managed by a process supervisor.
+
+**Deployment Configurations:**
+
+Production-ready deployment configurations are available in the `/deployment` directory:
+- `supervisor-discordbot.conf` - Supervisor configuration
+- `systemd-discordbot.service` - Systemd service unit
+- `README.md` - Detailed deployment instructions
+
+**Quick Setup:**
+
 **Using Supervisor (Recommended):**
-
-Create `/etc/supervisor/conf.d/discordbot.conf`:
-```ini
-[program:discordbot]
-process_name=%(program_name)s
-command=php /path/to/your/app/artisan discordbot:start
-autostart=true
-autorestart=true
-user=www-data
-redirect_stderr=true
-stdout_logfile=/path/to/your/app/storage/logs/discordbot.log
-```
-
-Then:
 ```bash
-sudo supervisorctl reread
-sudo supervisorctl update
-sudo supervisorctl start discordbot
+# Copy configuration
+sudo cp deployment/supervisor-discordbot.conf /etc/supervisor/conf.d/fpsociety-discordbot.conf
+
+# Update paths to match your installation
+sudo nano /etc/supervisor/conf.d/fpsociety-discordbot.conf
+
+# Start the bot
+sudo supervisorctl reread && sudo supervisorctl update
+sudo supervisorctl start fpsociety-discordbot
+
+# View logs
+sudo supervisorctl tail -f fpsociety-discordbot
 ```
 
-**Using systemd:**
-
-Create `/etc/systemd/system/discordbot.service`:
-```ini
-[Unit]
-Description=FPSociety Discord Bot
-After=network.target
-
-[Service]
-Type=simple
-User=www-data
-WorkingDirectory=/path/to/your/app
-ExecStart=/usr/bin/php /path/to/your/app/artisan discordbot:start
-Restart=always
-
-[Install]
-WantedBy=multi-user.target
-```
-
-Then:
+**Using Systemd:**
 ```bash
+# Copy service file
+sudo cp deployment/systemd-discordbot.service /etc/systemd/system/fpsociety-discordbot.service
+
+# Update paths to match your installation
+sudo nano /etc/systemd/system/fpsociety-discordbot.service
+
+# Start the bot
 sudo systemctl daemon-reload
-sudo systemctl enable discordbot
-sudo systemctl start discordbot
+sudo systemctl enable fpsociety-discordbot
+sudo systemctl start fpsociety-discordbot
+
+# View logs
+sudo journalctl -u fpsociety-discordbot -f
 ```
+
+**Using Docker:**
+
+The bot is already configured in `scripts/supervisord.conf` and starts automatically with:
+```bash
+docker compose up -d
+```
+
+For complete deployment documentation, monitoring, and troubleshooting, see `/deployment/README.md`.
 
 ### Permission Configuration
 
