@@ -87,7 +87,7 @@ class ChannelManager
             ->setPosition($settings['position'] ?? 0);
 
         // Create channel and return promise
-        return $guild->channels->save($builder)->then(
+        return $guild->createChannel($builder)->then(
             function (Channel $category) use ($name) {
                 $this->categoryCache[$name] = $category;
                 Log::info('Created category', ['category' => $name]);
@@ -148,7 +148,7 @@ class ChannelManager
         }
 
         // Create channel using promise-based save method
-        $guild->channels->save($builder)->done(
+        $guild->createChannel($builder)->then(
             function (Channel $channel) use ($channelName, $config) {
                 $this->channelCache[$channelName] = $channel;
                 Log::info('Created channel', ['channel' => $channelName]);
@@ -180,45 +180,41 @@ class ChannelManager
                     // Apply permissions to @everyone role
                     $everyoneRole = $guild->roles->get('id', $guild->id);
                     if ($everyoneRole) {
-                        $overwrite = [
-                            'id' => $everyoneRole->id,
-                            'type' => 'role',
-                            'allow' => 0,
-                            'deny' => 0,
-                        ];
+                        $allow = [];
+                        $deny = [];
 
-                        // Calculate permission bits
+                        // Build permission arrays
                         if (isset($perms['view_channel'])) {
                             if ($perms['view_channel']) {
-                                $overwrite['allow'] |= DiscordPermissions::VIEW_CHANNEL;
+                                $allow[] = 'view_channel';
                             } else {
-                                $overwrite['deny'] |= DiscordPermissions::VIEW_CHANNEL;
+                                $deny[] = 'view_channel';
                             }
                         }
 
                         if (isset($perms['send_messages'])) {
                             if ($perms['send_messages']) {
-                                $overwrite['allow'] |= DiscordPermissions::SEND_MESSAGES;
+                                $allow[] = 'send_messages';
                             } else {
-                                $overwrite['deny'] |= DiscordPermissions::SEND_MESSAGES;
+                                $deny[] = 'send_messages';
                             }
                         }
 
                         if (isset($perms['read_message_history'])) {
                             if ($perms['read_message_history']) {
-                                $overwrite['allow'] |= DiscordPermissions::READ_MESSAGE_HISTORY;
+                                $allow[] = 'read_message_history';
                             } else {
-                                $overwrite['deny'] |= DiscordPermissions::READ_MESSAGE_HISTORY;
+                                $deny[] = 'read_message_history';
                             }
                         }
 
-                        $channel->setPermissions($everyoneRole, $overwrite['allow'], $overwrite['deny']);
+                        $channel->setPermissions($everyoneRole, $allow, $deny);
                         
                         Log::info('Applied permissions to channel', [
                             'channel' => $channel->name,
                             'role' => '@everyone',
-                            'allow' => $overwrite['allow'],
-                            'deny' => $overwrite['deny'],
+                            'allow' => $allow,
+                            'deny' => $deny,
                         ]);
                     }
                 } else {
@@ -228,43 +224,41 @@ class ChannelManager
                     });
 
                     if ($role) {
-                        $overwrite = [
-                            'allow' => 0,
-                            'deny' => 0,
-                        ];
+                        $allow = [];
+                        $deny = [];
 
-                        // Calculate permission bits for custom roles
+                        // Build permission arrays for custom roles
                         if (isset($perms['view_channel'])) {
                             if ($perms['view_channel']) {
-                                $overwrite['allow'] |= DiscordPermissions::VIEW_CHANNEL;
+                                $allow[] = 'view_channel';
                             } else {
-                                $overwrite['deny'] |= DiscordPermissions::VIEW_CHANNEL;
+                                $deny[] = 'view_channel';
                             }
                         }
 
                         if (isset($perms['send_messages'])) {
                             if ($perms['send_messages']) {
-                                $overwrite['allow'] |= DiscordPermissions::SEND_MESSAGES;
+                                $allow[] = 'send_messages';
                             } else {
-                                $overwrite['deny'] |= DiscordPermissions::SEND_MESSAGES;
+                                $deny[] = 'send_messages';
                             }
                         }
 
                         if (isset($perms['read_message_history'])) {
                             if ($perms['read_message_history']) {
-                                $overwrite['allow'] |= DiscordPermissions::READ_MESSAGE_HISTORY;
+                                $allow[] = 'read_message_history';
                             } else {
-                                $overwrite['deny'] |= DiscordPermissions::READ_MESSAGE_HISTORY;
+                                $deny[] = 'read_message_history';
                             }
                         }
 
-                        $channel->setPermissions($role, $overwrite['allow'], $overwrite['deny']);
+                        $channel->setPermissions($role, $allow, $deny);
 
                         Log::info('Applied permissions to channel', [
                             'channel' => $channel->name,
                             'role' => $roleName,
-                            'allow' => $overwrite['allow'],
-                            'deny' => $overwrite['deny'],
+                            'allow' => $allow,
+                            'deny' => $deny,
                         ]);
                     } else {
                         Log::warning('Role not found for permission application', [
