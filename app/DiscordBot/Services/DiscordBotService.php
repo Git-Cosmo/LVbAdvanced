@@ -4,6 +4,7 @@ namespace App\DiscordBot\Services;
 
 use Discord\Discord;
 use Discord\WebSockets\Intents;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 
 class DiscordBotService
@@ -42,6 +43,14 @@ class DiscordBotService
 
             // Register message handler
             $this->messageHandler->registerHandlers();
+
+            // Set initial heartbeat
+            $this->updateHeartbeat();
+
+            // Set up periodic heartbeat (every 30 seconds)
+            $discord->getLoop()->addPeriodicTimer(30, function () {
+                $this->updateHeartbeat();
+            });
 
             Log::info('Discord bot fully initialized', [
                 'guilds_count' => $discord->guilds->count(),
@@ -102,5 +111,14 @@ class DiscordBotService
     public function getMessageHandler(): MessageHandler
     {
         return $this->messageHandler;
+    }
+
+    /**
+     * Update heartbeat in cache to indicate bot is online.
+     */
+    protected function updateHeartbeat(): void
+    {
+        Cache::put('discord_bot_heartbeat', true, 90); // 90 seconds TTL (3x the heartbeat interval)
+        Cache::put('discord_bot_last_heartbeat', now()->toIso8601String(), 3600); // Keep for 1 hour
     }
 }

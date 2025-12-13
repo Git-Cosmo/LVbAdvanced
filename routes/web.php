@@ -9,6 +9,7 @@ use App\Http\Controllers\Auth\OAuthController;
 use App\Http\Controllers\Auth\PasswordResetController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\DealController;
+use App\Http\Controllers\DiscordBotStatusController;
 use App\Http\Controllers\Forum\ForumController;
 use App\Http\Controllers\Forum\PostController;
 use App\Http\Controllers\Forum\ProfileController;
@@ -79,6 +80,12 @@ Route::get('/game/{slug}', [DealController::class, 'show'])->name('deals.show');
 
 // Universal Search Route
 Route::get('/search', [\App\Http\Controllers\SearchController::class, 'index'])->name('search');
+
+// Discord Bot API Routes
+Route::prefix('api/discord-bot')->name('api.discord.')->group(function () {
+    Route::get('/status', [DiscordBotStatusController::class, 'status'])->name('status');
+    Route::get('/commands', [DiscordBotStatusController::class, 'commands'])->name('commands');
+});
 
 // Authentication Routes
 Route::middleware('guest')->group(function () {
