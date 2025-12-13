@@ -87,7 +87,7 @@ class ChannelManager
             ->setPosition($settings['position'] ?? 0);
 
         // Create channel and return promise
-        return $guild->channels->save($builder)->then(
+        return $guild->createChannel($builder)->then(
             function (Channel $category) use ($name) {
                 $this->categoryCache[$name] = $category;
                 Log::info('Created category', ['category' => $name]);
@@ -148,7 +148,7 @@ class ChannelManager
         }
 
         // Create channel using promise-based save method
-        $guild->channels->save($builder)->done(
+        $guild->createChannel($builder)->done(
             function (Channel $channel) use ($channelName, $config) {
                 $this->channelCache[$channelName] = $channel;
                 Log::info('Created channel', ['channel' => $channelName]);
