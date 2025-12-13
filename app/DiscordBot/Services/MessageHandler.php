@@ -3,9 +3,16 @@
 namespace App\DiscordBot\Services;
 
 use App\DiscordBot\Commands\AnnounceCommand;
+use App\DiscordBot\Commands\ChuckNorrisCommand;
+use App\DiscordBot\Commands\CoinFlipCommand;
 use App\DiscordBot\Commands\CommandInterface;
+use App\DiscordBot\Commands\DiceRollCommand;
+use App\DiscordBot\Commands\EightBallCommand;
+use App\DiscordBot\Commands\FeedbackCommand;
 use App\DiscordBot\Commands\HelpCommand;
 use App\DiscordBot\Commands\PingCommand;
+use App\DiscordBot\Commands\ServerStatusCommand;
+use App\DiscordBot\Commands\TriviaCommand;
 use App\Events\AnnouncementCreated;
 use App\Models\Announcement;
 use Discord\Discord;
@@ -42,12 +49,26 @@ class MessageHandler
         $announceCommand = new AnnounceCommand($this->discord, $this->channelManager);
         $pingCommand = new PingCommand();
         $helpCommand = new HelpCommand($this->discord);
+        $chuckNorrisCommand = new ChuckNorrisCommand();
+        $diceRollCommand = new DiceRollCommand();
+        $coinFlipCommand = new CoinFlipCommand();
+        $eightBallCommand = new EightBallCommand();
+        $triviaCommand = new TriviaCommand($this->discord);
+        $serverStatusCommand = new ServerStatusCommand($this->discord);
+        $feedbackCommand = new FeedbackCommand();
 
         // Register commands
         $this->commands = [
             $announceCommand->getName() => $announceCommand,
             $pingCommand->getName() => $pingCommand,
             $helpCommand->getName() => $helpCommand,
+            $chuckNorrisCommand->getName() => $chuckNorrisCommand,
+            $diceRollCommand->getName() => $diceRollCommand,
+            $coinFlipCommand->getName() => $coinFlipCommand,
+            $eightBallCommand->getName() => $eightBallCommand,
+            $triviaCommand->getName() => $triviaCommand,
+            $serverStatusCommand->getName() => $serverStatusCommand,
+            $feedbackCommand->getName() => $feedbackCommand,
         ];
 
         // Set available commands for help command

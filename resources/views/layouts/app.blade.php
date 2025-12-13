@@ -538,10 +538,10 @@
                     </ul>
                 </div>
                 
-                <!-- Social -->
+                <!-- Social & Discord Bot -->
                 <div>
                     <h3 class="text-lg font-bold dark:text-dark-text-bright text-light-text-bright mb-4">Connect</h3>
-                    <div class="flex space-x-3">
+                    <div class="flex space-x-3 mb-4">
                         <a href="#" class="w-10 h-10 rounded-lg dark:bg-dark-bg-tertiary bg-light-bg-tertiary flex items-center justify-center dark:hover:bg-accent-blue hover:bg-accent-blue transition-colors group">
                             <svg class="w-5 h-5 dark:text-dark-text-primary text-light-text-primary group-hover:text-white" fill="currentColor" viewBox="0 0 24 24">
                                 <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
@@ -557,6 +557,26 @@
                                 <path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0112 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/>
                             </svg>
                         </a>
+                    </div>
+                    
+                    <!-- Discord Bot Status -->
+                    <div x-data="discordBotStatus()" x-init="init()" class="mt-4 p-3 rounded-lg dark:bg-dark-bg-tertiary bg-light-bg-tertiary">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-sm font-semibold dark:text-dark-text-primary text-light-text-primary">Discord Bot</span>
+                            <div class="flex items-center space-x-2">
+                                <span class="relative flex h-2 w-2">
+                                    <span x-show="status === 'online'" class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                                    <span :class="status === 'online' ? 'bg-green-500' : 'bg-red-500'" class="relative inline-flex rounded-full h-2 w-2"></span>
+                                </span>
+                                <span x-text="status === 'online' ? 'Online' : 'Offline'" class="text-xs dark:text-dark-text-secondary text-light-text-secondary"></span>
+                            </div>
+                        </div>
+                        <p class="text-xs dark:text-dark-text-tertiary text-light-text-tertiary" x-show="status === 'online'">
+                            Type <code class="px-1 py-0.5 rounded dark:bg-dark-bg-primary bg-light-bg-primary">!help</code> in Discord
+                        </p>
+                        <p class="text-xs dark:text-dark-text-tertiary text-light-text-tertiary" x-show="status === 'offline'">
+                            Bot is currently offline
+                        </p>
                     </div>
                 </div>
             </div>
@@ -741,6 +761,35 @@
                         second: '2-digit',
                         hour12: true 
                     });
+                }
+            }
+        }
+
+        // Discord Bot Status Component
+        function discordBotStatus() {
+            return {
+                status: 'offline',
+                lastHeartbeat: null,
+                init() {
+                    this.checkStatus();
+                    // Check status every 30 seconds
+                    setInterval(() => this.checkStatus(), 30000);
+                },
+                async checkStatus() {
+                    try {
+                        const response = await fetch('{{ route('api.discord.status') }}', {
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'Accept': 'application/json',
+                            }
+                        });
+                        const data = await response.json();
+                        this.status = data.status;
+                        this.lastHeartbeat = data.last_heartbeat;
+                    } catch (error) {
+                        console.error('Error checking Discord bot status:', error);
+                        this.status = 'offline';
+                    }
                 }
             }
         }

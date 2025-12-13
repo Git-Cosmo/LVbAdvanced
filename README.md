@@ -2295,6 +2295,25 @@ FPSociety includes a comprehensive Discord bot built with Laravel 12 and Discord
 - ✅ **!announce <message>** - Create an announcement (Admin/Moderator only)
 - ✅ **!ping** - Check bot responsiveness
 - ✅ **!help** - Display available commands
+- ✅ **!chucknorris** - Get a random Chuck Norris joke
+- ✅ **!roll <dice>** - Roll dice (e.g., !roll 2d6 or !roll 1d20)
+- ✅ **!flip** - Flip a coin (heads or tails)
+- ✅ **!8ball <question>** - Ask the magic 8-ball a question
+- ✅ **!trivia** - Get a random gaming trivia question
+- ✅ **!servers** - Show game server status from the website
+- ✅ **!feedback** - Submit feedback with interactive button
+
+**Interactive UI Elements:**
+- ✅ **Buttons** - Interactive buttons for user actions
+- ✅ **Message Components** - Rich interactive messages with action rows
+- ✅ **Ephemeral Messages** - Private responses visible only to command user
+- ✅ **Modal Support** - Foundation for modal forms (buttons with callbacks)
+
+**Website Integration:**
+- ✅ **Live Bot Status** - Real-time bot status indicator on website footer
+- ✅ **Bot Status API** - RESTful API endpoints for bot status and commands
+- ✅ **Heartbeat System** - Automatic heartbeat to track bot uptime
+- ✅ **Status Monitoring** - Visual online/offline indicator with auto-refresh
 
 ### Required Channels
 
@@ -2409,6 +2428,111 @@ Navigate to: /admin/announcements
 2. Bot creates announcement in database
 3. Posts to `#announcements` channel with rich embed
 4. Broadcasts to website in real-time via Reverb
+
+### Discord Bot Commands Guide
+
+**Community Commands (Everyone):**
+
+**!chucknorris**
+- Get a random Chuck Norris joke/fact
+- Uses Chuck Norris API for endless entertainment
+- Perfect for breaking the ice in chat
+- Example: `!chucknorris`
+
+**!roll <dice>**
+- Roll dice for gaming decisions
+- Supports standard RPG dice notation (e.g., 2d6, 1d20, 3d10)
+- Limits: 1-100 dice, 2-1000 sides per die
+- Shows individual rolls when rolling 10 or fewer dice
+- Examples: 
+  - `!roll` (defaults to 1d6)
+  - `!roll 2d6` (roll two six-sided dice)
+  - `!roll 1d20` (roll one twenty-sided die)
+
+**!flip**
+- Flip a coin to make quick decisions
+- Returns either Heads 👑 or Tails ⚡
+- Example: `!flip`
+
+**!8ball <question>**
+- Ask the magic 8-ball for wisdom
+- 20 classic responses (positive, negative, and non-committal)
+- Must include a question
+- Example: `!8ball Will I win my next match?`
+
+**!trivia**
+- Get a random video game trivia question
+- Multiple choice format with 4 options
+- Questions pulled from Open Trivia Database
+- Answer revealed after 30 seconds
+- Difficulty levels: Easy, Medium, Hard
+- Example: `!trivia`
+
+**!servers**
+- Display current game server status
+- Shows live data from FPSociety website
+- Includes:
+  - Server name and game
+  - Online/Offline/Maintenance status
+  - Current player count vs max players
+  - Connection information (IP:Port or direct connect URL)
+- Example: `!servers`
+
+**!ping**
+- Check if bot is responsive
+- Simple connectivity test
+- Returns: "🏓 Pong!"
+- Example: `!ping`
+
+**!help**
+- Display all available commands
+- Shows command descriptions and usage
+- Example: `!help`
+
+**!feedback**
+- Submit feedback to the website team
+- Uses Discord interactive buttons
+- Click button to get feedback submission link
+- Demonstrates modal/interaction capabilities
+- Response is ephemeral (private to you)
+- Example: `!feedback`
+
+**Administrative Commands:**
+
+**!announce <title>\n<message>**
+- Create an announcement (Admin/Moderator only)
+- Posts to #announcements channel
+- Syncs to website in real-time
+- Stores in database for history
+- Example: `!announce Tournament Tonight\nCS2 tournament starts at 8 PM EST!`
+
+### Website Integration Features
+
+**Discord Bot Status Widget:**
+- Located in website footer
+- Real-time online/offline indicator
+- Green pulsing dot when bot is online
+- Auto-refreshes every 30 seconds
+- Shows helpful command tip when online
+
+**Bot Status API Endpoints:**
+- `GET /api/discord-bot/status` - Bot status, heartbeat, command list
+- `GET /api/discord-bot/commands` - Detailed command documentation
+- Returns JSON with bot state and available commands
+- Used by frontend for live status updates
+
+**Heartbeat System:**
+- Bot sends heartbeat every 30 seconds
+- Stored in cache with 90-second TTL
+- Website checks heartbeat to determine online status
+- Status determined solely by cache (no process checking for security)
+
+**Integration Benefits:**
+- Seamless cross-platform experience
+- Commands trigger website updates
+- Website data displayed in Discord
+- Real-time status monitoring
+- Unified gaming community platform
 
 ### Database Schema
 
@@ -2592,6 +2716,63 @@ Discord enforces rate limits:
 - Consider the 50 channel limit per category
 - Message sending has per-channel rate limits
 
+### Quick Start Examples
+
+**Using Commands in Discord:**
+```
+User: !chucknorris
+Bot: 💪 Chuck Norris Fact:
+     Chuck Norris doesn't use web frameworks. He writes websites in binary.
+
+User: !roll 2d6
+Bot: 🎲 PlayerName rolled 2d6: 9 (5, 4)
+
+User: !flip
+Bot: ⚡ PlayerName flipped a coin: Tails!
+
+User: !8ball Will I win?
+Bot: 🎱 Question: Will I win?
+     Answer: Signs point to yes.
+
+User: !trivia
+Bot: 🎮 Gaming Trivia (Medium)
+     
+     What year was Counter-Strike: Global Offensive released?
+     A. 2011
+     B. 2012
+     C. 2013
+     D. 2014
+     
+     *Answer will be revealed in 30 seconds...*
+     
+[30 seconds later]
+Bot: ✅ Correct Answer: 2012
+
+User: !servers
+Bot: [Rich embed showing game server status with player counts and IPs]
+
+User: !feedback
+Bot: 📝 Submit Feedback
+     Click the button below to open the feedback form!
+     [Button: Open Feedback Form]
+```
+
+**Checking Bot Status on Website:**
+- Look at the footer of any page on the website
+- You'll see a "Discord Bot" widget showing:
+  - 🟢 Online (with pulsing green dot) or 🔴 Offline
+  - Helpful command tip when online
+  - Auto-refreshes every 30 seconds
+
+**API Usage:**
+```bash
+# Get bot status
+curl https://your-domain.com/api/discord-bot/status
+
+# Get all commands
+curl https://your-domain.com/api/discord-bot/commands
+```
+
 ### Security Best Practices
 
 1. **Never commit** bot tokens to version control
@@ -2600,6 +2781,7 @@ Discord enforces rate limits:
 4. Regularly rotate bot token if compromised
 5. Monitor activity logs for suspicious usage
 6. Keep Discord-PHP library updated
+7. Bot status endpoint is public - no sensitive data exposed
 
 ### Bot Architecture
 
