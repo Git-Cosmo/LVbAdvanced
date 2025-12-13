@@ -32,5 +32,11 @@ class AppServiceProvider extends ServiceProvider
         DatabaseNotification::created(function (DatabaseNotification $notification) {
             broadcast(new RealtimeNotificationCreated($notification));
         });
+
+        // Register Discord bot event listeners
+        Event::listen(
+            \App\Events\AnnouncementCreated::class,
+            \App\Listeners\SendAnnouncementToDiscord::class,
+        );
     }
 }

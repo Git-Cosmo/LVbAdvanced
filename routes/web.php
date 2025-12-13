@@ -298,6 +298,16 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
         Route::delete('/{news}', [\App\Http\Controllers\Admin\NewsManagementController::class, 'destroy'])->name('destroy');
     });
 
+    // Announcements Management
+    Route::prefix('announcements')->name('announcements.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Admin\AnnouncementController::class, 'index'])->name('index');
+        Route::get('/create', [\App\Http\Controllers\Admin\AnnouncementController::class, 'create'])->name('create');
+        Route::post('/', [\App\Http\Controllers\Admin\AnnouncementController::class, 'store'])->name('store');
+        Route::get('/{announcement}/edit', [\App\Http\Controllers\Admin\AnnouncementController::class, 'edit'])->name('edit');
+        Route::patch('/{announcement}', [\App\Http\Controllers\Admin\AnnouncementController::class, 'update'])->name('update');
+        Route::delete('/{announcement}', [\App\Http\Controllers\Admin\AnnouncementController::class, 'destroy'])->name('destroy');
+    });
+
     // Patch Notes Management
     Route::prefix('patch-notes')->name('patch-notes.')->group(function () {
         Route::get('/', [\App\Http\Controllers\Admin\PatchNoteController::class, 'index'])->name('index');
