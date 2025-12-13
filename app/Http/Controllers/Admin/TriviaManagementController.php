@@ -3,13 +3,17 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\AddTriviaQuestionRequest;
+use App\Http\Requests\Admin\StoreTriviaGameRequest;
+use App\Http\Requests\Admin\UpdateTriviaGameRequest;
 use App\Models\TriviaGame;
 use App\Models\TriviaQuestion;
-use Illuminate\Http\Request;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\View\View;
 
 class TriviaManagementController extends Controller
 {
-    public function index()
+    public function index(): View
     {
         $games = TriviaGame::withCount('questions', 'attempts')
             ->orderByDesc('created_at')
@@ -21,24 +25,16 @@ class TriviaManagementController extends Controller
         ]);
     }
 
-    public function create()
+    public function create(): View
     {
         return view('admin.casual-games.trivia.create', [
             'page' => (object) ['title' => 'Create Trivia Game'],
         ]);
     }
 
-    public function store(Request $request)
+    public function store(StoreTriviaGameRequest $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'category' => 'required|string',
-            'difficulty' => 'required|in:easy,medium,hard',
-            'time_limit' => 'required|integer|min:10|max:300',
-            'points_per_correct' => 'required|integer|min:1',
-            'is_active' => 'boolean',
-        ]);
+        $validated = $request->validated();
 
         TriviaGame::create($validated);
 
@@ -46,7 +42,7 @@ class TriviaManagementController extends Controller
             ->with('success', 'Trivia game created successfully!');
     }
 
-    public function edit(TriviaGame $triviaGame)
+    public function edit(TriviaGame $triviaGame): View
     {
         $triviaGame->load('questions');
 
@@ -56,17 +52,9 @@ class TriviaManagementController extends Controller
         ]);
     }
 
-    public function update(Request $request, TriviaGame $triviaGame)
+    public function update(UpdateTriviaGameRequest $request, TriviaGame $triviaGame): RedirectResponse
     {
-        $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'category' => 'required|string',
-            'difficulty' => 'required|in:easy,medium,hard',
-            'time_limit' => 'required|integer|min:10|max:300',
-            'points_per_correct' => 'required|integer|min:1',
-            'is_active' => 'boolean',
-        ]);
+        $validated = $request->validated();
 
         $triviaGame->update($validated);
 
@@ -74,7 +62,7 @@ class TriviaManagementController extends Controller
             ->with('success', 'Trivia game updated successfully!');
     }
 
-    public function destroy(TriviaGame $triviaGame)
+    public function destroy(TriviaGame $triviaGame): RedirectResponse
     {
         $triviaGame->delete();
 
@@ -82,23 +70,16 @@ class TriviaManagementController extends Controller
             ->with('success', 'Trivia game deleted successfully!');
     }
 
-    public function addQuestion(Request $request, TriviaGame $triviaGame)
+    public function addQuestion(AddTriviaQuestionRequest $request, TriviaGame $triviaGame): RedirectResponse
     {
-        $validated = $request->validate([
-            'question' => 'required|string',
-            'options' => 'required|array|min:2',
-            'options.*' => 'required|string',
-            'correct_answer_index' => 'required|integer|min:0',
-            'explanation' => 'nullable|string',
-            'points' => 'required|integer|min:1',
-        ]);
+        $validated = $request->validated();
 
         $triviaGame->questions()->create($validated);
 
         return back()->with('success', 'Question added successfully!');
     }
 
-    public function deleteQuestion(TriviaQuestion $question)
+    public function deleteQuestion(TriviaQuestion $question): RedirectResponse
     {
         $question->delete();
 

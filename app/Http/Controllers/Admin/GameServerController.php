@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Enums\ServerStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StoreGameServerRequest;
 use App\Http\Requests\Admin\UpdateGameServerRequest;

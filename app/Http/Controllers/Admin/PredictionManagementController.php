@@ -3,12 +3,15 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\ResolvePredictionRequest;
+use App\Http\Requests\Admin\StorePredictionRequest;
 use App\Models\Prediction;
-use Illuminate\Http\Request;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\View\View;
 
 class PredictionManagementController extends Controller
 {
-    public function index()
+    public function index(): View
     {
         $predictions = Prediction::withCount('entries')
             ->orderByDesc('created_at')
@@ -20,24 +23,16 @@ class PredictionManagementController extends Controller
         ]);
     }
 
-    public function create()
+    public function create(): View
     {
         return view('admin.casual-games.predictions.create', [
             'page' => (object) ['title' => 'Create Prediction'],
         ]);
     }
 
-    public function store(Request $request)
+    public function store(StorePredictionRequest $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'category' => 'required|string',
-            'options' => 'required|array|min:2',
-            'options.*' => 'required|string',
-            'points_reward' => 'required|integer|min:1',
-            'closes_at' => 'required|date|after:now',
-        ]);
+        $validated = $request->validated();
 
         Prediction::create($validated);
 
@@ -45,11 +40,9 @@ class PredictionManagementController extends Controller
             ->with('success', 'Prediction created successfully!');
     }
 
-    public function resolve(Request $request, Prediction $prediction)
+    public function resolve(ResolvePredictionRequest $request, Prediction $prediction): RedirectResponse
     {
-        $validated = $request->validate([
-            'correct_option_index' => 'required|integer|min:0',
-        ]);
+        $validated = $request->validated();
 
         $prediction->update([
             'correct_option_index' => $validated['correct_option_index'],

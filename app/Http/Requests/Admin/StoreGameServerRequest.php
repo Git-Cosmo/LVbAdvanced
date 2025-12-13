@@ -29,7 +29,7 @@ class StoreGameServerRequest extends FormRequest
             'ip_address' => 'nullable|string|max:255',
             'port' => 'nullable|integer|min:1|max:65535',
             'connect_url' => 'nullable|string|max:500',
-            'status' => 'required|in:online,offline,maintenance,coming_soon',
+            'status' => ['required', \App\Enums\ServerStatus::validationRule()],
             'max_players' => 'nullable|integer|min:0',
             'current_players' => 'nullable|integer|min:0',
             'map' => 'nullable|string|max:255',
