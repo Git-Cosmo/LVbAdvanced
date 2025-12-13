@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\ResolveModerationReportRequest;
 use App\Models\Forum\ForumPost;
 use App\Models\Forum\ForumReport;
 use App\Models\Forum\ForumThread;
@@ -10,7 +11,6 @@ use App\Models\User;
 use App\Models\User\UserBan;
 use App\Models\User\UserWarning;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class ModerationController extends Controller
@@ -43,12 +43,9 @@ class ModerationController extends Controller
     /**
      * Resolve a report.
      */
-    public function resolve(Request $request, ForumReport $report): RedirectResponse
+    public function resolve(ResolveModerationReportRequest $request, ForumReport $report): RedirectResponse
     {
-        $validated = $request->validate([
-            'action' => 'required|in:dismiss,delete_content,warn_user,ban_user',
-            'notes' => 'nullable|string|max:1000',
-        ]);
+        $validated = $request->validated();
 
         $report->resolve(auth()->user(), $validated['notes']);
 
