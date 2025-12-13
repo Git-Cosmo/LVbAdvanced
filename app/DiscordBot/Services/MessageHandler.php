@@ -93,7 +93,6 @@ class MessageHandler
             'title' => $title,
             'message' => $messageText,
             'source' => 'discord',
-            'discord_message_id' => $message->id,
             'discord_channel_id' => $message->channel_id,
             'published_at' => now(),
             'metadata' => [
@@ -110,7 +109,7 @@ class MessageHandler
             $embed = $this->createAnnouncementEmbed($announcement, $message);
 
             $announcementsChannel->sendEmbed($embed)->done(function (Message $sentMessage) use ($announcement) {
-                // Update announcement with Discord message ID
+                // Update announcement with Discord message ID after successful post
                 $announcement->update([
                     'discord_message_id' => $sentMessage->id,
                 ]);

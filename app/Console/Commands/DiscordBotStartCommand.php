@@ -57,4 +57,3 @@ class DiscordBotStartCommand extends Command
         return self::SUCCESS;
     }
 }
-
