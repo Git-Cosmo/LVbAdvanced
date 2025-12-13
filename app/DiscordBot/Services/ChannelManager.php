@@ -147,30 +147,24 @@ class ChannelManager
             $builder->setParentId($this->categoryCache[$config['category']]->id);
         }
 
-        try {
-            $guild->channels->save($builder)->done(
-                function (Channel $channel) use ($channelName, $config) {
-                    $this->channelCache[$channelName] = $channel;
-                    Log::info('Created channel', ['channel' => $channelName]);
+        // Create channel using promise-based save method
+        $guild->channels->save($builder)->done(
+            function (Channel $channel) use ($channelName, $config) {
+                $this->channelCache[$channelName] = $channel;
+                Log::info('Created channel', ['channel' => $channelName]);
 
-                    // Apply permissions if configured
-                    if (isset($config['permissions'])) {
-                        $this->applyChannelPermissions($channel, $config['permissions']);
-                    }
-                },
-                function ($error) use ($channelName) {
-                    Log::error('Failed to create channel', [
-                        'channel' => $channelName,
-                        'error' => (string) $error,
-                    ]);
+                // Apply permissions if configured
+                if (isset($config['permissions'])) {
+                    $this->applyChannelPermissions($channel, $config['permissions']);
                 }
-            );
-        } catch (\Exception $e) {
-            Log::error('Failed to create channel', [
-                'channel' => $channelName,
-                'error' => $e->getMessage(),
-            ]);
-        }
+            },
+            function ($error) use ($channelName) {
+                Log::error('Failed to create channel', [
+                    'channel' => $channelName,
+                    'error' => (string) $error,
+                ]);
+            }
+        );
     }
 
     /**

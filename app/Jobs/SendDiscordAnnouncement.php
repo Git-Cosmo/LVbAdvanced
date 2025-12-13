@@ -11,9 +11,22 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Facades\Log;
 
+/**
+ * Send an announcement from the website to Discord.
+ * 
+ * This job creates a temporary Discord client to send announcements.
+ * For better performance in high-traffic scenarios, consider using a long-running
+ * bot service with a message queue instead.
+ */
+
 class SendDiscordAnnouncement implements ShouldQueue
 {
     use Queueable;
+
+    /**
+     * Job timeout in seconds for the event loop.
+     */
+    protected const EVENT_LOOP_TIMEOUT = 30;
 
     /**
      * Create a new job instance.
@@ -119,10 +132,11 @@ class SendDiscordAnnouncement implements ShouldQueue
             });
 
             // Run the event loop to completion with timeout
-            $timeoutTimer = $loop->addTimer(30, function () use ($loop, &$sentSuccessfully) {
+            $timeoutTimer = $loop->addTimer(self::EVENT_LOOP_TIMEOUT, function () use ($loop, &$sentSuccessfully) {
                 if (!$sentSuccessfully) {
                     Log::warning('Discord announcement job timed out', [
                         'announcement_id' => $this->announcement->id,
+                        'timeout_seconds' => self::EVENT_LOOP_TIMEOUT,
                     ]);
                 }
                 $loop->stop();
@@ -130,8 +144,13 @@ class SendDiscordAnnouncement implements ShouldQueue
 
             $loop->run();
             
-            // Cancel timeout if loop completed
-            $loop->cancelTimer($timeoutTimer);
+            // Cancel timeout if loop completed before timeout
+            // Check if timer is still active before cancelling
+            if ($timeoutTimer && !$timeoutTimer->isActive()) {
+                // Timer already triggered, no need to cancel
+            } else if ($timeoutTimer) {
+                $loop->cancelTimer($timeoutTimer);
+            }
 
         } catch (\Exception $e) {
             Log::error('Failed to send announcement to Discord', [

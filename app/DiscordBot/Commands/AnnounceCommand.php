@@ -3,6 +3,7 @@
 namespace App\DiscordBot\Commands;
 
 use App\DiscordBot\Services\ChannelManager;
+use App\DiscordBot\Services\RateLimiter;
 use App\Events\AnnouncementCreated;
 use App\Models\Announcement;
 use Discord\Discord;
@@ -14,8 +15,10 @@ class AnnounceCommand extends BaseCommand
 {
     public function __construct(
         protected Discord $discord,
-        protected ChannelManager $channelManager
+        protected ChannelManager $channelManager,
+        protected ?RateLimiter $rateLimiter = null
     ) {
+        $this->rateLimiter = $rateLimiter ?? new RateLimiter();
     }
 
     /**
@@ -50,6 +53,17 @@ class AnnounceCommand extends BaseCommand
         // Check permissions
         if (! $this->hasPermission($message)) {
             $message->reply('❌ You do not have permission to use this command.');
+            return;
+        }
+
+        // Check rate limiting (3 announcements per 5 minutes per user)
+        $userId = $message->author->id;
+        if ($this->rateLimiter->tooManyAttempts($userId, 'announce', 3, 300)) {
+            $message->reply('⏱️ You are creating announcements too quickly. Please wait a few minutes before trying again.');
+            Log::warning('User hit rate limit for announce command', [
+                'user_id' => $userId,
+                'username' => $message->author->username,
+            ]);
             return;
         }
 
@@ -106,12 +120,16 @@ class AnnounceCommand extends BaseCommand
         // Broadcast to website via Reverb
         event(new AnnouncementCreated($announcement));
 
+        // Increment rate limit counter
+        $this->rateLimiter->hit($userId, 'announce', 300);
+
         // Confirm to user
         $message->reply('✅ Announcement created and broadcasted!');
 
         Log::info('Announcement created from Discord', [
             'announcement_id' => $announcement->id,
             'author' => $message->author->username,
+            'user_id' => $userId,
         ]);
     }
 
