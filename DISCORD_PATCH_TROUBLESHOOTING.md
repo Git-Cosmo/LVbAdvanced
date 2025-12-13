@@ -156,7 +156,7 @@ php artisan test --filter=DiscordBot
 
 You should see:
 ```
-Tests:  6 passed (9 assertions)
+Tests:  12 passed (9 assertions)
 ```
 
 Then try starting the bot:

@@ -45,7 +45,7 @@ if %errorlevel% equ 0 (
     echo SUCCESS: Patch applied successfully!
 ) else (
     REM Check if patch was already applied
-    findstr /C:"addComponent(ComponentObject $component)" src\Discord\Builders\ComponentsTrait.php >nul 2>nul
+    findstr /C:"addComponent(ComponentObject $$component)" src\Discord\Builders\ComponentsTrait.php >nul 2>nul
     if %errorlevel% equ 0 (
         echo SUCCESS: Patch was already applied.
     ) else (

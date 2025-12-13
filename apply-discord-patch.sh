@@ -30,7 +30,7 @@ fi
 
 # Apply the patch
 cd vendor/team-reflex/discord-php
-if patch -p1 --forward --no-backup-if-mismatch < ../../../patches/discord-php-components-trait-type-fix.patch 2>/dev/null; then
+if patch -p1 --forward --no-backup-if-mismatch < ../../../patches/discord-php-components-trait-type-fix.patch; then
     echo "SUCCESS: Patch applied successfully!"
 elif grep -q "addComponent(ComponentObject \$component)" src/Discord/Builders/ComponentsTrait.php; then
     echo "SUCCESS: Patch was already applied."
