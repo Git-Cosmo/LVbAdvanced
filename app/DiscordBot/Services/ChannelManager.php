@@ -148,7 +148,7 @@ class ChannelManager
         }
 
         // Create channel using promise-based save method
-        $guild->createChannel($builder)->done(
+        $guild->createChannel($builder)->then(
             function (Channel $channel) use ($channelName, $config) {
                 $this->channelCache[$channelName] = $channel;
                 Log::info('Created channel', ['channel' => $channelName]);
