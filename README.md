@@ -2261,5 +2261,363 @@ PSN_CLIENT_SECRET=your_psn_client_secret
 - Clan vs Clan tournaments
 - Clan leaderboards and achievements
 - Event RSVP system with calendar integration
-- Discord bot integration for clans
+
+## Discord Bot Integration
+
+### Overview
+FPSociety includes a comprehensive Discord bot built with Laravel 12 and Discord-PHP library. The bot provides seamless integration between your Discord server and the gaming community website with real-time announcements, automatic channel management, and cross-platform synchronization via Laravel Reverb.
+
+### Features
+
+**Automatic Channel Provisioning:**
+- ✅ **Auto-Create Channels** - Bot automatically creates required channels on startup
+- ✅ **Category Organization** - Channels grouped into Community, Systems, and Moderation categories
+- ✅ **Permission Management** - Automatic role-based permission configuration
+- ✅ **Channel Configuration** - Centralized config file for easy channel management
+
+**Announcement System:**
+- ✅ **Bidirectional Sync** - Announcements sync between Discord and website
+- ✅ **!announce Command** - Admin/Moderator command to create announcements in Discord
+- ✅ **Rich Embeds** - Beautiful Discord embeds with timestamps and author info
+- ✅ **Website Admin Panel** - Create announcements from the admin panel
+- ✅ **Real-time Broadcasting** - Reverb integration for live website updates
+- ✅ **Database Logging** - All announcements stored in database with full history
+
+**Cross-Platform Integration:**
+- ✅ **Laravel Reverb** - WebSocket broadcasting for real-time updates
+- ✅ **Event System** - Laravel events for extensible architecture
+- ✅ **Activity Logging** - Track all announcement actions
+- ✅ **Multi-Channel Broadcasting** - Broadcasts to site.announcements, site.dashboard, discord.announcements
+
+**Bot Commands:**
+- ✅ **!announce <message>** - Create an announcement (Admin/Moderator only)
+- ✅ **!ping** - Check bot responsiveness
+- ✅ **!help** - Display available commands
+
+### Required Channels
+
+The bot automatically provisions these channels:
+
+**Community Category:**
+- `#announcements` - Official announcements (read-only for members)
+- `#live-streams` - Stream announcements and notifications
+- `#bot-commands` - Bot interaction channel
+
+**Systems Category:**
+- `#game-status` - Real-time game server status updates
+- `#leaderboards` - Player rankings and leaderboard updates
+
+**Moderation Category:**
+- `#moderation-logs` - Mod action logs (moderator-only)
+
+### Setup & Configuration
+
+**1. Install Dependencies:**
+```bash
+composer install
+```
+
+**2. Configure Environment Variables:**
+Add to your `.env` file:
+```env
+# Discord Bot Configuration
+DISCORD_BOT_TOKEN=your_discord_bot_token_here
+DISCORD_GUILD_ID=your_discord_server_id_here
+
+# Discord OAuth (optional, for website login)
+DISCORD_CLIENT_ID=your_oauth_client_id
+DISCORD_CLIENT_SECRET=your_oauth_client_secret
+```
+
+**3. Run Database Migration:**
+```bash
+php artisan migrate
+```
+
+**4. Configure Channels (Optional):**
+Edit `config/discord_channels.php` to customize:
+- Channel names and topics
+- Category organization
+- Role permissions
+- Channel order
+
+**5. Start the Bot:**
+```bash
+php artisan discordbot:start
+```
+
+The bot will:
+1. Connect to Discord
+2. Verify guild access
+3. Create missing channels and categories
+4. Apply configured permissions
+5. Register message handlers
+6. Start listening for commands
+
+### Creating Discord Bot
+
+**1. Create Bot on Discord Developer Portal:**
+- Visit https://discord.com/developers/applications
+- Click "New Application"
+- Go to "Bot" section
+- Click "Add Bot"
+- Enable "Message Content Intent" under Privileged Gateway Intents
+- Copy the bot token (this is your `DISCORD_BOT_TOKEN`)
+
+**2. Invite Bot to Your Server:**
+- Go to OAuth2 → URL Generator
+- Select scopes: `bot`
+- Select permissions: `Manage Channels`, `Send Messages`, `Embed Links`, `Read Messages`, `Read Message History`
+- Copy the generated URL and open it in browser
+- Select your server and authorize
+
+**3. Get Guild ID:**
+- Enable Developer Mode in Discord (User Settings → Advanced → Developer Mode)
+- Right-click your server icon → Copy ID (this is your `DISCORD_GUILD_ID`)
+
+### Admin Panel Usage
+
+**Access Announcements:**
+```
+Navigate to: /admin/announcements
+```
+
+**Create Website → Discord Announcement:**
+1. Click "Create Announcement"
+2. Enter title and message
+3. Check "Publish immediately and broadcast to Discord"
+4. Click "Create & Broadcast Announcement"
+5. Announcement appears in Discord `#announcements` and broadcasts to website via Reverb
+
+**Create Discord → Website Announcement:**
+1. In Discord, use command: `!announce Your Title\nYour detailed message`
+2. Bot creates announcement in database
+3. Posts to `#announcements` channel with rich embed
+4. Broadcasts to website in real-time via Reverb
+
+### Database Schema
+
+**`announcements` table:**
+- **Basic**: id, user_id, title, message
+- **Source Tracking**: source (website/discord), discord_message_id, discord_channel_id
+- **Publishing**: published_at timestamp
+- **Metadata**: JSON field for additional data
+- **Indexes**: source + created_at, published_at
+
+### Architecture
+
+**Event Flow:**
+```
+Website Announcement Created
+    ↓
+AnnouncementCreated Event Dispatched
+    ↓
+    ├─→ SendAnnouncementToDiscord Listener → Discord API
+    ├─→ Reverb Broadcast → Website Users
+    └─→ Database Log
+
+Discord !announce Command
+    ↓
+MessageHandler Processes Command
+    ↓
+    ├─→ Create Database Record
+    ├─→ Post to #announcements
+    └─→ AnnouncementCreated Event → Reverb Broadcast
+```
+
+**Service Classes:**
+- `DiscordBotService` - Main bot client and initialization
+- `ChannelManager` - Channel provisioning and management
+- `MessageHandler` - Command processing and message handling
+
+**Laravel Integration:**
+- `Announcement` Model - Eloquent model with relationships
+- `AnnouncementCreated` Event - Broadcasts to Reverb channels
+- `SendAnnouncementToDiscord` Listener - Syncs to Discord
+- `AnnouncementController` - Admin panel CRUD operations
+
+### Running in Production
+
+**Using Supervisor (Recommended):**
+
+Create `/etc/supervisor/conf.d/discordbot.conf`:
+```ini
+[program:discordbot]
+process_name=%(program_name)s
+command=php /path/to/your/app/artisan discordbot:start
+autostart=true
+autorestart=true
+user=www-data
+redirect_stderr=true
+stdout_logfile=/path/to/your/app/storage/logs/discordbot.log
+```
+
+Then:
+```bash
+sudo supervisorctl reread
+sudo supervisorctl update
+sudo supervisorctl start discordbot
+```
+
+**Using systemd:**
+
+Create `/etc/systemd/system/discordbot.service`:
+```ini
+[Unit]
+Description=FPSociety Discord Bot
+After=network.target
+
+[Service]
+Type=simple
+User=www-data
+WorkingDirectory=/path/to/your/app
+ExecStart=/usr/bin/php /path/to/your/app/artisan discordbot:start
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+```
+
+Then:
+```bash
+sudo systemctl daemon-reload
+sudo systemctl enable discordbot
+sudo systemctl start discordbot
+```
+
+### Permission Configuration
+
+Customize command permissions in `config/discord_channels.php`:
+
+```php
+'permissions' => [
+    'announce' => ['admin', 'moderator'],
+    'manage_channels' => ['admin'],
+],
+```
+
+Role names are case-insensitive and matched against Discord role names in your server.
+
+### Monitoring & Logs
+
+**Check Bot Status:**
+```bash
+# View bot logs
+tail -f storage/logs/laravel.log | grep Discord
+
+# Check process
+ps aux | grep discordbot
+
+# Supervisor status
+sudo supervisorctl status discordbot
+```
+
+**Log Events:**
+- Bot startup and ready status
+- Channel creation/discovery
+- Command executions
+- Announcement broadcasts
+- Error handling
+
+### Troubleshooting
+
+**Bot doesn't connect:**
+- Verify `DISCORD_BOT_TOKEN` is correct
+- Check bot is invited to server with correct permissions
+- Ensure "Message Content Intent" is enabled in Discord Developer Portal
+
+**Commands don't work:**
+- Verify user has correct Discord roles (Admin/Moderator)
+- Check bot has "Read Messages" permission in the channel
+- Ensure "Message Content Intent" is enabled
+
+**Channels not created:**
+- Verify `DISCORD_GUILD_ID` matches your server
+- Check bot has "Manage Channels" permission
+- Review logs for permission errors
+
+**Announcements not syncing:**
+- Ensure Laravel queue worker is running
+- Check Reverb server is running
+- Verify event listeners are registered in `AppServiceProvider`
+
+### API Rate Limits
+
+Discord enforces rate limits:
+- The bot respects Discord's rate limits automatically
+- Channel creation is throttled during initial provisioning
+- Consider the 50 channel limit per category
+- Message sending has per-channel rate limits
+
+### Security Best Practices
+
+1. **Never commit** bot tokens to version control
+2. Use `.env` for all sensitive credentials
+3. Restrict announce command to trusted roles only
+4. Regularly rotate bot token if compromised
+5. Monitor activity logs for suspicious usage
+6. Keep Discord-PHP library updated
+
+### Extending the Bot
+
+**Add New Commands:**
+
+Edit `app/DiscordBot/Services/MessageHandler.php`:
+```php
+protected function handleCommands(Message $message): void
+{
+    // ... existing code ...
+    
+    match ($command) {
+        'announce' => $this->handleAnnounceCommand($message, $args),
+        'ping' => $this->handlePingCommand($message),
+        'help' => $this->handleHelpCommand($message),
+        'yourcmd' => $this->handleYourCommand($message, $args), // Add here
+        default => null,
+    };
+}
+
+protected function handleYourCommand(Message $message, string $args): void
+{
+    // Your command logic here
+}
+```
+
+**Add New Channels:**
+
+Edit `config/discord_channels.php`:
+```php
+'channels' => [
+    // ... existing channels ...
+    
+    'your-channel' => [
+        'name' => 'your-channel',
+        'type' => 0, // Text channel
+        'category' => 'Community',
+        'topic' => 'Your channel description',
+        'permissions' => [
+            'everyone' => [
+                'view_channel' => true,
+                'send_messages' => true,
+            ],
+        ],
+    ],
+],
+```
+
+Restart the bot and it will auto-create the new channel.
+
+### Future Enhancements
+
+Planned features for Discord bot:
+- Slash commands support
+- Game server status updates to Discord
+- Tournament bracket updates
+- Clan/guild Discord role sync
+- Leaderboard updates to Discord
+- Voice channel management
+- Welcome messages for new members
+- Moderation commands (kick, ban, mute)
+- Custom embed builder in admin panel
+
 
