@@ -1,0 +1,17 @@
+{
+    "_hash": "c9cacd4dbdb5f3de8adc30e78c8bdab847edbf45630e8fadb5396ebd53728886",
+    "patches": {
+        "team-reflex/discord-php": [
+            {
+                "package": "team-reflex/discord-php",
+                "description": "0",
+                "url": "patches/discord-php-components-trait-type-fix.patch",
+                "sha256": "841a56643e49145107d351c6b1680a640fa2fe85c1a64cfbbb877ca7dced63d8",
+                "depth": 1,
+                "extra": {
+                    "provenance": "root"
+                }
+            }
+        ]
+    }
+}

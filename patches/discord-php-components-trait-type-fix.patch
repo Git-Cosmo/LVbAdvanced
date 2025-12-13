@@ -1,0 +1,9 @@
+--- a/src/Discord/Builders/ComponentsTrait.php
++++ b/src/Discord/Builders/ComponentsTrait.php
+@@ -75,5 +75,5 @@
+      *
+      * @return $this
+      */
+-    abstract public function addComponent($component): self;
++    abstract public function addComponent(ComponentObject $component): self;
+ }

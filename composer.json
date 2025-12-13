@@ -33,6 +33,7 @@
         "team-reflex/discord-php": "^10.0"
     },
     "require-dev": {
+        "cweagans/composer-patches": "^2.0",
         "fakerphp/faker": "^1.23",
         "laravel/breeze": "*",
         "laravel/pail": "^1.2",
@@ -93,6 +94,11 @@
     "extra": {
         "laravel": {
             "dont-discover": []
+        },
+        "patches": {
+            "team-reflex/discord-php": [
+                "patches/discord-php-components-trait-type-fix.patch"
+            ]
         }
     },
     "config": {
@@ -101,7 +107,8 @@
         "sort-packages": true,
         "allow-plugins": {
             "pestphp/pest-plugin": true,
-            "php-http/discovery": true
+            "php-http/discovery": true,
+            "cweagans/composer-patches": true
         }
     },
     "minimum-stability": "stable",
