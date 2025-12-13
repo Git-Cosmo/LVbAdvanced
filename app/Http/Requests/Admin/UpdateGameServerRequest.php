@@ -54,7 +54,8 @@ class UpdateGameServerRequest extends FormRequest
             'game.required' => 'Game is required.',
             'game_short_code.required' => 'Game short code is required.',
             'port.integer' => 'Port must be a valid number.',
-            'port.between' => 'Port must be between 1 and 65535.',
+            'port.min' => 'Port must be at least 1.',
+            'port.max' => 'Port cannot exceed 65535.',
         ];
     }
 }
