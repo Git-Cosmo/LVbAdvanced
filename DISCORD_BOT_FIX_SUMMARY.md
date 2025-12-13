@@ -65,18 +65,44 @@ Created `MessageBuilderCompatibilityTest` to verify:
 composer install  # Patch is automatically applied
 ```
 
-### For Existing Installations
+### For Existing Installations / If Error Persists
+
+If you're seeing the ComponentsTrait error after pulling the latest code:
+
+**Quick Fix - Windows:**
+```cmd
+apply-discord-patch.bat
+```
+
+**Quick Fix - Linux/Mac:**
 ```bash
-composer update  # Patch is automatically applied
-# OR manually apply:
+./apply-discord-patch.sh
+```
+
+**Alternative (All Platforms):**
+```bash
 composer apply-patches
 ```
+
+**If patch command is not available on your system:**
+See [DISCORD_PATCH_TROUBLESHOOTING.md](DISCORD_PATCH_TROUBLESHOOTING.md) for manual edit instructions.
 
 ### To Verify Fix
 ```bash
 php artisan test --filter=DiscordBot
 # Should see: Tests: 6 passed (9 assertions)
 ```
+
+Check the patched file:
+```bash
+# Windows
+type vendor\team-reflex\discord-php\src\Discord\Builders\ComponentsTrait.php | findstr "addComponent"
+
+# Linux/Mac
+grep "addComponent" vendor/team-reflex/discord-php/src/Discord/Builders/ComponentsTrait.php
+```
+
+Should output: `abstract public function addComponent(ComponentObject $component): self;`
 
 ### To Start the Bot
 ```bash

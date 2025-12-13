@@ -2319,7 +2319,15 @@ The bot automatically provisions these channels:
 composer install
 ```
 
-> **📝 Note:** The project includes a composer patch that fixes a critical compatibility issue in Discord-PHP v10.41.15 (`ComponentsTrait` type mismatch). The patch is automatically applied during installation. See `patches/discord-php-components-trait-type-fix.patch` for details.
+> **⚠️ IMPORTANT:** If you see a "ComponentsTrait::addComponent must be compatible" fatal error, the patch wasn't applied automatically. Follow the troubleshooting guide:
+> 
+> **Quick Fix:**
+> - **Windows:** Run `apply-discord-patch.bat` or `composer apply-patches`
+> - **Linux/Mac:** Run `./apply-discord-patch.sh` or `composer apply-patches`
+> 
+> **Full troubleshooting:** See [DISCORD_PATCH_TROUBLESHOOTING.md](DISCORD_PATCH_TROUBLESHOOTING.md)
+> 
+> **📝 Technical Note:** The project includes a composer patch that fixes a critical compatibility issue in Discord-PHP v10.41.15 (`ComponentsTrait` type mismatch). The patch is automatically applied during `composer install`, but if you're upgrading from an older version or the patch utility isn't available on your system, you may need to apply it manually.
 
 **2. Configure Environment Variables:**
 Add to your `.env` file:
