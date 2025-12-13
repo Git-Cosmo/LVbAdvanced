@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Admin;
 
+use App\Enums\TriviaGameDifficulty;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreTriviaGameRequest extends FormRequest
@@ -25,7 +26,7 @@ class StoreTriviaGameRequest extends FormRequest
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
             'category' => 'required|string',
-            'difficulty' => 'required|in:easy,medium,hard',
+            'difficulty' => ['required', TriviaGameDifficulty::validationRule()],
             'time_limit' => 'required|integer|min:10|max:300',
             'points_per_correct' => 'required|integer|min:1',
             'is_active' => 'boolean',
