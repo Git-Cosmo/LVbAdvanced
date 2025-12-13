@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreGalleryRequest;
 use App\Models\User\Gallery;
 use App\Services\MediaService;
 use Illuminate\Http\RedirectResponse;
@@ -74,15 +75,9 @@ class MediaController extends Controller
     /**
      * Store new gallery
      */
-    public function store(Request $request): RedirectResponse
+    public function store(StoreGalleryRequest $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'title' => 'required|max:255',
-            'description' => 'nullable|max:1000',
-            'game' => 'required|max:100',
-            'category' => 'required|in:map,skin,mod,texture,sound,other',
-            'files.*' => 'required|file|max:102400', // 100MB max
-        ]);
+        $validated = $request->validated();
 
         $gallery = Gallery::create([
             'user_id' => auth()->id(),

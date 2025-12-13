@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Forum;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreForumThreadRequest;
 use App\Models\Forum\Forum;
 use App\Models\Forum\ForumThread;
 use App\Services\Forum\ThreadService;
@@ -41,14 +42,11 @@ class ThreadController extends Controller
     /**
      * Store a newly created thread.
      */
-    public function store(Request $request, Forum $forum): RedirectResponse
+    public function store(StoreForumThreadRequest $request, Forum $forum): RedirectResponse
     {
         $this->authorize('create', [ForumThread::class, $forum]);
 
-        $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'content' => 'required|string',
-        ]);
+        $validated = $request->validated();
 
         $thread = $this->threadService->createThread([
             'forum_id' => $forum->id,

@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\UpdateAccountRequest;
+use App\Http\Requests\UpdatePasswordRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rules\Password;
 use Illuminate\View\View;
 
 class SettingsController extends Controller
@@ -32,16 +33,11 @@ class SettingsController extends Controller
     /**
      * Update account settings.
      */
-    public function updateAccount(Request $request): RedirectResponse
+    public function updateAccount(UpdateAccountRequest $request): RedirectResponse
     {
         $user = auth()->user();
 
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|max:255|unique:users,email,'.$user->id,
-        ]);
-
-        $user->update($validated);
+        $user->update($request->validated());
 
         return redirect()->route('settings.index')->with('success', 'Account settings updated successfully!');
     }
@@ -49,12 +45,9 @@ class SettingsController extends Controller
     /**
      * Update password.
      */
-    public function updatePassword(Request $request): RedirectResponse
+    public function updatePassword(UpdatePasswordRequest $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'current_password' => 'required|current_password',
-            'password' => ['required', 'confirmed', Password::defaults()],
-        ]);
+        $validated = $request->validated();
 
         auth()->user()->update([
             'password' => Hash::make($validated['password']),

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreTournamentRequest;
 use App\Models\Tournament;
 use App\Models\TournamentAnnouncement;
 use App\Models\TournamentCheckIn;
@@ -65,29 +66,11 @@ class TournamentController extends Controller
     /**
      * Store a newly created tournament.
      */
-    public function store(Request $request): RedirectResponse
+    public function store(StoreTournamentRequest $request): RedirectResponse
     {
         $this->authorize('create', Tournament::class);
 
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'game' => 'nullable|string|max:255',
-            'format' => 'required|in:single_elimination,double_elimination,round_robin,swiss',
-            'type' => 'required|in:solo,team',
-            'team_size' => 'nullable|integer|min:2|max:32',
-            'max_participants' => 'required|integer|min:2|max:512',
-            'prize_pool' => 'nullable|numeric|min:0',
-            'registration_opens_at' => 'nullable|date',
-            'registration_closes_at' => 'nullable|date|after:registration_opens_at',
-            'check_in_starts_at' => 'nullable|date',
-            'check_in_ends_at' => 'nullable|date|after:check_in_starts_at',
-            'starts_at' => 'required|date|after:now',
-            'rules' => 'nullable|array',
-            'is_public' => 'boolean',
-            'requires_approval' => 'boolean',
-        ]);
-
+        $validated = $request->validated();
         $validated['user_id'] = auth()->id();
         $validated['status'] = 'registration_open';
 
