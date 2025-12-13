@@ -2585,30 +2585,81 @@ Discord enforces rate limits:
 5. Monitor activity logs for suspicious usage
 6. Keep Discord-PHP library updated
 
+### Bot Architecture
+
+**Service-Based Design:**
+- `DiscordBotService` - Main bot client and initialization with event loop management
+- `ChannelManager` - Handles channel provisioning and permissions using ChannelBuilder API
+- `MessageHandler` - Processes commands and routes them to appropriate command classes
+- Commands follow `CommandInterface` with permission checking via `BaseCommand`
+
+**Key Design Patterns:**
+- Command Pattern: Each bot command is a separate class implementing `CommandInterface`
+- Promise-based async: Uses ReactPHP promises for all async Discord operations
+- Event-driven: Laravel events (AnnouncementCreated) bridge website and Discord
+- Job-based sync: Website → Discord uses queued jobs for reliability
+
+**Discord-PHP v10 Features Used:**
+- ChannelBuilder API for channel creation (replaces deprecated direct create methods)
+- ReactPHP event loop for async operations
+- WebSocket gateway for real-time communication
+- Promise-based API for all async operations
+
 ### Extending the Bot
 
 **Add New Commands:**
 
-Edit `app/DiscordBot/Services/MessageHandler.php`:
+1. Create a new command class in `app/DiscordBot/Commands/`:
 ```php
-protected function handleCommands(Message $message): void
-{
-    // ... existing code ...
-    
-    match ($command) {
-        'announce' => $this->handleAnnounceCommand($message, $args),
-        'ping' => $this->handlePingCommand($message),
-        'help' => $this->handleHelpCommand($message),
-        'yourcmd' => $this->handleYourCommand($message, $args), // Add here
-        default => null,
-    };
-}
+<?php
 
-protected function handleYourCommand(Message $message, string $args): void
+namespace App\DiscordBot\Commands;
+
+use Discord\Parts\Channel\Message;
+
+class YourCommand extends BaseCommand
 {
-    // Your command logic here
+    public function getName(): string
+    {
+        return 'yourcmd';
+    }
+
+    public function getDescription(): string
+    {
+        return 'Description of your command';
+    }
+
+    protected function getRequiredRoles(): array
+    {
+        return ['admin']; // or [] for public access
+    }
+
+    public function execute(Message $message, string $args): void
+    {
+        // Your command logic here
+        $message->reply('Your response');
+    }
 }
 ```
+
+2. Register it in `app/DiscordBot/Services/MessageHandler.php`:
+```php
+protected function registerCommands(): void
+{
+    $yourCommand = new YourCommand();
+    
+    $this->commands = [
+        $announceCommand->getName() => $announceCommand,
+        $pingCommand->getName() => $pingCommand,
+        $helpCommand->getName() => $helpCommand,
+        $yourCommand->getName() => $yourCommand, // Add here
+    ];
+
+    $helpCommand->setCommands($this->commands);
+}
+```
+
+3. Restart the bot to load the new command.
 
 **Add New Channels:**
 
@@ -2619,7 +2670,7 @@ Edit `config/discord_channels.php`:
     
     'your-channel' => [
         'name' => 'your-channel',
-        'type' => 0, // Text channel
+        'type' => 0, // 0 = Text channel (Channel::TYPE_TEXT)
         'category' => 'Community',
         'topic' => 'Your channel description',
         'permissions' => [
@@ -2627,12 +2678,17 @@ Edit `config/discord_channels.php`:
                 'view_channel' => true,
                 'send_messages' => true,
             ],
+            'moderator' => [
+                'view_channel' => true,
+                'send_messages' => true,
+                'read_message_history' => true,
+            ],
         ],
     ],
 ],
 ```
 
-Restart the bot and it will auto-create the new channel.
+Restart the bot and it will auto-create the new channel with configured permissions.
 
 ### Future Enhancements
 

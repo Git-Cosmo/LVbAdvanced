@@ -34,6 +34,7 @@ class DiscordBotService
             Log::info('Discord bot is ready!', [
                 'username' => $discord->user->username,
                 'discriminator' => $discord->user->discriminator,
+                'id' => $discord->user->id,
             ]);
 
             // Initialize channels on startup
@@ -42,14 +43,40 @@ class DiscordBotService
             // Register message handler
             $this->messageHandler->registerHandlers();
 
-            Log::info('Discord bot fully initialized');
+            Log::info('Discord bot fully initialized', [
+                'guilds_count' => $discord->guilds->count(),
+            ]);
         });
 
         $this->discord->on('error', function ($error) {
-            Log::error('Discord bot error', ['error' => $error]);
+            Log::error('Discord bot error', [
+                'error' => (string) $error,
+                'type' => get_class($error),
+            ]);
         });
 
-        Log::info('Starting Discord bot...');
+        // Handle reconnection events
+        $this->discord->on('reconnecting', function () {
+            Log::warning('Discord bot is reconnecting...');
+        });
+
+        $this->discord->on('reconnected', function () {
+            Log::info('Discord bot reconnected successfully');
+        });
+
+        // Handle disconnection
+        $this->discord->on('closed', function ($op, $reason) {
+            Log::warning('Discord bot connection closed', [
+                'op' => $op,
+                'reason' => $reason,
+            ]);
+        });
+
+        Log::info('Starting Discord bot...', [
+            'token_configured' => !empty(config('discord_channels.token')),
+            'guild_id' => config('discord_channels.guild_id'),
+        ]);
+        
         $this->discord->run();
     }
 
