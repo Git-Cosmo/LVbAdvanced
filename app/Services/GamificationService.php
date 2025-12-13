@@ -3,11 +3,14 @@
 namespace App\Services;
 
 use App\Models\User;
+use App\Traits\EnsuresUserProfile;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Cache;
 
 class GamificationService
 {
+    use EnsuresUserProfile;
+
     protected ReputationService $reputationService;
 
     public function __construct(ReputationService $reputationService)
@@ -45,10 +48,7 @@ class GamificationService
     public function checkStreaks(User $user, string $action): void
     {
         if ($action === 'daily_login') {
-            // Ensure profile exists
-            if (! $user->profile) {
-                $user->profile()->create(['login_streak' => 0]);
-            }
+            $this->ensureUserProfile($user);
 
             $lastLogin = $user->profile->last_login_at;
             $today = Carbon::today();

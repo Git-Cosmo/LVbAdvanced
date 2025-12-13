@@ -4,18 +4,17 @@ namespace App\Services;
 
 use App\Models\Forum\ForumReaction;
 use App\Models\User;
+use App\Traits\EnsuresUserProfile;
 
 class ReputationService
 {
+    use EnsuresUserProfile;
     /**
      * Award XP to a user
      */
     public function awardXP(User $user, int $amount, string $reason = ''): void
     {
-        // Ensure profile exists
-        if (! $user->profile) {
-            $user->profile()->create(['xp' => 0, 'level' => 1]);
-        }
+        $this->ensureUserProfile($user);
 
         $user->profile->increment('xp', $amount);
 
@@ -78,10 +77,7 @@ class ReputationService
      */
     public function updateKarma(User $user): void
     {
-        // Ensure profile exists
-        if (! $user->profile) {
-            $user->profile()->create(['karma' => 0]);
-        }
+        $this->ensureUserProfile($user);
 
         // Count likes received on posts by this user
         $karma = ForumReaction::where('reactable_type', \App\Models\Forum\ForumPost::class)
