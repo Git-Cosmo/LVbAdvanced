@@ -44,7 +44,7 @@ class StoreTriviaGameRequest extends FormRequest
             'title.required' => 'Trivia game title is required.',
             'category.required' => 'Category is required.',
             'difficulty.required' => 'Difficulty level is required.',
-            'difficulty.in' => 'Difficulty must be easy, medium, or hard.',
+            'difficulty.in' => 'Invalid difficulty level selected. Choose easy, medium, or hard.',
             'time_limit.required' => 'Time limit is required.',
             'time_limit.min' => 'Time limit must be at least 10 seconds.',
             'time_limit.max' => 'Time limit cannot exceed 300 seconds.',
