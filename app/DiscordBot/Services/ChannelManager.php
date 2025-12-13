@@ -2,6 +2,7 @@
 
 namespace App\DiscordBot\Services;
 
+use App\DiscordBot\DiscordPermissions;
 use Discord\Discord;
 use Discord\Parts\Channel\Channel;
 use Discord\Parts\Guild\Guild;
@@ -174,25 +175,25 @@ class ChannelManager
                         // Calculate permission bits
                         if (isset($perms['view_channel'])) {
                             if ($perms['view_channel']) {
-                                $overwrite['allow'] |= 1024; // VIEW_CHANNEL
+                                $overwrite['allow'] |= DiscordPermissions::VIEW_CHANNEL;
                             } else {
-                                $overwrite['deny'] |= 1024;
+                                $overwrite['deny'] |= DiscordPermissions::VIEW_CHANNEL;
                             }
                         }
 
                         if (isset($perms['send_messages'])) {
                             if ($perms['send_messages']) {
-                                $overwrite['allow'] |= 2048; // SEND_MESSAGES
+                                $overwrite['allow'] |= DiscordPermissions::SEND_MESSAGES;
                             } else {
-                                $overwrite['deny'] |= 2048;
+                                $overwrite['deny'] |= DiscordPermissions::SEND_MESSAGES;
                             }
                         }
 
                         if (isset($perms['read_message_history'])) {
                             if ($perms['read_message_history']) {
-                                $overwrite['allow'] |= 65536; // READ_MESSAGE_HISTORY
+                                $overwrite['allow'] |= DiscordPermissions::READ_MESSAGE_HISTORY;
                             } else {
-                                $overwrite['deny'] |= 65536;
+                                $overwrite['deny'] |= DiscordPermissions::READ_MESSAGE_HISTORY;
                             }
                         }
 
@@ -220,25 +221,25 @@ class ChannelManager
                         // Calculate permission bits for custom roles
                         if (isset($perms['view_channel'])) {
                             if ($perms['view_channel']) {
-                                $overwrite['allow'] |= 1024;
+                                $overwrite['allow'] |= DiscordPermissions::VIEW_CHANNEL;
                             } else {
-                                $overwrite['deny'] |= 1024;
+                                $overwrite['deny'] |= DiscordPermissions::VIEW_CHANNEL;
                             }
                         }
 
                         if (isset($perms['send_messages'])) {
                             if ($perms['send_messages']) {
-                                $overwrite['allow'] |= 2048;
+                                $overwrite['allow'] |= DiscordPermissions::SEND_MESSAGES;
                             } else {
-                                $overwrite['deny'] |= 2048;
+                                $overwrite['deny'] |= DiscordPermissions::SEND_MESSAGES;
                             }
                         }
 
                         if (isset($perms['read_message_history'])) {
                             if ($perms['read_message_history']) {
-                                $overwrite['allow'] |= 65536;
+                                $overwrite['allow'] |= DiscordPermissions::READ_MESSAGE_HISTORY;
                             } else {
-                                $overwrite['deny'] |= 65536;
+                                $overwrite['deny'] |= DiscordPermissions::READ_MESSAGE_HISTORY;
                             }
                         }
 

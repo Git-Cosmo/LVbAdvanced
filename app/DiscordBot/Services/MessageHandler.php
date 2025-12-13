@@ -88,7 +88,7 @@ class MessageHandler
         $title = $lines[0];
         
         // Require both title and message
-        if (!isset($lines[1]) || trim($lines[1]) === '') {
+        if (! isset($lines[1]) || trim($lines[1]) === '') {
             $message->reply('❌ Please provide both a title and a message, separated by a newline. Usage: `!announce <title>\n<message>`');
             return;
         }

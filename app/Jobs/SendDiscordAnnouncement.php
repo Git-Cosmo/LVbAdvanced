@@ -40,11 +40,13 @@ class SendDiscordAnnouncement implements ShouldQueue
                 'intents' => Intents::getDefaultIntents(),
             ]);
 
+            $loop = $discord->getLoop();
+
             // Use promises to handle async Discord operations
-            $discord->on('ready', function (Discord $discord) {
+            $discord->on('ready', function (Discord $discord) use ($loop) {
                 $guildId = config('discord_channels.guild_id');
 
-                $discord->guilds->fetch($guildId)->done(function ($guild) use ($discord) {
+                $discord->guilds->fetch($guildId)->done(function ($guild) use ($discord, $loop) {
                     // Find the announcements channel
                     $announcementsChannel = $guild->channels->find(function (Channel $channel) {
                         return $channel->type !== Channel::TYPE_CATEGORY 
@@ -53,7 +55,7 @@ class SendDiscordAnnouncement implements ShouldQueue
 
                     if (! $announcementsChannel) {
                         Log::warning('Announcements channel not found in Discord guild');
-                        $discord->close();
+                        $loop->stop();
                         return;
                     }
 
@@ -70,7 +72,7 @@ class SendDiscordAnnouncement implements ShouldQueue
                     }
 
                     // Send the embed
-                    $announcementsChannel->sendEmbed($embed)->done(function ($message) use ($discord) {
+                    $announcementsChannel->sendEmbed($embed)->done(function ($message) use ($loop) {
                         // Update announcement with Discord message ID
                         $this->announcement->update([
                             'discord_message_id' => $message->id,
@@ -82,24 +84,24 @@ class SendDiscordAnnouncement implements ShouldQueue
                             'message_id' => $message->id,
                         ]);
 
-                        $discord->close();
-                    }, function ($error) use ($discord) {
+                        $loop->stop();
+                    }, function ($error) use ($loop) {
                         Log::error('Failed to send announcement to Discord', [
                             'announcement_id' => $this->announcement->id,
                             'error' => $error,
                         ]);
-                        $discord->close();
+                        $loop->stop();
                     });
-                }, function ($error) use ($discord) {
+                }, function ($error) use ($loop) {
                     Log::error('Failed to fetch Discord guild', [
                         'error' => $error,
                     ]);
-                    $discord->close();
+                    $loop->stop();
                 });
             });
 
-            // Run the Discord client
-            $discord->run();
+            // Run the event loop to completion
+            $loop->run();
         } catch (\Exception $e) {
             Log::error('Failed to send announcement to Discord', [
                 'announcement_id' => $this->announcement->id,
