@@ -2265,7 +2265,9 @@ PSN_CLIENT_SECRET=your_psn_client_secret
 ## Discord Bot Integration
 
 ### Overview
-FPSociety includes a comprehensive Discord bot built with Laravel 12 and Discord-PHP library. The bot provides seamless integration between your Discord server and the gaming community website with real-time announcements, automatic channel management, and cross-platform synchronization via Laravel Reverb.
+FPSociety includes a comprehensive Discord bot built with Laravel 12 and Discord-PHP v10.41.15. The bot provides seamless integration between your Discord server and the gaming community website with real-time announcements, automatic channel management, and cross-platform synchronization via Laravel Reverb.
+
+**⚠️ Important:** This bot requires Discord-PHP v10+ which uses modern async/await patterns with ReactPHP. Ensure your server environment supports long-running PHP processes.
 
 ### Features
 
@@ -2347,12 +2349,14 @@ php artisan discordbot:start
 ```
 
 The bot will:
-1. Connect to Discord
+1. Connect to Discord using WebSocket gateway
 2. Verify guild access
-3. Create missing channels and categories
+3. Create missing channels and categories (using ChannelBuilder API)
 4. Apply configured permissions
 5. Register message handlers
 6. Start listening for commands
+
+**Note:** The bot runs as a long-lived process. For production, use Supervisor or systemd (see Running in Production section below).
 
 ### Creating Discord Bot
 
@@ -2523,24 +2527,46 @@ sudo supervisorctl status discordbot
 ### Troubleshooting
 
 **Bot doesn't connect:**
-- Verify `DISCORD_BOT_TOKEN` is correct
+- Verify `DISCORD_BOT_TOKEN` is correct in `.env`
 - Check bot is invited to server with correct permissions
-- Ensure "Message Content Intent" is enabled in Discord Developer Portal
+- Ensure "Message Content Intent" is enabled in Discord Developer Portal (required for v10+)
+- Check Laravel logs: `tail -f storage/logs/laravel.log | grep Discord`
+- Verify PHP can run long-lived processes (no `max_execution_time` restrictions)
 
 **Commands don't work:**
-- Verify user has correct Discord roles (Admin/Moderator)
-- Check bot has "Read Messages" permission in the channel
-- Ensure "Message Content Intent" is enabled
+- Verify user has correct Discord roles (Admin/Moderator) matching config
+- Check bot has "Read Messages" and "Read Message History" permissions
+- Ensure "Message Content Intent" is enabled (this is a REQUIRED privileged intent)
+- Try the `!ping` command first to test basic functionality
+- Check logs for command execution errors
 
 **Channels not created:**
-- Verify `DISCORD_GUILD_ID` matches your server
+- Verify `DISCORD_GUILD_ID` matches your server ID
 - Check bot has "Manage Channels" permission
-- Review logs for permission errors
+- Review logs: `storage/logs/laravel.log` for ChannelBuilder errors
+- Ensure categories are created before channels (bot does this automatically)
+- Check Discord API rate limits if creating many channels
 
-**Announcements not syncing:**
-- Ensure Laravel queue worker is running
-- Check Reverb server is running
-- Verify event listeners are registered in `AppServiceProvider`
+**Announcements not syncing (Website → Discord):**
+- Ensure Laravel queue worker is running: `php artisan queue:work`
+- Check Reverb server is running: `php artisan reverb:start`
+- Verify event listeners are registered in `app/Providers/AppServiceProvider.php`
+- Check `SendDiscordAnnouncement` job logs
+- Verify `#announcements` channel exists in Discord
+- Test with: `php artisan queue:work --once` to process one job
+
+**Announcements not syncing (Discord → Website):**
+- Ensure bot is running (`php artisan discordbot:start`)
+- Verify bot has MESSAGE_CONTENT intent enabled
+- Check database connection in long-running bot process
+- Review logs for "Announcement created from Discord" messages
+
+**Bot crashes or disconnects:**
+- Check for memory leaks in long-running process
+- Verify ReactPHP event loop is not blocked
+- Use Supervisor with `autorestart=true` for automatic recovery
+- Check Discord API status: https://discordstatus.com/
+- Review PHP error logs for fatal errors
 
 ### API Rate Limits
 

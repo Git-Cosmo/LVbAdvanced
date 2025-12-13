@@ -3,6 +3,7 @@
 namespace App\DiscordBot\Services;
 
 use App\DiscordBot\DiscordPermissions;
+use Discord\Builders\ChannelBuilder;
 use Discord\Discord;
 use Discord\Parts\Channel\Channel;
 use Discord\Parts\Guild\Guild;
@@ -80,25 +81,26 @@ class ChannelManager
             return \React\Promise\resolve($existingCategory);
         }
 
-        // Create the category - this returns a promise in Discord-PHP v10
-        try {
-            $category = $guild->channels->create([
-                'name' => $name,
-                'type' => Channel::TYPE_CATEGORY,
-                'position' => $settings['position'] ?? 0,
-            ]);
-            
-            $this->categoryCache[$name] = $category;
-            Log::info('Created category', ['category' => $name]);
+        // Create the category using ChannelBuilder
+        $builder = ChannelBuilder::new($name)
+            ->setType(Channel::TYPE_CATEGORY)
+            ->setPosition($settings['position'] ?? 0);
 
-            return \React\Promise\resolve($category);
-        } catch (\Exception $e) {
-            Log::error('Failed to create category', [
-                'category' => $name,
-                'error' => $e->getMessage(),
-            ]);
-            return \React\Promise\reject($e);
-        }
+        // Create channel and return promise
+        return $guild->channels->save($builder)->then(
+            function (Channel $category) use ($name) {
+                $this->categoryCache[$name] = $category;
+                Log::info('Created category', ['category' => $name]);
+                return $category;
+            },
+            function ($error) use ($name) {
+                Log::error('Failed to create category', [
+                    'category' => $name,
+                    'error' => (string) $error,
+                ]);
+                throw $error;
+            }
+        );
     }
 
     /**
@@ -132,28 +134,37 @@ class ChannelManager
             return;
         }
 
-        // Create the channel
-        $createParams = [
-            'name' => $channelName,
-            'type' => $config['type'] ?? Channel::TYPE_TEXT,
-            'topic' => $config['topic'] ?? null,
-        ];
+        // Create the channel using ChannelBuilder
+        $builder = ChannelBuilder::new($channelName)
+            ->setType($config['type'] ?? Channel::TYPE_TEXT);
+
+        if (isset($config['topic'])) {
+            $builder->setTopic($config['topic']);
+        }
 
         // Add category if specified
         if (isset($config['category']) && isset($this->categoryCache[$config['category']])) {
-            $createParams['parent_id'] = $this->categoryCache[$config['category']]->id;
+            $builder->setParentId($this->categoryCache[$config['category']]->id);
         }
 
         try {
-            $channel = $guild->channels->create($createParams);
-            
-            $this->channelCache[$channelName] = $channel;
-            Log::info('Created channel', ['channel' => $channelName]);
+            $guild->channels->save($builder)->done(
+                function (Channel $channel) use ($channelName, $config) {
+                    $this->channelCache[$channelName] = $channel;
+                    Log::info('Created channel', ['channel' => $channelName]);
 
-            // Apply permissions if configured
-            if (isset($config['permissions'])) {
-                $this->applyChannelPermissions($channel, $config['permissions']);
-            }
+                    // Apply permissions if configured
+                    if (isset($config['permissions'])) {
+                        $this->applyChannelPermissions($channel, $config['permissions']);
+                    }
+                },
+                function ($error) use ($channelName) {
+                    Log::error('Failed to create channel', [
+                        'channel' => $channelName,
+                        'error' => (string) $error,
+                    ]);
+                }
+            );
         } catch (\Exception $e) {
             Log::error('Failed to create channel', [
                 'channel' => $channelName,
