@@ -34,8 +34,8 @@ class StoreGameServerRequest extends FormRequest
             'current_players' => 'nullable|integer|min:0',
             'map' => 'nullable|string|max:255',
             'game_mode' => 'nullable|string|max:255',
-            'icon_color_from' => 'required|string|max:7',
-            'icon_color_to' => 'required|string|max:7',
+            'icon_color_from' => 'required|string|regex:/^#[0-9A-Fa-f]{6}$/',
+            'icon_color_to' => 'required|string|regex:/^#[0-9A-Fa-f]{6}$/',
             'display_order' => 'nullable|integer|min:0',
             'is_featured' => 'boolean',
             'is_active' => 'boolean',
@@ -56,6 +56,8 @@ class StoreGameServerRequest extends FormRequest
             'port.integer' => 'Port must be a valid number.',
             'port.min' => 'Port must be at least 1.',
             'port.max' => 'Port cannot exceed 65535.',
+            'icon_color_from.regex' => 'Icon color from must be a valid hex color code (e.g., #FFFFFF).',
+            'icon_color_to.regex' => 'Icon color to must be a valid hex color code (e.g., #FFFFFF).',
         ];
     }
 }
