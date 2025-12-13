@@ -81,15 +81,23 @@ class ChannelManager
         }
 
         // Create the category
-        return $guild->channels->create([
+        $promise = $guild->channels->create([
             'name' => $name,
             'type' => Channel::TYPE_CATEGORY,
             'position' => $settings['position'] ?? 0,
-        ])->then(function (Channel $category) use ($name) {
+        ]);
+
+        return $promise->then(function (Channel $category) use ($name) {
             $this->categoryCache[$name] = $category;
             Log::info('Created category', ['category' => $name]);
 
             return $category;
+        }, function ($error) use ($name) {
+            Log::error('Failed to create category', [
+                'category' => $name,
+                'error' => $error,
+            ]);
+            throw $error;
         });
     }
 
@@ -136,7 +144,9 @@ class ChannelManager
             $createParams['parent_id'] = $this->categoryCache[$config['category']]->id;
         }
 
-        $guild->channels->create($createParams)->then(function (Channel $channel) use ($channelName, $config) {
+        $promise = $guild->channels->create($createParams);
+        
+        $promise->then(function (Channel $channel) use ($channelName, $config) {
             $this->channelCache[$channelName] = $channel;
             Log::info('Created channel', ['channel' => $channelName]);
 
