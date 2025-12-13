@@ -73,8 +73,17 @@ class RateLimiter
             return 0;
         }
         
-        // Return the configured decay seconds as an approximation
-        // For precise TTL, we'd need to track the timestamp when limit was set
+        // Try to get the actual TTL from the cache store if supported
+        $store = Cache::getStore();
+        // Redis and Memcached support getTtl (Laravel 8+), others may not
+        if (method_exists($store, 'getTtl')) {
+            $ttl = $store->getTtl($key);
+            // getTtl may return null or negative if not found/expired
+            if (is_int($ttl) && $ttl > 0) {
+                return $ttl;
+            }
+        }
+        // Fallback: return the configured decay seconds as an approximation
         return $decaySeconds;
     }
     
