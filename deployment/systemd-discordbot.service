@@ -1,0 +1,26 @@
+[Unit]
+Description=FPSociety Discord Bot
+After=network.target mysql.service redis.service
+
+[Service]
+Type=simple
+User=www-data
+Group=www-data
+WorkingDirectory=/var/www/html
+ExecStart=/usr/bin/php /var/www/html/artisan discordbot:start
+Restart=always
+RestartSec=3
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=fpsociety-discordbot
+
+# Resource limits
+LimitNOFILE=4096
+MemoryMax=512M
+
+# Security
+PrivateTmp=true
+NoNewPrivileges=true
+
+[Install]
+WantedBy=multi-user.target

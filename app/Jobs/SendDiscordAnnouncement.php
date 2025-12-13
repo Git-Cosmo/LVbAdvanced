@@ -11,9 +11,22 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Facades\Log;
 
+/**
+ * Send an announcement from the website to Discord.
+ * 
+ * This job creates a temporary Discord client to send announcements.
+ * For better performance in high-traffic scenarios, consider using a long-running
+ * bot service with a message queue instead.
+ */
+
 class SendDiscordAnnouncement implements ShouldQueue
 {
     use Queueable;
+
+    /**
+     * Job timeout in seconds for the event loop.
+     */
+    protected const EVENT_LOOP_TIMEOUT = 30;
 
     /**
      * Create a new job instance.
@@ -25,6 +38,9 @@ class SendDiscordAnnouncement implements ShouldQueue
 
     /**
      * Execute the job.
+     * 
+     * Note: This job creates a temporary Discord client for sending announcements.
+     * For better performance, consider using the long-running bot service via Reverb/WebSocket.
      */
     public function handle(): void
     {
@@ -35,18 +51,20 @@ class SendDiscordAnnouncement implements ShouldQueue
 
         try {
             // Create a Discord client instance for this job
+            // Include MESSAGE_CONTENT intent for full functionality
             $discord = new Discord([
                 'token' => config('discord_channels.token'),
-                'intents' => Intents::getDefaultIntents(),
+                'intents' => Intents::getDefaultIntents() | Intents::MESSAGE_CONTENT,
             ]);
 
             $loop = $discord->getLoop();
+            $sentSuccessfully = false;
 
             // Use promises to handle async Discord operations
-            $discord->on('init', function (Discord $discord) use ($loop) {
+            $discord->on('init', function (Discord $discord) use ($loop, &$sentSuccessfully) {
                 $guildId = config('discord_channels.guild_id');
 
-                $discord->guilds->fetch($guildId)->then(function ($guild) use ($discord, $loop) {
+                $discord->guilds->fetch($guildId)->then(function ($guild) use ($discord, $loop, &$sentSuccessfully) {
                     // Find the announcements channel
                     $announcementsChannel = $guild->channels->find(function (Channel $channel) {
                         return $channel->type !== Channel::TYPE_CATEGORY 
@@ -54,7 +72,10 @@ class SendDiscordAnnouncement implements ShouldQueue
                     });
 
                     if (! $announcementsChannel) {
-                        Log::warning('Announcements channel not found in Discord guild');
+                        Log::warning('Announcements channel not found in Discord guild', [
+                            'guild_id' => $guild->id,
+                            'guild_name' => $guild->name,
+                        ]);
                         $loop->stop();
                         return;
                     }
@@ -72,7 +93,7 @@ class SendDiscordAnnouncement implements ShouldQueue
                     }
 
                     // Send the embed
-                    $announcementsChannel->sendEmbed($embed)->then(function ($message) use ($loop) {
+                    $announcementsChannel->sendEmbed($embed)->then(function ($message) use ($loop, &$sentSuccessfully) {
                         // Update announcement with Discord message ID
                         $this->announcement->update([
                             'discord_message_id' => $message->id,
@@ -84,28 +105,58 @@ class SendDiscordAnnouncement implements ShouldQueue
                             'message_id' => $message->id,
                         ]);
 
+                        $sentSuccessfully = true;
                         $loop->stop();
                     }, function ($error) use ($loop) {
                         Log::error('Failed to send announcement to Discord', [
                             'announcement_id' => $this->announcement->id,
-                            'error' => $error,
+                            'error' => (string) $error,
                         ]);
                         $loop->stop();
                     });
                 }, function ($error) use ($loop) {
                     Log::error('Failed to fetch Discord guild', [
-                        'error' => $error,
+                        'guild_id' => config('discord_channels.guild_id'),
+                        'error' => (string) $error,
                     ]);
                     $loop->stop();
                 });
             });
 
-            // Run the event loop to completion
+            $discord->on('error', function ($error) use ($loop) {
+                Log::error('Discord client error in announcement job', [
+                    'announcement_id' => $this->announcement->id,
+                    'error' => (string) $error,
+                ]);
+                $loop->stop();
+            });
+
+            // Run the event loop to completion with timeout
+            $timeoutTimer = $loop->addTimer(self::EVENT_LOOP_TIMEOUT, function () use ($loop, &$sentSuccessfully) {
+                if (!$sentSuccessfully) {
+                    Log::warning('Discord announcement job timed out', [
+                        'announcement_id' => $this->announcement->id,
+                        'timeout_seconds' => self::EVENT_LOOP_TIMEOUT,
+                    ]);
+                }
+                $loop->stop();
+            });
+
             $loop->run();
+            
+            // Cancel timeout if loop completed before timeout
+            // Check if timer is still active before cancelling
+            if ($timeoutTimer && !$timeoutTimer->isActive()) {
+                // Timer already triggered, no need to cancel
+            } else if ($timeoutTimer) {
+                $loop->cancelTimer($timeoutTimer);
+            }
+
         } catch (\Exception $e) {
             Log::error('Failed to send announcement to Discord', [
                 'announcement_id' => $this->announcement->id,
                 'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
             ]);
             throw $e;
         }

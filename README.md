@@ -2265,7 +2265,9 @@ PSN_CLIENT_SECRET=your_psn_client_secret
 ## Discord Bot Integration
 
 ### Overview
-FPSociety includes a comprehensive Discord bot built with Laravel 12 and Discord-PHP library. The bot provides seamless integration between your Discord server and the gaming community website with real-time announcements, automatic channel management, and cross-platform synchronization via Laravel Reverb.
+FPSociety includes a comprehensive Discord bot built with Laravel 12 and Discord-PHP v10.41.15. The bot provides seamless integration between your Discord server and the gaming community website with real-time announcements, automatic channel management, and cross-platform synchronization via Laravel Reverb.
+
+**⚠️ Important:** This bot requires Discord-PHP v10+ which uses modern async/await patterns with ReactPHP. Ensure your server environment supports long-running PHP processes.
 
 ### Features
 
@@ -2347,12 +2349,14 @@ php artisan discordbot:start
 ```
 
 The bot will:
-1. Connect to Discord
+1. Connect to Discord using WebSocket gateway
 2. Verify guild access
-3. Create missing channels and categories
+3. Create missing channels and categories (using ChannelBuilder API)
 4. Apply configured permissions
 5. Register message handlers
 6. Start listening for commands
+
+**Note:** The bot runs as a long-lived process. For production, use Supervisor or systemd (see Running in Production section below).
 
 ### Creating Discord Bot
 
@@ -2439,52 +2443,58 @@ MessageHandler Processes Command
 
 ### Running in Production
 
+**⚠️ Important:** The Discord bot is a long-running process that must be managed by a process supervisor.
+
+**Deployment Configurations:**
+
+Production-ready deployment configurations are available in the `/deployment` directory:
+- `supervisor-discordbot.conf` - Supervisor configuration
+- `systemd-discordbot.service` - Systemd service unit
+- `README.md` - Detailed deployment instructions
+
+**Quick Setup:**
+
 **Using Supervisor (Recommended):**
-
-Create `/etc/supervisor/conf.d/discordbot.conf`:
-```ini
-[program:discordbot]
-process_name=%(program_name)s
-command=php /path/to/your/app/artisan discordbot:start
-autostart=true
-autorestart=true
-user=www-data
-redirect_stderr=true
-stdout_logfile=/path/to/your/app/storage/logs/discordbot.log
-```
-
-Then:
 ```bash
-sudo supervisorctl reread
-sudo supervisorctl update
-sudo supervisorctl start discordbot
+# Copy configuration
+sudo cp deployment/supervisor-discordbot.conf /etc/supervisor/conf.d/fpsociety-discordbot.conf
+
+# Update paths to match your installation
+sudo nano /etc/supervisor/conf.d/fpsociety-discordbot.conf
+
+# Start the bot
+sudo supervisorctl reread && sudo supervisorctl update
+sudo supervisorctl start fpsociety-discordbot
+
+# View logs
+sudo supervisorctl tail -f fpsociety-discordbot
 ```
 
-**Using systemd:**
-
-Create `/etc/systemd/system/discordbot.service`:
-```ini
-[Unit]
-Description=FPSociety Discord Bot
-After=network.target
-
-[Service]
-Type=simple
-User=www-data
-WorkingDirectory=/path/to/your/app
-ExecStart=/usr/bin/php /path/to/your/app/artisan discordbot:start
-Restart=always
-
-[Install]
-WantedBy=multi-user.target
-```
-
-Then:
+**Using Systemd:**
 ```bash
+# Copy service file
+sudo cp deployment/systemd-discordbot.service /etc/systemd/system/fpsociety-discordbot.service
+
+# Update paths to match your installation
+sudo nano /etc/systemd/system/fpsociety-discordbot.service
+
+# Start the bot
 sudo systemctl daemon-reload
-sudo systemctl enable discordbot
-sudo systemctl start discordbot
+sudo systemctl enable fpsociety-discordbot
+sudo systemctl start fpsociety-discordbot
+
+# View logs
+sudo journalctl -u fpsociety-discordbot -f
 ```
+
+**Using Docker:**
+
+The bot is already configured in `scripts/supervisord.conf` and starts automatically with:
+```bash
+docker compose up -d
+```
+
+For complete deployment documentation, monitoring, and troubleshooting, see `/deployment/README.md`.
 
 ### Permission Configuration
 
@@ -2523,24 +2533,46 @@ sudo supervisorctl status discordbot
 ### Troubleshooting
 
 **Bot doesn't connect:**
-- Verify `DISCORD_BOT_TOKEN` is correct
+- Verify `DISCORD_BOT_TOKEN` is correct in `.env`
 - Check bot is invited to server with correct permissions
-- Ensure "Message Content Intent" is enabled in Discord Developer Portal
+- Ensure "Message Content Intent" is enabled in Discord Developer Portal (required for v10+)
+- Check Laravel logs: `tail -f storage/logs/laravel.log | grep Discord`
+- Verify PHP can run long-lived processes (no `max_execution_time` restrictions)
 
 **Commands don't work:**
-- Verify user has correct Discord roles (Admin/Moderator)
-- Check bot has "Read Messages" permission in the channel
-- Ensure "Message Content Intent" is enabled
+- Verify user has correct Discord roles (Admin/Moderator) matching config
+- Check bot has "Read Messages" and "Read Message History" permissions
+- Ensure "Message Content Intent" is enabled (this is a REQUIRED privileged intent)
+- Try the `!ping` command first to test basic functionality
+- Check logs for command execution errors
 
 **Channels not created:**
-- Verify `DISCORD_GUILD_ID` matches your server
+- Verify `DISCORD_GUILD_ID` matches your server ID
 - Check bot has "Manage Channels" permission
-- Review logs for permission errors
+- Review logs: `storage/logs/laravel.log` for ChannelBuilder errors
+- Ensure categories are created before channels (bot does this automatically)
+- Check Discord API rate limits if creating many channels
 
-**Announcements not syncing:**
-- Ensure Laravel queue worker is running
-- Check Reverb server is running
-- Verify event listeners are registered in `AppServiceProvider`
+**Announcements not syncing (Website → Discord):**
+- Ensure Laravel queue worker is running: `php artisan queue:work`
+- Check Reverb server is running: `php artisan reverb:start`
+- Verify event listeners are registered in `app/Providers/AppServiceProvider.php`
+- Check `SendDiscordAnnouncement` job logs
+- Verify `#announcements` channel exists in Discord
+- Test with: `php artisan queue:work --once` to process one job
+
+**Announcements not syncing (Discord → Website):**
+- Ensure bot is running (`php artisan discordbot:start`)
+- Verify bot has MESSAGE_CONTENT intent enabled
+- Check database connection in long-running bot process
+- Review logs for "Announcement created from Discord" messages
+
+**Bot crashes or disconnects:**
+- Check for memory leaks in long-running process
+- Verify ReactPHP event loop is not blocked
+- Use Supervisor with `autorestart=true` for automatic recovery
+- Check Discord API status: https://discordstatus.com/
+- Review PHP error logs for fatal errors
 
 ### API Rate Limits
 
@@ -2559,30 +2591,81 @@ Discord enforces rate limits:
 5. Monitor activity logs for suspicious usage
 6. Keep Discord-PHP library updated
 
+### Bot Architecture
+
+**Service-Based Design:**
+- `DiscordBotService` - Main bot client and initialization with event loop management
+- `ChannelManager` - Handles channel provisioning and permissions using ChannelBuilder API
+- `MessageHandler` - Processes commands and routes them to appropriate command classes
+- Commands follow `CommandInterface` with permission checking via `BaseCommand`
+
+**Key Design Patterns:**
+- Command Pattern: Each bot command is a separate class implementing `CommandInterface`
+- Promise-based async: Uses ReactPHP promises for all async Discord operations
+- Event-driven: Laravel events (AnnouncementCreated) bridge website and Discord
+- Job-based sync: Website → Discord uses queued jobs for reliability
+
+**Discord-PHP v10 Features Used:**
+- ChannelBuilder API for channel creation (replaces deprecated direct create methods)
+- ReactPHP event loop for async operations
+- WebSocket gateway for real-time communication
+- Promise-based API for all async operations
+
 ### Extending the Bot
 
 **Add New Commands:**
 
-Edit `app/DiscordBot/Services/MessageHandler.php`:
+1. Create a new command class in `app/DiscordBot/Commands/`:
 ```php
-protected function handleCommands(Message $message): void
-{
-    // ... existing code ...
-    
-    match ($command) {
-        'announce' => $this->handleAnnounceCommand($message, $args),
-        'ping' => $this->handlePingCommand($message),
-        'help' => $this->handleHelpCommand($message),
-        'yourcmd' => $this->handleYourCommand($message, $args), // Add here
-        default => null,
-    };
-}
+<?php
 
-protected function handleYourCommand(Message $message, string $args): void
+namespace App\DiscordBot\Commands;
+
+use Discord\Parts\Channel\Message;
+
+class YourCommand extends BaseCommand
 {
-    // Your command logic here
+    public function getName(): string
+    {
+        return 'yourcmd';
+    }
+
+    public function getDescription(): string
+    {
+        return 'Description of your command';
+    }
+
+    protected function getRequiredRoles(): array
+    {
+        return ['admin']; // or [] for public access
+    }
+
+    public function execute(Message $message, string $args): void
+    {
+        // Your command logic here
+        $message->reply('Your response');
+    }
 }
 ```
+
+2. Register it in `app/DiscordBot/Services/MessageHandler.php`:
+```php
+protected function registerCommands(): void
+{
+    $yourCommand = new YourCommand();
+    
+    $this->commands = [
+        $announceCommand->getName() => $announceCommand,
+        $pingCommand->getName() => $pingCommand,
+        $helpCommand->getName() => $helpCommand,
+        $yourCommand->getName() => $yourCommand, // Add here
+    ];
+
+    $helpCommand->setCommands($this->commands);
+}
+```
+
+3. Restart the bot to load the new command.
 
 **Add New Channels:**
 
@@ -2593,7 +2676,7 @@ Edit `config/discord_channels.php`:
     
     'your-channel' => [
         'name' => 'your-channel',
-        'type' => 0, // Text channel
+        'type' => 0, // 0 = Text channel (Channel::TYPE_TEXT)
         'category' => 'Community',
         'topic' => 'Your channel description',
         'permissions' => [
@@ -2601,12 +2684,17 @@ Edit `config/discord_channels.php`:
                 'view_channel' => true,
                 'send_messages' => true,
             ],
+            'moderator' => [
+                'view_channel' => true,
+                'send_messages' => true,
+                'read_message_history' => true,
+            ],
         ],
     ],
 ],
 ```
 
-Restart the bot and it will auto-create the new channel.
+Restart the bot and it will auto-create the new channel with configured permissions.
 
 ### Future Enhancements
 
