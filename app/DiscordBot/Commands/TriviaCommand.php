@@ -2,12 +2,19 @@
 
 namespace App\DiscordBot\Commands;
 
+use Discord\Discord;
 use Discord\Parts\Channel\Message;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
 class TriviaCommand extends BaseCommand
 {
+    protected Discord $discord;
+
+    public function __construct(Discord $discord)
+    {
+        $this->discord = $discord;
+    }
     /**
      * Get the command name.
      */
@@ -59,12 +66,12 @@ class TriviaCommand extends BaseCommand
                     
                     $difficulty = ucfirst($trivia['difficulty']);
                     
-                    $response = "🎮 **Gaming Trivia ({$difficulty})**\n\n{$question}{$answersText}\n\n*Answer will be revealed in 30 seconds...*";
+                    $questionText = "🎮 **Gaming Trivia ({$difficulty})**\n\n{$question}{$answersText}\n\n*Answer will be revealed in 30 seconds...*";
                     
-                    $message->channel->sendMessage($response)->then(function () use ($message, $correctAnswer) {
-                        // Send the answer after a delay (simulated)
-                        // Note: In production, you'd want to use Discord's built-in timer or queue system
-                        sleep(30);
+                    $message->channel->sendMessage($questionText);
+                    
+                    // Use Discord's event loop timer for async delay
+                    $this->discord->getLoop()->addTimer(30, function () use ($message, $correctAnswer) {
                         $message->channel->sendMessage("✅ **Correct Answer:** {$correctAnswer}");
                     });
                     

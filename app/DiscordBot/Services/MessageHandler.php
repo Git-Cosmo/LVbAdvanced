@@ -53,7 +53,7 @@ class MessageHandler
         $diceRollCommand = new DiceRollCommand();
         $coinFlipCommand = new CoinFlipCommand();
         $eightBallCommand = new EightBallCommand();
-        $triviaCommand = new TriviaCommand();
+        $triviaCommand = new TriviaCommand($this->discord);
         $serverStatusCommand = new ServerStatusCommand($this->discord);
         $feedbackCommand = new FeedbackCommand();
 

@@ -13,16 +13,13 @@ class DiscordBotStatusController extends Controller
      */
     public function status(): JsonResponse
     {
-        // Check if the bot is running by looking for a heartbeat file or cache
+        // Check if the bot is running by looking for heartbeat in cache
         $isOnline = Cache::has('discord_bot_heartbeat');
         $lastHeartbeat = Cache::get('discord_bot_last_heartbeat');
         
-        // Alternatively, check if the bot process is running (Linux/Unix)
-        if (!$isOnline && function_exists('exec')) {
-            $output = [];
-            exec('pgrep -f "discordbot:start" 2>&1', $output, $returnCode);
-            $isOnline = $returnCode === 0 && !empty($output);
-        }
+        // Note: Process checking has been removed for security reasons.
+        // Bot status is determined solely by the heartbeat cache which is
+        // updated every 30 seconds by the running Discord bot process.
 
         return response()->json([
             'status' => $isOnline ? 'online' : 'offline',
