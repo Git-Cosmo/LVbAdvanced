@@ -29,20 +29,6 @@
                     <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                 @enderror
             </div>
-
-            @if ($announcement->source === 'discord')
-                <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
-                    <div class="flex">
-                        <svg class="w-5 h-5 text-blue-600 dark:text-blue-400 mr-2" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
-                        </svg>
-                        <div>
-                            <p class="text-sm font-medium text-blue-800 dark:text-blue-300">Discord Announcement</p>
-                            <p class="text-sm text-blue-700 dark:text-blue-400 mt-1">This announcement was created from Discord. Changes made here will only affect the database record, not the Discord message.</p>
-                        </div>
-                    </div>
-                </div>
-            @endif
         </div>
 
         <div class="dark:bg-dark-bg-secondary bg-light-bg-secondary rounded-lg shadow p-6 mb-6">

@@ -2362,6 +2362,7 @@ The bot will:
 - Go to "Bot" section
 - Click "Add Bot"
 - Enable "Message Content Intent" under Privileged Gateway Intents
+  > **Note:** "Message Content Intent" is a [privileged intent](https://discord.com/developers/docs/topics/gateway#privileged-intents). If your bot is in 100 or more servers, you must [verify your bot with Discord](https://support.discord.com/hc/en-us/articles/360040720412-Bot-Verification-and-Data-Allowlisting) to use this intent in production. Without verification, your bot will not receive message content in servers after reaching the 100 server limit.
 - Copy the bot token (this is your `DISCORD_BOT_TOKEN`)
 
 **2. Invite Bot to Your Server:**

@@ -3,6 +3,7 @@
 namespace App\Listeners;
 
 use App\Events\AnnouncementCreated;
+use App\Jobs\SendDiscordAnnouncement;
 use Illuminate\Support\Facades\Log;
 
 class SendAnnouncementToDiscord
@@ -24,19 +25,17 @@ class SendAnnouncementToDiscord
         // and the Discord bot is configured
         if ($event->announcement->isFromWebsite() && config('discord_channels.token')) {
             try {
-                // Note: This requires the Discord bot to be running
-                // The actual sending happens through the bot's event listener
-                // This just logs the intent - actual implementation would use
-                // a queue job or bot API when bot is active
-                Log::info('Announcement ready for Discord sync', [
+                // Dispatch a job to send the announcement to Discord
+                // This allows the announcement to be sent asynchronously without blocking
+                // and provides retry capability if the Discord API is temporarily unavailable
+                SendDiscordAnnouncement::dispatch($event->announcement);
+
+                Log::info('Announcement queued for Discord sync', [
                     'announcement_id' => $event->announcement->id,
                     'title' => $event->announcement->title,
                 ]);
-
-                // TODO: In production, use a queue job to send to Discord API
-                // or trigger bot webhook if bot supports it
             } catch (\Exception $e) {
-                Log::error('Failed to prepare announcement for Discord', [
+                Log::error('Failed to queue announcement for Discord', [
                     'announcement_id' => $event->announcement->id,
                     'error' => $e->getMessage(),
                 ]);

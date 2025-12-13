@@ -85,6 +85,25 @@ class AnnouncementTest extends TestCase
         $this->assertEquals(2, Announcement::recent()->count());
     }
 
+    public function test_announcement_with_null_user(): void
+    {
+        // Create announcement without user_id (e.g., system-generated)
+        $announcement = Announcement::create([
+            'title' => 'System Announcement',
+            'message' => 'This is a system announcement',
+            'source' => 'website',
+            'published_at' => now(),
+        ]);
+
+        $this->assertNull($announcement->user_id);
+        $this->assertNull($announcement->user);
+        
+        // Verify it can be retrieved without errors
+        $retrieved = Announcement::find($announcement->id);
+        $this->assertNotNull($retrieved);
+        $this->assertNull($retrieved->user);
+    }
+
     public function test_announcement_belongs_to_user(): void
     {
         $announcement = Announcement::create([

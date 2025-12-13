@@ -75,7 +75,11 @@
                         </div>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                        <a href="{{ route('admin.announcements.edit', $announcement) }}" class="text-primary-600 hover:text-primary-900 dark:text-primary-400 dark:hover:text-primary-300 mr-3">Edit</a>
+                        @if ($announcement->source === 'website')
+                            <a href="{{ route('admin.announcements.edit', $announcement) }}" class="text-primary-600 hover:text-primary-900 dark:text-primary-400 dark:hover:text-primary-300 mr-3">Edit</a>
+                        @else
+                            <span class="text-gray-400 dark:text-gray-600 mr-3" title="Discord announcements cannot be edited from admin panel">Edit</span>
+                        @endif
                         <form action="{{ route('admin.announcements.destroy', $announcement) }}" method="POST" class="inline" onsubmit="return confirm('Are you sure you want to delete this announcement?');">
                             @csrf
                             @method('DELETE')

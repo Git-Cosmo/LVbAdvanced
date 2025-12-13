@@ -67,6 +67,12 @@ class AnnouncementController extends Controller
      */
     public function edit(Announcement $announcement): View
     {
+        // Prevent editing Discord-sourced announcements
+        if ($announcement->isFromDiscord()) {
+            return redirect()->route('admin.announcements.index')
+                ->with('error', 'Discord-sourced announcements cannot be edited from the admin panel.');
+        }
+
         return view('admin.announcements.edit', compact('announcement'));
     }
 
@@ -75,6 +81,11 @@ class AnnouncementController extends Controller
      */
     public function update(Request $request, Announcement $announcement): RedirectResponse
     {
+        // Prevent updating Discord-sourced announcements
+        if ($announcement->isFromDiscord()) {
+            return redirect()->route('admin.announcements.index')
+                ->with('error', 'Discord-sourced announcements cannot be updated from the admin panel.');
+        }
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'message' => 'required|string',

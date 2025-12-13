@@ -78,7 +78,7 @@ class MessageHandler
         }
 
         if (empty($content)) {
-            $message->reply('❌ Please provide a message to announce. Usage: `!announce <message>`');
+            $message->reply('❌ Please provide a message to announce. Usage: `!announce <title>\n<message>`');
 
             return;
         }
@@ -86,7 +86,14 @@ class MessageHandler
         // Extract title and message
         $lines = explode("\n", $content, 2);
         $title = $lines[0];
-        $messageText = $lines[1] ?? $title;
+        
+        // Require both title and message
+        if (!isset($lines[1]) || trim($lines[1]) === '') {
+            $message->reply('❌ Please provide both a title and a message, separated by a newline. Usage: `!announce <title>\n<message>`');
+            return;
+        }
+        
+        $messageText = $lines[1];
 
         // Create announcement in database
         $announcement = Announcement::create([

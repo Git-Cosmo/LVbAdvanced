@@ -156,12 +156,115 @@ class ChannelManager
      */
     protected function applyChannelPermissions(Channel $channel, array $permissions): void
     {
-        // Permission application will be implemented based on specific needs
-        // This is a placeholder for permission logic
-        Log::info('Permissions configured for channel', [
-            'channel' => $channel->name,
-            'permissions' => array_keys($permissions),
-        ]);
+        $guild = $channel->guild;
+        
+        foreach ($permissions as $roleName => $perms) {
+            try {
+                if ($roleName === 'everyone') {
+                    // Apply permissions to @everyone role
+                    $everyoneRole = $guild->roles->get('id', $guild->id);
+                    if ($everyoneRole) {
+                        $overwrite = [
+                            'id' => $everyoneRole->id,
+                            'type' => 'role',
+                            'allow' => 0,
+                            'deny' => 0,
+                        ];
+
+                        // Calculate permission bits
+                        if (isset($perms['view_channel'])) {
+                            if ($perms['view_channel']) {
+                                $overwrite['allow'] |= 1024; // VIEW_CHANNEL
+                            } else {
+                                $overwrite['deny'] |= 1024;
+                            }
+                        }
+
+                        if (isset($perms['send_messages'])) {
+                            if ($perms['send_messages']) {
+                                $overwrite['allow'] |= 2048; // SEND_MESSAGES
+                            } else {
+                                $overwrite['deny'] |= 2048;
+                            }
+                        }
+
+                        if (isset($perms['read_message_history'])) {
+                            if ($perms['read_message_history']) {
+                                $overwrite['allow'] |= 65536; // READ_MESSAGE_HISTORY
+                            } else {
+                                $overwrite['deny'] |= 65536;
+                            }
+                        }
+
+                        $channel->setPermissions($everyoneRole, $overwrite['allow'], $overwrite['deny']);
+                        
+                        Log::info('Applied permissions to channel', [
+                            'channel' => $channel->name,
+                            'role' => '@everyone',
+                            'allow' => $overwrite['allow'],
+                            'deny' => $overwrite['deny'],
+                        ]);
+                    }
+                } else {
+                    // Find the role by name
+                    $role = $guild->roles->find(function ($r) use ($roleName) {
+                        return strtolower($r->name) === strtolower($roleName);
+                    });
+
+                    if ($role) {
+                        $overwrite = [
+                            'allow' => 0,
+                            'deny' => 0,
+                        ];
+
+                        // Calculate permission bits for custom roles
+                        if (isset($perms['view_channel'])) {
+                            if ($perms['view_channel']) {
+                                $overwrite['allow'] |= 1024;
+                            } else {
+                                $overwrite['deny'] |= 1024;
+                            }
+                        }
+
+                        if (isset($perms['send_messages'])) {
+                            if ($perms['send_messages']) {
+                                $overwrite['allow'] |= 2048;
+                            } else {
+                                $overwrite['deny'] |= 2048;
+                            }
+                        }
+
+                        if (isset($perms['read_message_history'])) {
+                            if ($perms['read_message_history']) {
+                                $overwrite['allow'] |= 65536;
+                            } else {
+                                $overwrite['deny'] |= 65536;
+                            }
+                        }
+
+                        $channel->setPermissions($role, $overwrite['allow'], $overwrite['deny']);
+
+                        Log::info('Applied permissions to channel', [
+                            'channel' => $channel->name,
+                            'role' => $roleName,
+                            'allow' => $overwrite['allow'],
+                            'deny' => $overwrite['deny'],
+                        ]);
+                    } else {
+                        Log::warning('Role not found for permission application', [
+                            'channel' => $channel->name,
+                            'role' => $roleName,
+                        ]);
+                    }
+                }
+            } catch (\Exception $e) {
+                Log::error('Failed to apply permissions to channel', [
+                    'channel' => $channel->name,
+                    'role' => $roleName,
+                    'error' => $e->getMessage(),
+                ]);
+            }
+        }
     }
 
     /**
