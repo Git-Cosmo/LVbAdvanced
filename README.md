@@ -2319,6 +2319,8 @@ The bot automatically provisions these channels:
 composer install
 ```
 
+> **📝 Note:** The project includes a composer patch that fixes a critical compatibility issue in Discord-PHP v10.41.15 (`ComponentsTrait` type mismatch). The patch is automatically applied during installation. See `patches/discord-php-components-trait-type-fix.patch` for details.
+
 **2. Configure Environment Variables:**
 Add to your `.env` file:
 ```env

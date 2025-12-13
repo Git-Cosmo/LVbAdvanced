@@ -76,8 +76,12 @@
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
             "@php artisan package:discover --ansi"
         ],
+        "post-install-cmd": [
+            "@php -r \"if (file_exists('patches/discord-php-components-trait-type-fix.patch')) { passthru('cd vendor/team-reflex/discord-php && patch -p1 --forward --no-backup-if-mismatch < ../../../patches/discord-php-components-trait-type-fix.patch 2>/dev/null || true'); }\""
+        ],
         "post-update-cmd": [
-            "@php artisan vendor:publish --tag=laravel-assets --ansi --force"
+            "@php artisan vendor:publish --tag=laravel-assets --ansi --force",
+            "@php -r \"if (file_exists('patches/discord-php-components-trait-type-fix.patch')) { passthru('cd vendor/team-reflex/discord-php && patch -p1 --forward --no-backup-if-mismatch < ../../../patches/discord-php-components-trait-type-fix.patch 2>/dev/null || true'); }\""
         ],
         "post-root-package-install": [
             "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
