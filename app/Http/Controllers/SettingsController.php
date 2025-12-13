@@ -2,16 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
+use Illuminate\View\View;
 
 class SettingsController extends Controller
 {
     /**
      * Display the user settings page.
      */
-    public function index()
+    public function index(): View
     {
         $user = auth()->user();
         $profile = $user->profile;
@@ -30,7 +32,7 @@ class SettingsController extends Controller
     /**
      * Update account settings.
      */
-    public function updateAccount(Request $request)
+    public function updateAccount(Request $request): RedirectResponse
     {
         $user = auth()->user();
 
@@ -47,7 +49,7 @@ class SettingsController extends Controller
     /**
      * Update password.
      */
-    public function updatePassword(Request $request)
+    public function updatePassword(Request $request): RedirectResponse
     {
         $validated = $request->validate([
             'current_password' => 'required|current_password',
@@ -64,7 +66,7 @@ class SettingsController extends Controller
     /**
      * Update privacy settings.
      */
-    public function updatePrivacy(Request $request)
+    public function updatePrivacy(Request $request): RedirectResponse
     {
         $profile = auth()->user()->profile;
 
@@ -86,7 +88,7 @@ class SettingsController extends Controller
     /**
      * Update email preferences.
      */
-    public function updateNotifications(Request $request)
+    public function updateNotifications(Request $request): RedirectResponse
     {
         $profile = auth()->user()->profile;
 
@@ -109,7 +111,7 @@ class SettingsController extends Controller
     /**
      * Update user status.
      */
-    public function updateStatus(Request $request)
+    public function updateStatus(Request $request): RedirectResponse
     {
         $user = auth()->user();
 

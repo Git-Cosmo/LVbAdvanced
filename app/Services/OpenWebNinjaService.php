@@ -13,7 +13,7 @@ class OpenWebNinjaService
 
     public function __construct()
     {
-        $this->apiKey = config('services.openwebninja.api_key') ?? env('OPEN_WEB_NINJA_API_KEY');
+        $this->apiKey = config('services.openwebninja.api_key');
     }
 
     /**
@@ -35,13 +35,12 @@ class OpenWebNinjaService
             if (empty($this->apiKey)) {
                 Log::error('OpenWebNinja API key not configured', [
                     'config_value' => config('services.openwebninja.api_key'),
-                    'env_value' => env('OPEN_WEB_NINJA_API_KEY'),
-                    'help' => 'Add OPEN_WEB_NINJA_API_KEY to your .env file. See EVENTS_SETUP.md for detailed instructions.',
+                    'help' => 'Add OPEN_WEB_NINJA_API_KEY to your .env file and run php artisan config:cache. See EVENTS_SETUP.md for detailed instructions.',
                 ]);
 
                 return [
                     'success' => false,
-                    'error' => 'API key not configured. Please add OPEN_WEB_NINJA_API_KEY to your .env file. See EVENTS_SETUP.md for setup instructions.',
+                    'error' => 'API key not configured. Please add OPEN_WEB_NINJA_API_KEY to your .env file and run php artisan config:cache. See EVENTS_SETUP.md for setup instructions.',
                     'data' => null,
                 ];
             }

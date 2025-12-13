@@ -45,6 +45,11 @@ class GamificationService
     public function checkStreaks(User $user, string $action): void
     {
         if ($action === 'daily_login') {
+            // Ensure profile exists
+            if (! $user->profile) {
+                $user->profile()->create(['login_streak' => 0]);
+            }
+
             $lastLogin = $user->profile->last_login_at;
             $today = Carbon::today();
 
