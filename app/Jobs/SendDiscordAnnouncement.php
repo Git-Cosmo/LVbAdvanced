@@ -43,10 +43,10 @@ class SendDiscordAnnouncement implements ShouldQueue
             $loop = $discord->getLoop();
 
             // Use promises to handle async Discord operations
-            $discord->on('ready', function (Discord $discord) use ($loop) {
+            $discord->on('init', function (Discord $discord) use ($loop) {
                 $guildId = config('discord_channels.guild_id');
 
-                $discord->guilds->fetch($guildId)->done(function ($guild) use ($discord, $loop) {
+                $discord->guilds->fetch($guildId)->then(function ($guild) use ($discord, $loop) {
                     // Find the announcements channel
                     $announcementsChannel = $guild->channels->find(function (Channel $channel) {
                         return $channel->type !== Channel::TYPE_CATEGORY 
@@ -72,7 +72,7 @@ class SendDiscordAnnouncement implements ShouldQueue
                     }
 
                     // Send the embed
-                    $announcementsChannel->sendEmbed($embed)->done(function ($message) use ($loop) {
+                    $announcementsChannel->sendEmbed($embed)->then(function ($message) use ($loop) {
                         // Update announcement with Discord message ID
                         $this->announcement->update([
                             'discord_message_id' => $message->id,

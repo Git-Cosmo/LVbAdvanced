@@ -90,7 +90,7 @@ class AnnounceCommand extends BaseCommand
         if ($announcementsChannel) {
             $embed = $this->createAnnouncementEmbed($announcement, $message);
 
-            $announcementsChannel->sendEmbed($embed)->done(function (Message $sentMessage) use ($announcement) {
+            $announcementsChannel->sendEmbed($embed)->then(function (Message $sentMessage) use ($announcement) {
                 // Update announcement with Discord message ID after successful post
                 $announcement->update([
                     'discord_message_id' => $sentMessage->id,

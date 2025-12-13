@@ -30,7 +30,7 @@ class DiscordBotService
      */
     public function start(): void
     {
-        $this->discord->on('ready', function (Discord $discord) {
+        $this->discord->on('init', function (Discord $discord) {
             Log::info('Discord bot is ready!', [
                 'username' => $discord->user->username,
                 'discriminator' => $discord->user->discriminator,

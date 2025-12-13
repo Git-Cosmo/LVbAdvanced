@@ -110,7 +110,7 @@ class MessageHandler
 
         $embed = $this->createAnnouncementEmbed($announcement);
 
-        $announcementsChannel->sendEmbed($embed)->done(function (Message $message) use ($announcement) {
+        $announcementsChannel->sendEmbed($embed)->then(function (Message $message) use ($announcement) {
             // Update announcement with Discord message ID
             $announcement->update([
                 'discord_message_id' => $message->id,

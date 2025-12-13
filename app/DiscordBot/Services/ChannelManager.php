@@ -35,11 +35,11 @@ class ChannelManager
             return;
         }
 
-        $this->discord->guilds->fetch($guildId)->done(function (Guild $guild) {
+        $this->discord->guilds->fetch($guildId)->then(function (Guild $guild) {
             Log::info('Provisioning channels for guild', ['guild' => $guild->name]);
 
             // First, create/fetch categories
-            $this->provisionCategories($guild)->done(function () use ($guild) {
+            $this->provisionCategories($guild)->then(function () use ($guild) {
                 // Then create/fetch channels
                 $this->provisionChannelsInGuild($guild);
             });
@@ -136,7 +136,7 @@ class ChannelManager
             $createParams['parent_id'] = $this->categoryCache[$config['category']]->id;
         }
 
-        $guild->channels->create($createParams)->done(function (Channel $channel) use ($channelName, $config) {
+        $guild->channels->create($createParams)->then(function (Channel $channel) use ($channelName, $config) {
             $this->channelCache[$channelName] = $channel;
             Log::info('Created channel', ['channel' => $channelName]);
 
