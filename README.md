@@ -2716,6 +2716,63 @@ Discord enforces rate limits:
 - Consider the 50 channel limit per category
 - Message sending has per-channel rate limits
 
+### Quick Start Examples
+
+**Using Commands in Discord:**
+```
+User: !chucknorris
+Bot: 💪 Chuck Norris Fact:
+     Chuck Norris doesn't use web frameworks. He writes websites in binary.
+
+User: !roll 2d6
+Bot: 🎲 PlayerName rolled 2d6: 9 (5, 4)
+
+User: !flip
+Bot: ⚡ PlayerName flipped a coin: Tails!
+
+User: !8ball Will I win?
+Bot: 🎱 Question: Will I win?
+     Answer: Signs point to yes.
+
+User: !trivia
+Bot: 🎮 Gaming Trivia (Medium)
+     
+     What year was Counter-Strike: Global Offensive released?
+     A. 2011
+     B. 2012
+     C. 2013
+     D. 2014
+     
+     *Answer will be revealed in 30 seconds...*
+     
+[30 seconds later]
+Bot: ✅ Correct Answer: 2012
+
+User: !servers
+Bot: [Rich embed showing game server status with player counts and IPs]
+
+User: !feedback
+Bot: 📝 Submit Feedback
+     Click the button below to open the feedback form!
+     [Button: Open Feedback Form]
+```
+
+**Checking Bot Status on Website:**
+- Look at the footer of any page on the website
+- You'll see a "Discord Bot" widget showing:
+  - 🟢 Online (with pulsing green dot) or 🔴 Offline
+  - Helpful command tip when online
+  - Auto-refreshes every 30 seconds
+
+**API Usage:**
+```bash
+# Get bot status
+curl https://your-domain.com/api/discord-bot/status
+
+# Get all commands
+curl https://your-domain.com/api/discord-bot/commands
+```
+
 ### Security Best Practices
 
 1. **Never commit** bot tokens to version control
@@ -2724,6 +2781,7 @@ Discord enforces rate limits:
 4. Regularly rotate bot token if compromised
 5. Monitor activity logs for suspicious usage
 6. Keep Discord-PHP library updated
+7. Bot status endpoint is public - no sensitive data exposed
 
 ### Bot Architecture
 
