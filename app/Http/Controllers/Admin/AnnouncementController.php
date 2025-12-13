@@ -4,9 +4,10 @@ namespace App\Http\Controllers\Admin;
 
 use App\Events\AnnouncementCreated;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\StoreAnnouncementRequest;
+use App\Http\Requests\Admin\UpdateAnnouncementRequest;
 use App\Models\Announcement;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class AnnouncementController extends Controller
@@ -34,14 +35,9 @@ class AnnouncementController extends Controller
     /**
      * Store a newly created announcement.
      */
-    public function store(Request $request): RedirectResponse
+    public function store(StoreAnnouncementRequest $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'message' => 'required|string',
-            'publish_now' => 'boolean',
-        ]);
-
+        $validated = $request->validated();
         $validated['user_id'] = auth()->id();
         $validated['source'] = 'website';
         $validated['published_at'] = $request->boolean('publish_now') ? now() : null;
@@ -79,19 +75,14 @@ class AnnouncementController extends Controller
     /**
      * Update the specified announcement.
      */
-    public function update(Request $request, Announcement $announcement): RedirectResponse
+    public function update(UpdateAnnouncementRequest $request, Announcement $announcement): RedirectResponse
     {
         // Prevent updating Discord-sourced announcements
         if ($announcement->isFromDiscord()) {
             return redirect()->route('admin.announcements.index')
                 ->with('error', 'Discord-sourced announcements cannot be updated from the admin panel.');
         }
-        $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'message' => 'required|string',
-            'publish_now' => 'boolean',
-        ]);
-
+        $validated = $request->validated();
         $validated['published_at'] = $request->boolean('publish_now') ? now() : $announcement->published_at;
 
         $announcement->update($validated);

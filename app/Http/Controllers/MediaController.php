@@ -2,10 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreGalleryRequest;
 use App\Models\User\Gallery;
 use App\Services\MediaService;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\View\View;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class MediaController extends Controller
 {
@@ -19,7 +23,7 @@ class MediaController extends Controller
     /**
      * Show downloads index
      */
-    public function index()
+    public function index(): View
     {
         $galleries = Gallery::with(['user', 'galleryMedia'])
             ->latest()
@@ -38,7 +42,7 @@ class MediaController extends Controller
     /**
      * Show single download
      */
-    public function show($id)
+    public function show(int $id): View
     {
         $gallery = Gallery::with(['user', 'galleryMedia', 'comments'])->findOrFail($id);
         $gallery->increment('views');
@@ -56,7 +60,7 @@ class MediaController extends Controller
     /**
      * Show create gallery form
      */
-    public function create()
+    public function create(): View
     {
         $games = ['Counter Strike 2', 'GTA V', 'Fortnite', 'Call of Duty', 'Minecraft', 'Other'];
 
@@ -71,15 +75,9 @@ class MediaController extends Controller
     /**
      * Store new gallery
      */
-    public function store(Request $request)
+    public function store(StoreGalleryRequest $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'title' => 'required|max:255',
-            'description' => 'nullable|max:1000',
-            'game' => 'required|max:100',
-            'category' => 'required|in:map,skin,mod,texture,sound,other',
-            'files.*' => 'required|file|max:102400', // 100MB max
-        ]);
+        $validated = $request->validated();
 
         $gallery = Gallery::create([
             'user_id' => auth()->id(),
@@ -105,7 +103,7 @@ class MediaController extends Controller
     /**
      * Download file
      */
-    public function download($mediaId)
+    public function download(int $mediaId): BinaryFileResponse
     {
         $media = \App\Models\User\Media::findOrFail($mediaId);
         $media->increment('downloads');
@@ -120,7 +118,7 @@ class MediaController extends Controller
     /**
      * Delete gallery
      */
-    public function destroy(Gallery $gallery)
+    public function destroy(Gallery $gallery): RedirectResponse
     {
         if (auth()->id() !== $gallery->user_id && ! auth()->user()->can('delete any media')) {
             abort(403);
@@ -134,7 +132,7 @@ class MediaController extends Controller
     /**
      * Store comment on gallery
      */
-    public function storeComment(Request $request, Gallery $gallery)
+    public function storeComment(Request $request, Gallery $gallery): RedirectResponse
     {
         $validated = $request->validate([
             'content' => 'required|max:1000',

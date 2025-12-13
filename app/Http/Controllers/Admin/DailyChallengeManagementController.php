@@ -3,12 +3,14 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\StoreDailyChallengeRequest;
 use App\Models\DailyChallenge;
-use Illuminate\Http\Request;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\View\View;
 
 class DailyChallengeManagementController extends Controller
 {
-    public function index()
+    public function index(): View
     {
         $challenges = DailyChallenge::withCount('completions')
             ->orderByDesc('valid_date')
@@ -20,24 +22,16 @@ class DailyChallengeManagementController extends Controller
         ]);
     }
 
-    public function create()
+    public function create(): View
     {
         return view('admin.casual-games.challenges.create', [
             'page' => (object) ['title' => 'Create Challenge'],
         ]);
     }
 
-    public function store(Request $request)
+    public function store(StoreDailyChallengeRequest $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'required|string',
-            'challenge_type' => 'required|string',
-            'requirements' => 'required|array',
-            'points_reward' => 'required|integer|min:1',
-            'valid_date' => 'required|date',
-            'is_active' => 'boolean',
-        ]);
+        $validated = $request->validated();
 
         DailyChallenge::create($validated);
 
@@ -45,7 +39,7 @@ class DailyChallengeManagementController extends Controller
             ->with('success', 'Daily challenge created successfully!');
     }
 
-    public function destroy(DailyChallenge $challenge)
+    public function destroy(DailyChallenge $challenge): RedirectResponse
     {
         $challenge->delete();
 

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\News;
 use App\Services\SeoService;
+use Illuminate\View\View;
 
 class NewsController extends Controller
 {
@@ -22,7 +23,7 @@ class NewsController extends Controller
     /**
      * Display a listing of news articles.
      */
-    public function index()
+    public function index(): View
     {
         $news = News::published()
             ->with('user')
@@ -50,7 +51,7 @@ class NewsController extends Controller
     /**
      * Display the specified news article.
      */
-    public function show(News $news)
+    public function show(News $news): View
     {
         if (! $news->is_published || $news->published_at > now()) {
             abort(404);

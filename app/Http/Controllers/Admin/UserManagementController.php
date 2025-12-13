@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\UpdateUserProfileRequest;
+use App\Http\Requests\Admin\UpdateUserRequest;
 use App\Models\User;
 use App\Models\User\UserAchievement;
 use App\Models\User\UserBadge;
@@ -57,14 +59,9 @@ class UserManagementController extends Controller
     /**
      * Update the specified user.
      */
-    public function update(Request $request, User $user): RedirectResponse
+    public function update(UpdateUserRequest $request, User $user): RedirectResponse
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email,'.$user->id,
-            'roles' => 'array',
-            'roles.*' => 'exists:roles,name',
-        ]);
+        $validated = $request->validated();
 
         $user->update([
             'name' => $validated['name'],
@@ -90,15 +87,9 @@ class UserManagementController extends Controller
     /**
      * Update user profile.
      */
-    public function updateProfile(Request $request, User $user): RedirectResponse
+    public function updateProfile(UpdateUserProfileRequest $request, User $user): RedirectResponse
     {
-        $validated = $request->validate([
-            'xp' => 'nullable|integer|min:0',
-            'level' => 'nullable|integer|min:1',
-            'karma' => 'nullable|integer',
-            'user_title' => 'nullable|string|max:255',
-            'about_me' => 'nullable|string',
-        ]);
+        $validated = $request->validated();
 
         // Ensure user has a profile
         if (! $user->profile) {

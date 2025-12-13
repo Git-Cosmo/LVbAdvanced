@@ -2,16 +2,20 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Enums\ServerStatus;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\StoreGameServerRequest;
+use App\Http\Requests\Admin\UpdateGameServerRequest;
 use App\Models\GameServer;
-use Illuminate\Http\Request;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\View\View;
 
 class GameServerController extends Controller
 {
     /**
      * Display a listing of game servers.
      */
-    public function index()
+    public function index(): View
     {
         $servers = GameServer::orderBy('display_order')
             ->orderBy('name')
@@ -30,7 +34,7 @@ class GameServerController extends Controller
     /**
      * Show the form for creating a new game server.
      */
-    public function create()
+    public function create(): View
     {
         return view('admin.game-servers.create');
     }
@@ -38,28 +42,9 @@ class GameServerController extends Controller
     /**
      * Store a newly created game server.
      */
-    public function store(Request $request)
+    public function store(StoreGameServerRequest $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'game' => 'required|string|max:255',
-            'game_short_code' => 'required|string|max:10',
-            'description' => 'nullable|string',
-            'ip_address' => 'nullable|string|max:255',
-            'port' => 'nullable|integer|min:1|max:65535',
-            'connect_url' => 'nullable|string|max:500',
-            'status' => 'required|in:online,offline,maintenance,coming_soon',
-            'max_players' => 'nullable|integer|min:0',
-            'current_players' => 'nullable|integer|min:0',
-            'map' => 'nullable|string|max:255',
-            'game_mode' => 'nullable|string|max:255',
-            'icon_color_from' => 'required|string|max:7',
-            'icon_color_to' => 'required|string|max:7',
-            'display_order' => 'nullable|integer|min:0',
-            'is_featured' => 'boolean',
-            'is_active' => 'boolean',
-        ]);
-
+        $validated = $request->validated();
         $server = GameServer::create($validated);
 
         activity()
@@ -74,7 +59,7 @@ class GameServerController extends Controller
     /**
      * Show the form for editing the specified game server.
      */
-    public function edit(GameServer $gameServer)
+    public function edit(GameServer $gameServer): View
     {
         return view('admin.game-servers.edit', compact('gameServer'));
     }
@@ -82,28 +67,9 @@ class GameServerController extends Controller
     /**
      * Update the specified game server.
      */
-    public function update(Request $request, GameServer $gameServer)
+    public function update(UpdateGameServerRequest $request, GameServer $gameServer): RedirectResponse
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'game' => 'required|string|max:255',
-            'game_short_code' => 'required|string|max:10',
-            'description' => 'nullable|string',
-            'ip_address' => 'nullable|string|max:255',
-            'port' => 'nullable|integer|min:1|max:65535',
-            'connect_url' => 'nullable|string|max:500',
-            'status' => 'required|in:online,offline,maintenance,coming_soon',
-            'max_players' => 'nullable|integer|min:0',
-            'current_players' => 'nullable|integer|min:0',
-            'map' => 'nullable|string|max:255',
-            'game_mode' => 'nullable|string|max:255',
-            'icon_color_from' => 'required|string|max:7',
-            'icon_color_to' => 'required|string|max:7',
-            'display_order' => 'nullable|integer|min:0',
-            'is_featured' => 'boolean',
-            'is_active' => 'boolean',
-        ]);
-
+        $validated = $request->validated();
         $gameServer->update($validated);
 
         activity()
@@ -118,7 +84,7 @@ class GameServerController extends Controller
     /**
      * Remove the specified game server.
      */
-    public function destroy(GameServer $gameServer)
+    public function destroy(GameServer $gameServer): RedirectResponse
     {
         activity()
             ->causedBy(auth()->user())
@@ -134,7 +100,7 @@ class GameServerController extends Controller
     /**
      * Toggle the active status of a game server.
      */
-    public function toggleActive(GameServer $gameServer)
+    public function toggleActive(GameServer $gameServer): RedirectResponse
     {
         $gameServer->update(['is_active' => ! $gameServer->is_active]);
 
@@ -144,7 +110,7 @@ class GameServerController extends Controller
     /**
      * Toggle the featured status of a game server.
      */
-    public function toggleFeatured(GameServer $gameServer)
+    public function toggleFeatured(GameServer $gameServer): RedirectResponse
     {
         $gameServer->update(['is_featured' => ! $gameServer->is_featured]);
 

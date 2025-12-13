@@ -2,16 +2,20 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\UserStatus;
+use App\Http\Requests\UpdateAccountRequest;
+use App\Http\Requests\UpdatePasswordRequest;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rules\Password;
+use Illuminate\View\View;
 
 class SettingsController extends Controller
 {
     /**
      * Display the user settings page.
      */
-    public function index()
+    public function index(): View
     {
         $user = auth()->user();
         $profile = $user->profile;
@@ -30,16 +34,11 @@ class SettingsController extends Controller
     /**
      * Update account settings.
      */
-    public function updateAccount(Request $request)
+    public function updateAccount(UpdateAccountRequest $request): RedirectResponse
     {
         $user = auth()->user();
 
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|max:255|unique:users,email,'.$user->id,
-        ]);
-
-        $user->update($validated);
+        $user->update($request->validated());
 
         return redirect()->route('settings.index')->with('success', 'Account settings updated successfully!');
     }
@@ -47,12 +46,9 @@ class SettingsController extends Controller
     /**
      * Update password.
      */
-    public function updatePassword(Request $request)
+    public function updatePassword(UpdatePasswordRequest $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'current_password' => 'required|current_password',
-            'password' => ['required', 'confirmed', Password::defaults()],
-        ]);
+        $validated = $request->validated();
 
         auth()->user()->update([
             'password' => Hash::make($validated['password']),
@@ -64,7 +60,7 @@ class SettingsController extends Controller
     /**
      * Update privacy settings.
      */
-    public function updatePrivacy(Request $request)
+    public function updatePrivacy(Request $request): RedirectResponse
     {
         $profile = auth()->user()->profile;
 
@@ -86,7 +82,7 @@ class SettingsController extends Controller
     /**
      * Update email preferences.
      */
-    public function updateNotifications(Request $request)
+    public function updateNotifications(Request $request): RedirectResponse
     {
         $profile = auth()->user()->profile;
 
@@ -109,7 +105,7 @@ class SettingsController extends Controller
     /**
      * Update user status.
      */
-    public function updateStatus(Request $request)
+    public function updateStatus(Request $request): RedirectResponse
     {
         $user = auth()->user();
 
@@ -123,7 +119,7 @@ class SettingsController extends Controller
         $profile = $user->profile;
 
         $validated = $request->validate([
-            'status' => 'required|in:online,away,busy,offline',
+            'status' => ['required', UserStatus::validationRule()],
             'status_message' => 'nullable|string|max:140',
         ]);
 

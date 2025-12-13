@@ -3,9 +3,10 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\StoreNewsRequest;
+use App\Http\Requests\Admin\UpdateNewsRequest;
 use App\Models\News;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
@@ -34,20 +35,9 @@ class NewsManagementController extends Controller
     /**
      * Store a newly created news article.
      */
-    public function store(Request $request): RedirectResponse
+    public function store(StoreNewsRequest $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'excerpt' => 'nullable|string|max:500',
-            'content' => 'required|string',
-            'image' => 'nullable|image|max:2048',
-            'source' => 'nullable|string|max:255',
-            'source_url' => 'nullable|url|max:500',
-            'is_published' => 'boolean',
-            'is_featured' => 'boolean',
-            'published_at' => 'nullable|date',
-            'tags' => 'nullable|string',
-        ]);
+        $validated = $request->validated();
 
         if ($request->hasFile('image')) {
             $path = $request->file('image')->store('news', 'public');
@@ -91,20 +81,9 @@ class NewsManagementController extends Controller
     /**
      * Update the specified news article.
      */
-    public function update(Request $request, News $news): RedirectResponse
+    public function update(UpdateNewsRequest $request, News $news): RedirectResponse
     {
-        $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'excerpt' => 'nullable|string|max:500',
-            'content' => 'required|string',
-            'image' => 'nullable|image|max:2048',
-            'source' => 'nullable|string|max:255',
-            'source_url' => 'nullable|url|max:500',
-            'is_published' => 'boolean',
-            'is_featured' => 'boolean',
-            'published_at' => 'nullable|date',
-            'tags' => 'nullable|string',
-        ]);
+        $validated = $request->validated();
 
         if ($request->hasFile('image')) {
             // Delete old image if exists
