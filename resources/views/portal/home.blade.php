@@ -196,6 +196,45 @@
     <!-- Center Content -->
     <div class="col-span-12 lg:col-span-6">
         <div class="space-y-6">
+            <!-- API Announcement Banner -->
+            <div class="relative overflow-hidden rounded-lg shadow-lg bg-gradient-to-r from-accent-blue to-accent-purple p-6">
+                <div class="relative z-10">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-4">
+                            <div class="flex-shrink-0 w-12 h-12 bg-white/10 backdrop-blur rounded-lg flex items-center justify-center">
+                                <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-bold text-white mb-1">REST API Now Available</h3>
+                                <p class="text-sm text-white/90">Build amazing integrations with our comprehensive v1 API</p>
+                            </div>
+                        </div>
+                        <a href="https://github.com/Git-Cosmo/LVbAdvanced#rest-api" target="_blank" rel="noopener" class="flex-shrink-0 px-4 py-2 bg-white/20 hover:bg-white/30 text-white rounded-lg font-medium transition-all backdrop-blur text-sm">
+                            View Docs →
+                        </a>
+                    </div>
+                    <div class="mt-4 flex flex-wrap gap-2">
+                        <span class="inline-flex items-center px-3 py-1 text-xs font-semibold rounded-full bg-white/10 text-white backdrop-blur">
+                            ✓ Laravel Sanctum Auth
+                        </span>
+                        <span class="inline-flex items-center px-3 py-1 text-xs font-semibold rounded-full bg-white/10 text-white backdrop-blur">
+                            ✓ Rate Limiting
+                        </span>
+                        <span class="inline-flex items-center px-3 py-1 text-xs font-semibold rounded-full bg-white/10 text-white backdrop-blur">
+                            ✓ 40+ Endpoints
+                        </span>
+                        <span class="inline-flex items-center px-3 py-1 text-xs font-semibold rounded-full bg-white/10 text-white backdrop-blur">
+                            ✓ JSON Responses
+                        </span>
+                    </div>
+                </div>
+                <!-- Decorative background pattern -->
+                <div class="absolute inset-0 opacity-10">
+                    <div class="absolute inset-0" style="background-image: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,.1) 10px, rgba(255,255,255,.1) 20px);"></div>
+                </div>
+            </div>
             @php
                 $currentSong = $nowPlaying['song'] ?? [];
                 $currentTitle = $currentSong['title'] ?? 'Nothing playing right now';
