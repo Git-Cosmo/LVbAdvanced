@@ -105,10 +105,10 @@ class TwitchApiService
             }
         }
 
-        // Mark offline streamers
+        // Mark offline streamers (not seen in current sync)
         Streamer::where('platform', 'twitch')
             ->where('is_live', true)
-            ->where('last_checked_at', '<', now()->subMinutes(5))
+            ->where('last_checked_at', '<', now()->subMinutes(10))
             ->update(['is_live' => false]);
 
         return $synced;

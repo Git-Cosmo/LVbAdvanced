@@ -43,6 +43,15 @@ class KickApiService
 
         foreach ($streams as $stream) {
             try {
+                $streamStartedAt = null;
+                if (isset($stream['started_at'])) {
+                    try {
+                        $streamStartedAt = \Carbon\Carbon::parse($stream['started_at']);
+                    } catch (\Exception $e) {
+                        Log::error('Failed to parse stream start time: '.$e->getMessage());
+                    }
+                }
+
                 Streamer::updateOrCreate(
                     [
                         'platform' => 'kick',
@@ -57,7 +66,7 @@ class KickApiService
                         'stream_title' => $stream['session_title'] ?? $stream['title'] ?? null,
                         'game_name' => $stream['category']['name'] ?? null,
                         'thumbnail_url' => $stream['thumbnail'] ?? $stream['thumbnail_url'] ?? null,
-                        'stream_started_at' => isset($stream['started_at']) ? now()->parse($stream['started_at']) : null,
+                        'stream_started_at' => $streamStartedAt,
                         'last_checked_at' => now(),
                     ]
                 );

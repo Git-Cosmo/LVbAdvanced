@@ -34,7 +34,12 @@ class GameRoom extends Model
 
         static::creating(function ($room) {
             if (empty($room->code)) {
-                $room->code = strtoupper(Str::random(6));
+                // Generate unique code
+                do {
+                    $code = strtoupper(Str::random(6));
+                } while (self::where('code', $code)->exists());
+                
+                $room->code = $code;
             }
         });
     }

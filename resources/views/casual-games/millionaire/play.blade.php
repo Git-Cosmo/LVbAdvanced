@@ -150,7 +150,12 @@ function useLifeline(type) {
         },
         body: JSON.stringify({ lifeline: type })
     })
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
     .then(data => {
         if (data.type === 'fifty_fifty') {
             data.remove_indices.forEach(index => {
@@ -167,6 +172,10 @@ function useLifeline(type) {
             alert(message);
         }
         document.getElementById(`lifeline-${type.replace('_', '-')}`).disabled = true;
+    })
+    .catch(error => {
+        console.error('Error using lifeline:', error);
+        alert('Failed to use lifeline. Please try again.');
     });
 }
 </script>

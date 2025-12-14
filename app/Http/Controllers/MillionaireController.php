@@ -252,17 +252,26 @@ class MillionaireController extends Controller
         ];
     }
 
+    private const PHONE_FRIEND_WRONG_CHANCE = 20;
+    private const PHONE_FRIEND_MIN_CONFIDENCE = 40;
+    private const PHONE_FRIEND_MAX_CONFIDENCE = 60;
+    private const PHONE_FRIEND_CORRECT_MIN_CONFIDENCE = 70;
+    private const PHONE_FRIEND_CORRECT_MAX_CONFIDENCE = 95;
+    
+    private const AUDIENCE_MIN_CORRECT_PERCENT = 45;
+    private const AUDIENCE_MAX_CORRECT_PERCENT = 65;
+
     private function phoneFriend($question)
     {
         // Simulate friend's confidence (70-95% for correct answer)
         $correctIndex = $question->correct_answer_index;
-        $confidence = rand(70, 95);
+        $confidence = rand(self::PHONE_FRIEND_CORRECT_MIN_CONFIDENCE, self::PHONE_FRIEND_CORRECT_MAX_CONFIDENCE);
 
         // 20% chance friend is unsure/wrong
-        if (rand(1, 100) <= 20) {
+        if (rand(1, 100) <= self::PHONE_FRIEND_WRONG_CHANCE) {
             $wrongIndices = array_diff([0, 1, 2, 3], [$correctIndex]);
             $suggestedIndex = array_values($wrongIndices)[rand(0, 2)];
-            $confidence = rand(40, 60);
+            $confidence = rand(self::PHONE_FRIEND_MIN_CONFIDENCE, self::PHONE_FRIEND_MAX_CONFIDENCE);
         } else {
             $suggestedIndex = $correctIndex;
         }
@@ -280,7 +289,7 @@ class MillionaireController extends Controller
         $distribution = [0 => 0, 1 => 0, 2 => 0, 3 => 0];
 
         // Correct answer gets 45-65% of votes
-        $distribution[$correctIndex] = rand(45, 65);
+        $distribution[$correctIndex] = rand(self::AUDIENCE_MIN_CORRECT_PERCENT, self::AUDIENCE_MAX_CORRECT_PERCENT);
 
         // Distribute remaining percentage among other options
         $remaining = 100 - $distribution[$correctIndex];
