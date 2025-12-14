@@ -428,6 +428,30 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
             Route::delete('/questions/{question}', [\App\Http\Controllers\Admin\TriviaManagementController::class, 'deleteQuestion'])->name('questions.delete');
         });
 
+        // Millionaire Management
+        Route::prefix('millionaire')->name('millionaire.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\Admin\MillionaireManagementController::class, 'index'])->name('index');
+            Route::get('/create', [\App\Http\Controllers\Admin\MillionaireManagementController::class, 'create'])->name('create');
+            Route::post('/', [\App\Http\Controllers\Admin\MillionaireManagementController::class, 'store'])->name('store');
+            Route::get('/{millionaireGame}/edit', [\App\Http\Controllers\Admin\MillionaireManagementController::class, 'edit'])->name('edit');
+            Route::patch('/{millionaireGame}', [\App\Http\Controllers\Admin\MillionaireManagementController::class, 'update'])->name('update');
+            Route::delete('/{millionaireGame}', [\App\Http\Controllers\Admin\MillionaireManagementController::class, 'destroy'])->name('destroy');
+            Route::post('/{millionaireGame}/questions', [\App\Http\Controllers\Admin\MillionaireManagementController::class, 'addQuestion'])->name('questions.add');
+            Route::delete('/{millionaireGame}/questions/{question}', [\App\Http\Controllers\Admin\MillionaireManagementController::class, 'deleteQuestion'])->name('questions.delete');
+        });
+
+        // GeoGuessr Management
+        Route::prefix('geoguessr')->name('geoguessr.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\Admin\GeoguessrManagementController::class, 'index'])->name('index');
+            Route::get('/create', [\App\Http\Controllers\Admin\GeoguessrManagementController::class, 'create'])->name('create');
+            Route::post('/', [\App\Http\Controllers\Admin\GeoguessrManagementController::class, 'store'])->name('store');
+            Route::get('/{geoguessrGame}/edit', [\App\Http\Controllers\Admin\GeoguessrManagementController::class, 'edit'])->name('edit');
+            Route::patch('/{geoguessrGame}', [\App\Http\Controllers\Admin\GeoguessrManagementController::class, 'update'])->name('update');
+            Route::delete('/{geoguessrGame}', [\App\Http\Controllers\Admin\GeoguessrManagementController::class, 'destroy'])->name('destroy');
+            Route::post('/{geoguessrGame}/locations', [\App\Http\Controllers\Admin\GeoguessrManagementController::class, 'addLocation'])->name('locations.add');
+            Route::delete('/{geoguessrGame}/locations/{location}', [\App\Http\Controllers\Admin\GeoguessrManagementController::class, 'deleteLocation'])->name('locations.delete');
+        });
+
         // Predictions Management
         Route::prefix('predictions')->name('predictions.')->group(function () {
             Route::get('/', [\App\Http\Controllers\Admin\PredictionManagementController::class, 'index'])->name('index');

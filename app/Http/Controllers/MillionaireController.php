@@ -76,7 +76,7 @@ class MillionaireController extends Controller
         }
 
         $millionaireGame->load('questions');
-        $currentQuestion = $millionaireGame->questions->where('difficulty_level', (string) $attempt->current_question)->first();
+        $currentQuestion = $millionaireGame->questions->where('difficulty_level', $attempt->current_question)->first();
 
         if (!$currentQuestion) {
             // Game completed successfully
@@ -114,7 +114,7 @@ class MillionaireController extends Controller
         ]);
 
         $millionaireGame->load('questions');
-        $currentQuestion = $millionaireGame->questions->where('difficulty_level', (string) $attempt->current_question)->first();
+        $currentQuestion = $millionaireGame->questions->where('difficulty_level', $attempt->current_question)->first();
 
         if (!$currentQuestion) {
             return response()->json(['error' => 'Question not found'], 404);
@@ -201,7 +201,7 @@ class MillionaireController extends Controller
         }
 
         $millionaireGame->load('questions');
-        $currentQuestion = $millionaireGame->questions->where('difficulty_level', (string) $attempt->current_question)->first();
+        $currentQuestion = $millionaireGame->questions->where('difficulty_level', $attempt->current_question)->first();
 
         $attempt->useLifeline($validated['lifeline']);
 

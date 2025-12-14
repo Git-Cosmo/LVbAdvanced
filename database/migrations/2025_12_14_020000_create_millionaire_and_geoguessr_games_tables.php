@@ -24,6 +24,8 @@ return new class extends Migration
             $table->timestamp('starts_at')->nullable();
             $table->timestamp('ends_at')->nullable();
             $table->timestamps();
+            
+            $table->index('is_active');
         });
 
         Schema::create('millionaire_questions', function (Blueprint $table) {
@@ -32,10 +34,12 @@ return new class extends Migration
             $table->text('question');
             $table->json('options'); // 4 answer options
             $table->integer('correct_answer_index'); // 0-3
-            $table->enum('difficulty_level', ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15']); // Question level (1-15)
+            $table->integer('difficulty_level'); // Question level (1-15)
             $table->integer('prize_amount'); // Prize for this question
             $table->integer('order')->default(0);
             $table->timestamps();
+            
+            $table->index(['millionaire_game_id', 'difficulty_level']);
         });
 
         Schema::create('millionaire_attempts', function (Blueprint $table) {
@@ -52,6 +56,7 @@ return new class extends Migration
             $table->timestamps();
 
             $table->index(['user_id', 'millionaire_game_id']);
+            $table->index('status');
         });
 
         // GeoGuessr-style Game
@@ -67,6 +72,8 @@ return new class extends Migration
             $table->timestamp('starts_at')->nullable();
             $table->timestamp('ends_at')->nullable();
             $table->timestamps();
+            
+            $table->index('is_active');
         });
 
         Schema::create('geoguessr_locations', function (Blueprint $table) {
@@ -97,6 +104,7 @@ return new class extends Migration
             $table->timestamps();
 
             $table->index(['user_id', 'geoguessr_game_id']);
+            $table->index('status');
         });
 
         // Multiplayer Rooms for both games
