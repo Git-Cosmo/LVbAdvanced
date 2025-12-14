@@ -470,8 +470,12 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     });
 });
 
-// Public Leaderboard Route
-Route::get('/leaderboard', [\App\Http\Controllers\LeaderboardController::class, 'index'])->name('leaderboard.index');
+// Public Leaderboard Routes
+Route::prefix('leaderboard')->name('leaderboard.')->group(function () {
+    Route::get('/', [\App\Http\Controllers\LeaderboardController::class, 'index'])->name('index');
+    Route::get('/millionaire', [\App\Http\Controllers\LeaderboardController::class, 'millionaire'])->name('millionaire');
+    Route::get('/geoguessr', [\App\Http\Controllers\LeaderboardController::class, 'geoguessr'])->name('geoguessr');
+});
 
 // Activity Feed Routes
 Route::prefix('activity')->name('activity.')->group(function () {

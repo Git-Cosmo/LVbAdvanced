@@ -3105,8 +3105,10 @@ A full-featured quiz game with 15 questions of increasing difficulty.
 - 3 lifelines: 50:50, Phone a Friend, Ask the Audience
 - Safe havens at questions 5 ($1,000) and 10 ($32,000)
 - Walk away option to keep your winnings
+- **Real-time countdown timer** with visual alerts
+- **Toast notifications** for game events (correct/wrong answers)
 - Leaderboard integration with point rewards
-- Timed questions with configurable time limits
+- Admin panel for creating/managing games and questions
 - Beautiful UI with prize ladder display
 
 **How to Play:**
@@ -3122,11 +3124,12 @@ Test your geography knowledge by guessing locations from images.
 **Features:**
 - Multiple rounds per game (typically 5 rounds)
 - Location images from around the world
-- Distance-based scoring system
-- Maximum points per round (typically 5,000)
+- Distance-based scoring system using haversine formula
+- Maximum points per round (configurable, typically 5,000)
 - Time limits per round
 - Round-by-round breakdown in results
-- Leaderboard integration
+- Admin panel for managing locations with coordinates
+- Leaderboard integration with statistics
 
 **How to Play:**
 1. Navigate to `/casual-games/geoguessr`
@@ -3168,21 +3171,29 @@ Complete daily challenges for bonus points.
 Play casual games with friends in real-time multiplayer rooms.
 
 **Features:**
-- Create or join game rooms with custom room codes
+- Create or join game rooms with custom 6-character codes
 - Support for Millionaire, GeoGuessr, and Trivia games
 - Host controls (start game, room settings)
 - Player status indicators (waiting, ready, playing)
-- Max player limits per room
-- Real-time updates via Laravel Reverb
+- Max player limits per room (configurable 2-20 players)
+- **Laravel Reverb WebSocket integration:**
+  - Real-time player join/leave notifications
+  - Live game start broadcasts
+  - Room status updates
+- Event-driven architecture with dedicated channels per room
 
 **How to Use:**
 1. Navigate to `/multiplayer/lobby`
-2. Create a new room or join an existing one
-3. Wait for players to join
+2. Create a new room or join an existing one with a room code
+3. Wait for players to join (real-time updates)
 4. Host starts the game when ready
 5. Compete for the highest score
 
-**Note:** Full real-time multiplayer gameplay is currently in development. Room infrastructure is complete.
+**WebSocket Events:**
+- `game-room.{code}` channel for room-specific events
+- `player.joined` - Player joins notification
+- `game.started` - Game start broadcast
+- `room.updated` - Room state changes
 
 ### Leaderboard Integration
 
@@ -3191,6 +3202,11 @@ All games integrate with the platform's gamification system:
 - **XP:** Game performance contributes to user experience points
 - **Achievements:** Special achievements for game milestones
 - **Seasonal Rankings:** Compete on seasonal leaderboards
+- **Game-Specific Leaderboards:**
+  - `/leaderboard/millionaire` - Top Millionaire prize winners
+  - `/leaderboard/geoguessr` - Top GeoGuessr scores
+  - Statistics: total games, completion rate, average scores
+- **Main Leaderboard** (`/leaderboard`) includes top 10 for each game type
 
 ## Live Streamers Integration
 
@@ -3199,15 +3215,20 @@ Watch top gaming streamers currently live on Twitch and Kick.
 ### Features
 
 **Twitch Integration:**
-- Fetch top live streamers via Twitch API
+- OAuth client credentials flow with cached access tokens (1 hour)
+- Fetch top 20 live streamers via Twitch API
 - Display viewer counts, stream titles, and game info
 - Streamer profile images and channel links
-- Auto-sync every 5 minutes
+- **Retry logic:** 3 attempts with exponential backoff
+- **Response caching:** 5 minutes to reduce API calls
+- Auto-sync every 5 minutes via scheduler
 
 **Kick Integration:**
+- Public endpoint integration (no authentication required)
 - Fetch top live streamers from Kick
 - Display viewer counts and stream information
 - Platform-specific styling and badges
+- Error handling with graceful fallbacks
 
 **User Interface:**
 - Grid layout with streamer cards
@@ -3215,6 +3236,13 @@ Watch top gaming streamers currently live on Twitch and Kick.
 - Live badges with animated indicators
 - Direct links to streamer channels
 - Thumbnail previews when available
+- Formatted viewer counts (e.g., "12.5K")
+
+**API Health & Monitoring:**
+- Health check endpoint: `/health`
+- Monitors Twitch and Kick API connectivity
+- JSON response with status for each service
+- Database and cache health checks included
 
 ### Setup
 
@@ -3247,6 +3275,82 @@ Watch top gaming streamers currently live on Twitch and Kick.
 - Manual sync: Click "Sync Streamers Now" button (admin only)
 
 **Note:** Kick API integration is included but may require updates based on API availability.
+
+## Admin Panel for Games Management
+
+Comprehensive admin interface for managing all casual games.
+
+### Millionaire Game Management
+
+**Routes:**
+- List all games: `/admin/casual-games/millionaire`
+- Create new game: `/admin/casual-games/millionaire/create`
+- Edit game: `/admin/casual-games/millionaire/{id}/edit`
+
+**Features:**
+- Create/edit/delete Millionaire games
+- Configure: title, description, category, difficulty, time limits
+- Question management:
+  - Add questions with 4 options
+  - Set correct answer and difficulty level (1-15)
+  - Configure prize amount per question
+  - Order questions by difficulty
+- View game statistics (total attempts, completion rate)
+- Toggle game active status
+
+### GeoGuessr Game Management
+
+**Routes:**
+- List all games: `/admin/casual-games/geoguessr`
+- Create new game: `/admin/casual-games/geoguessr/create`
+- Edit game: `/admin/casual-games/geoguessr/{id}/edit`
+
+**Features:**
+- Create/edit/delete GeoGuessr games
+- Configure: rounds, time per round, max points
+- Location management:
+  - Add locations with name and country
+  - Set latitude/longitude coordinates
+  - Upload image URLs
+  - Add optional hints
+  - Set difficulty rating (1-5)
+- View game statistics
+- Toggle game active status
+
+### Database Optimizations
+
+**Performance Improvements:**
+- Integer `difficulty_level` (changed from enum strings)
+- Database indexes on frequently queried fields:
+  - `millionaire_games.is_active`
+  - `geoguessr_games.is_active`
+  - `millionaire_attempts.status`
+  - `geoguessr_attempts.status`
+  - Compound index on `millionaire_questions` (game_id + difficulty_level)
+- Query caching for active games
+
+## Technical Enhancements
+
+### UI/UX Improvements
+- **Toast Notification System:** Replace browser alerts with elegant toast messages
+- **Real-time Countdown Timer:** Visual timer with color coding and pulse animation
+- **Loading States:** Show feedback during AJAX requests
+- **Responsive Design:** Mobile-friendly game interfaces
+
+### API & Service Layer
+- **Retry Logic:** Exponential backoff for failed API requests (3 retries, 100ms delay)
+- **Request Timeouts:** 10-second timeout prevents hanging requests
+- **Response Caching:** 5-minute cache for frequently accessed data
+- **Rate Limiting:** Built-in protection against API quota exhaustion
+- **Health Check Endpoint:** `/health` - Monitor all service dependencies
+
+### WebSocket Integration
+- **Laravel Reverb Events:**
+  - `GameRoomUpdated` - Broadcast room state changes
+  - `PlayerJoinedRoom` - Real-time player join notifications
+  - `GameStarted` - Synchronized game start
+- **Channel Architecture:** Dedicated channels per game room
+- **Broadcasting:** Automatic event broadcasting to connected clients
 
 ### Future Enhancements
 
