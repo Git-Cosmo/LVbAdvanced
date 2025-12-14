@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\GameRoomUpdated;
+use App\Events\GameStarted;
+use App\Events\PlayerJoinedRoom;
 use App\Models\GameRoom;
 use App\Models\GameRoomPlayer;
 use Illuminate\Http\Request;
@@ -45,6 +48,8 @@ class MultiplayerController extends Controller
             'joined_at' => now(),
         ]);
 
+        broadcast(new GameRoomUpdated($room, 'created'))->toOthers();
+
         return redirect()->route('multiplayer.room', $room->code);
     }
 
@@ -74,6 +79,8 @@ class MultiplayerController extends Controller
             'status' => 'waiting',
             'joined_at' => now(),
         ]);
+
+        broadcast(new PlayerJoinedRoom($room, auth()->user()))->toOthers();
 
         return redirect()->route('multiplayer.room', $code);
     }
@@ -114,6 +121,8 @@ class MultiplayerController extends Controller
 
         // Update all players to playing status
         $room->players()->update(['status' => 'playing']);
+
+        broadcast(new GameStarted($room))->toOthers();
 
         return redirect()->route('multiplayer.play', $code);
     }

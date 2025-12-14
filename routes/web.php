@@ -639,6 +639,9 @@ Route::prefix('tournaments')->name('tournaments.')->group(function () {
 // Sitemap Route
 Route::get('/sitemap.xml', [\App\Http\Controllers\SitemapController::class, 'index'])->name('sitemap');
 
+// Health Check Route
+Route::get('/health', [\App\Http\Controllers\HealthCheckController::class, 'index'])->name('health');
+
 // Activity Log Routes (Admin)
 Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/activity-log', [App\Http\Controllers\Admin\ActivityLogController::class, 'index'])->name('activity-log.index');

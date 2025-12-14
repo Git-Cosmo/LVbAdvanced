@@ -1,6 +1,22 @@
 @extends('layouts.app')
 
 @section('content')
+<div x-data="millionaireGame()" class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Toast Notification -->
+    <div x-show="toast.show" 
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="opacity-0 transform translate-y-2"
+         x-transition:enter-end="opacity-100 transform translate-y-0"
+         x-transition:leave="transition ease-in duration-200"
+         x-transition:leave-start="opacity-100"
+         x-transition:leave-end="opacity-0"
+         class="fixed top-4 right-4 z-50 max-w-sm">
+        <div :class="toast.type === 'success' ? 'bg-green-500' : toast.type === 'error' ? 'bg-red-500' : 'bg-blue-500'" 
+             class="rounded-lg shadow-lg p-4 text-white">
+            <p x-text="toast.message"></p>
+        </div>
+    </div>
+
 <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <!-- Prize Ladder (Right Side) -->
     <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
@@ -9,7 +25,16 @@
             <!-- Current Question -->
             <div class="dark:bg-dark-bg-secondary rounded-lg border dark:border-dark-border-primary p-8 mb-6">
                 <div class="text-center mb-6">
-                    <span class="text-sm dark:text-dark-text-tertiary">Question {{ $attempt->current_question }} of 15</span>
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-sm dark:text-dark-text-tertiary">Question {{ $attempt->current_question }} of 15</span>
+                        <div class="flex items-center gap-2">
+                            <span class="text-sm dark:text-dark-text-tertiary">Time:</span>
+                            <span x-text="formatTime(timeLeft)" 
+                                  :class="timeLeft <= 10 ? 'text-red-500 font-bold animate-pulse' : 'text-green-500 font-semibold'"
+                                  class="text-lg">
+                            </span>
+                        </div>
+                    </div>
                     <h2 class="text-2xl font-bold dark:text-dark-text-bright mt-2">{{ $question->question }}</h2>
                 </div>
 
@@ -94,12 +119,133 @@
         </div>
     </div>
 </div>
+</div>
 
 <script>
-let selectedAnswer = null;
+function millionaireGame() {
+    return {
+        selectedAnswer: null,
+        timeLeft: {{ $game->time_limit }},
+        timerInterval: null,
+        toast: {
+            show: false,
+            message: '',
+            type: 'success'
+        },
+        
+        init() {
+            this.startTimer();
+        },
+        
+        startTimer() {
+            this.timerInterval = setInterval(() => {
+                this.timeLeft--;
+                if (this.timeLeft <= 0) {
+                    clearInterval(this.timerInterval);
+                    this.showToast('Time is up!', 'error');
+                    setTimeout(() => {
+                        window.location.href = '{{ route('casual-games.millionaire.result', [$game, $attempt]) }}';
+                    }, 2000);
+                }
+            }, 1000);
+        },
+        
+        formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            return `${mins}:${secs.toString().padStart(2, '0')}`;
+        },
+        
+        showToast(message, type = 'success') {
+            this.toast = { show: true, message, type };
+            setTimeout(() => {
+                this.toast.show = false;
+            }, 3000);
+        },
+        
+        selectAnswer(index) {
+            this.selectedAnswer = index;
+        },
+        
+        submitAnswer() {
+            if (this.selectedAnswer === null) return;
+            
+            clearInterval(this.timerInterval);
+            const submitBtn = document.getElementById('submit-btn');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Checking...';
 
+            fetch('{{ route('casual-games.millionaire.answer', [$game, $attempt]) }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({ answer: this.selectedAnswer })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.correct) {
+                    this.showToast(`Correct! You won $${data.prize_won.toLocaleString()}`, 'success');
+                    setTimeout(() => window.location.reload(), 2000);
+                } else {
+                    this.showToast(`Wrong answer! Final prize: $${data.final_prize.toLocaleString()}`, 'error');
+                    setTimeout(() => {
+                        window.location.href = '{{ route('casual-games.millionaire.result', [$game, $attempt]) }}';
+                    }, 2000);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                this.showToast('An error occurred. Please try again.', 'error');
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Final Answer';
+                this.startTimer();
+            });
+        },
+        
+        useLifeline(type) {
+            fetch('{{ route('casual-games.millionaire.lifeline', [$game, $attempt]) }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({ lifeline: type })
+            })
+            .then(response => {
+                if (!response.ok) throw new Error('Network response was not ok');
+                return response.json();
+            })
+            .then(data => {
+                if (data.type === 'fifty_fifty') {
+                    data.remove_indices.forEach(index => {
+                        document.getElementById(`option-${index}`).style.display = 'none';
+                    });
+                    this.showToast('50:50 lifeline used!', 'success');
+                } else if (data.type === 'phone_friend') {
+                    const option = String.fromCharCode(65 + data.suggested_index);
+                    this.showToast(`Your friend thinks the answer is ${option} (${data.confidence}% confident)`, 'info');
+                } else if (data.type === 'ask_audience') {
+                    let message = 'Audience votes: ';
+                    Object.keys(data.distribution).forEach(key => {
+                        message += `${String.fromCharCode(65 + parseInt(key))}: ${data.distribution[key]}% `;
+                    });
+                    this.showToast(message, 'info');
+                }
+                document.getElementById(`lifeline-${type.replace('_', '-')}`).disabled = true;
+            })
+            .catch(error => {
+                console.error('Error using lifeline:', error);
+                this.showToast('Failed to use lifeline. Please try again.', 'error');
+            });
+        }
+    }
+}
+
+// Update button handlers to use Alpine
 function selectAnswer(index) {
-    selectedAnswer = index;
+    Alpine.$data(document.querySelector('[x-data]')).selectAnswer(index);
     document.querySelectorAll('.answer-option').forEach(btn => {
         btn.classList.remove('border-accent-blue', 'bg-accent-blue/10');
     });
@@ -109,74 +255,11 @@ function selectAnswer(index) {
 }
 
 function submitAnswer() {
-    if (selectedAnswer === null) return;
-    
-    const submitBtn = document.getElementById('submit-btn');
-    submitBtn.disabled = true;
-    submitBtn.textContent = 'Checking...';
-
-    fetch('{{ route('casual-games.millionaire.answer', [$game, $attempt]) }}', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-        },
-        body: JSON.stringify({ answer: selectedAnswer })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.correct) {
-            alert(`Correct! You won $${data.prize_won.toLocaleString()}`);
-            window.location.reload();
-        } else {
-            alert(`Wrong answer! Final prize: $${data.final_prize.toLocaleString()}`);
-            window.location.href = '{{ route('casual-games.millionaire.result', [$game, $attempt]) }}';
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('An error occurred. Please try again.');
-        submitBtn.disabled = false;
-        submitBtn.textContent = 'Final Answer';
-    });
+    Alpine.$data(document.querySelector('[x-data]')).submitAnswer();
 }
 
 function useLifeline(type) {
-    fetch('{{ route('casual-games.millionaire.lifeline', [$game, $attempt]) }}', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-        },
-        body: JSON.stringify({ lifeline: type })
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        return response.json();
-    })
-    .then(data => {
-        if (data.type === 'fifty_fifty') {
-            data.remove_indices.forEach(index => {
-                document.getElementById(`option-${index}`).style.display = 'none';
-            });
-        } else if (data.type === 'phone_friend') {
-            const option = String.fromCharCode(65 + data.suggested_index);
-            alert(`Your friend thinks the answer is ${option} (${data.confidence}% confident)`);
-        } else if (data.type === 'ask_audience') {
-            let message = 'Audience votes:\n';
-            Object.keys(data.distribution).forEach(key => {
-                message += `${String.fromCharCode(65 + parseInt(key))}: ${data.distribution[key]}%\n`;
-            });
-            alert(message);
-        }
-        document.getElementById(`lifeline-${type.replace('_', '-')}`).disabled = true;
-    })
-    .catch(error => {
-        console.error('Error using lifeline:', error);
-        alert('Failed to use lifeline. Please try again.');
-    });
+    Alpine.$data(document.querySelector('[x-data]')).useLifeline(type);
 }
 </script>
 @endsection

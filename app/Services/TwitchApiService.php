@@ -49,25 +49,35 @@ class TwitchApiService
             return [];
         }
 
-        try {
-            $response = Http::withHeaders([
-                'Client-ID' => $this->clientId,
-                'Authorization' => 'Bearer '.$token,
-            ])->get($this->baseUrl.'/streams', [
-                'first' => $limit,
-                'type' => 'live',
-            ]);
+        return Cache::remember("twitch_top_streams_{$limit}", 300, function () use ($token, $limit) {
+            try {
+                $response = Http::retry(3, 100, function ($exception) {
+                    return $exception instanceof \Illuminate\Http\Client\RequestException;
+                })
+                ->timeout(10)
+                ->withHeaders([
+                    'Client-ID' => $this->clientId,
+                    'Authorization' => 'Bearer '.$token,
+                ])
+                ->get($this->baseUrl.'/streams', [
+                    'first' => $limit,
+                    'type' => 'live',
+                ]);
 
-            if ($response->successful()) {
-                return $response->json('data', []);
+                if ($response->successful()) {
+                    return $response->json('data', []);
+                }
+
+                Log::error('Failed to fetch Twitch streams', [
+                    'status' => $response->status(),
+                    'response' => $response->body()
+                ]);
+                return [];
+            } catch (\Exception $e) {
+                Log::error('Twitch streams fetch error: '.$e->getMessage());
+                return [];
             }
-
-            Log::error('Failed to fetch Twitch streams', ['response' => $response->body()]);
-            return [];
-        } catch (\Exception $e) {
-            Log::error('Twitch streams fetch error: '.$e->getMessage());
-            return [];
-        }
+        });
     }
 
     public function syncTopStreamers(int $limit = 20): int
