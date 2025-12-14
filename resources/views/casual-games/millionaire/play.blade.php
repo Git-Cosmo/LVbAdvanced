@@ -16,8 +16,6 @@
             <p x-text="toast.message"></p>
         </div>
     </div>
-
-<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <!-- Prize Ladder (Right Side) -->
     <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
         <!-- Main Game Area -->
@@ -118,7 +116,6 @@
             </div>
         </div>
     </div>
-</div>
 </div>
 
 <script>
