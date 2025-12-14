@@ -14,10 +14,14 @@ use App\Http\Controllers\Forum\ForumController;
 use App\Http\Controllers\Forum\PostController;
 use App\Http\Controllers\Forum\ProfileController;
 use App\Http\Controllers\Forum\ThreadController;
+use App\Http\Controllers\GeoguessrController;
 use App\Http\Controllers\MediaController;
+use App\Http\Controllers\MillionaireController;
+use App\Http\Controllers\MultiplayerController;
 use App\Http\Controllers\PortalController;
 use App\Http\Controllers\StatusController;
 use App\Http\Controllers\StoreController;
+use App\Http\Controllers\StreamerController;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
@@ -424,6 +428,30 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
             Route::delete('/questions/{question}', [\App\Http\Controllers\Admin\TriviaManagementController::class, 'deleteQuestion'])->name('questions.delete');
         });
 
+        // Millionaire Management
+        Route::prefix('millionaire')->name('millionaire.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\Admin\MillionaireManagementController::class, 'index'])->name('index');
+            Route::get('/create', [\App\Http\Controllers\Admin\MillionaireManagementController::class, 'create'])->name('create');
+            Route::post('/', [\App\Http\Controllers\Admin\MillionaireManagementController::class, 'store'])->name('store');
+            Route::get('/{millionaireGame}/edit', [\App\Http\Controllers\Admin\MillionaireManagementController::class, 'edit'])->name('edit');
+            Route::patch('/{millionaireGame}', [\App\Http\Controllers\Admin\MillionaireManagementController::class, 'update'])->name('update');
+            Route::delete('/{millionaireGame}', [\App\Http\Controllers\Admin\MillionaireManagementController::class, 'destroy'])->name('destroy');
+            Route::post('/{millionaireGame}/questions', [\App\Http\Controllers\Admin\MillionaireManagementController::class, 'addQuestion'])->name('questions.add');
+            Route::delete('/{millionaireGame}/questions/{question}', [\App\Http\Controllers\Admin\MillionaireManagementController::class, 'deleteQuestion'])->name('questions.delete');
+        });
+
+        // GeoGuessr Management
+        Route::prefix('geoguessr')->name('geoguessr.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\Admin\GeoguessrManagementController::class, 'index'])->name('index');
+            Route::get('/create', [\App\Http\Controllers\Admin\GeoguessrManagementController::class, 'create'])->name('create');
+            Route::post('/', [\App\Http\Controllers\Admin\GeoguessrManagementController::class, 'store'])->name('store');
+            Route::get('/{geoguessrGame}/edit', [\App\Http\Controllers\Admin\GeoguessrManagementController::class, 'edit'])->name('edit');
+            Route::patch('/{geoguessrGame}', [\App\Http\Controllers\Admin\GeoguessrManagementController::class, 'update'])->name('update');
+            Route::delete('/{geoguessrGame}', [\App\Http\Controllers\Admin\GeoguessrManagementController::class, 'destroy'])->name('destroy');
+            Route::post('/{geoguessrGame}/locations', [\App\Http\Controllers\Admin\GeoguessrManagementController::class, 'addLocation'])->name('locations.add');
+            Route::delete('/{geoguessrGame}/locations/{location}', [\App\Http\Controllers\Admin\GeoguessrManagementController::class, 'deleteLocation'])->name('locations.delete');
+        });
+
         // Predictions Management
         Route::prefix('predictions')->name('predictions.')->group(function () {
             Route::get('/', [\App\Http\Controllers\Admin\PredictionManagementController::class, 'index'])->name('index');
@@ -442,8 +470,12 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     });
 });
 
-// Public Leaderboard Route
-Route::get('/leaderboard', [\App\Http\Controllers\LeaderboardController::class, 'index'])->name('leaderboard.index');
+// Public Leaderboard Routes
+Route::prefix('leaderboard')->name('leaderboard.')->group(function () {
+    Route::get('/', [\App\Http\Controllers\LeaderboardController::class, 'index'])->name('index');
+    Route::get('/millionaire', [\App\Http\Controllers\LeaderboardController::class, 'millionaire'])->name('millionaire');
+    Route::get('/geoguessr', [\App\Http\Controllers\LeaderboardController::class, 'geoguessr'])->name('geoguessr');
+});
 
 // Activity Feed Routes
 Route::prefix('activity')->name('activity.')->group(function () {
@@ -519,6 +551,45 @@ Route::prefix('casual-games')->name('casual-games.')->group(function () {
     Route::prefix('challenges')->name('challenges.')->group(function () {
         Route::get('/', [\App\Http\Controllers\CasualGamesController::class, 'challengesIndex'])->name('index');
     });
+
+    // Millionaire Game
+    Route::prefix('millionaire')->name('millionaire.')->group(function () {
+        Route::get('/', [MillionaireController::class, 'index'])->name('index');
+        Route::get('/{millionaireGame}', [MillionaireController::class, 'show'])->name('show');
+        Route::post('/{millionaireGame}/start', [MillionaireController::class, 'start'])->name('start')->middleware('auth');
+        Route::get('/{millionaireGame}/play/{attempt}', [MillionaireController::class, 'play'])->name('play')->middleware('auth');
+        Route::post('/{millionaireGame}/play/{attempt}/answer', [MillionaireController::class, 'answer'])->name('answer')->middleware('auth');
+        Route::post('/{millionaireGame}/play/{attempt}/lifeline', [MillionaireController::class, 'useLifeline'])->name('lifeline')->middleware('auth');
+        Route::post('/{millionaireGame}/play/{attempt}/walk-away', [MillionaireController::class, 'walkAway'])->name('walk-away')->middleware('auth');
+        Route::get('/{millionaireGame}/result/{attempt}', [MillionaireController::class, 'result'])->name('result')->middleware('auth');
+    });
+
+    // GeoGuessr Game
+    Route::prefix('geoguessr')->name('geoguessr.')->group(function () {
+        Route::get('/', [GeoguessrController::class, 'index'])->name('index');
+        Route::get('/{geoguessrGame}', [GeoguessrController::class, 'show'])->name('show');
+        Route::post('/{geoguessrGame}/start', [GeoguessrController::class, 'start'])->name('start')->middleware('auth');
+        Route::get('/{geoguessrGame}/play/{attempt}', [GeoguessrController::class, 'play'])->name('play')->middleware('auth');
+        Route::post('/{geoguessrGame}/play/{attempt}/guess', [GeoguessrController::class, 'submitGuess'])->name('guess')->middleware('auth');
+        Route::get('/{geoguessrGame}/result/{attempt}', [GeoguessrController::class, 'result'])->name('result')->middleware('auth');
+    });
+});
+
+// Streamers Routes
+Route::prefix('streamers')->name('streamers.')->group(function () {
+    Route::get('/', [StreamerController::class, 'index'])->name('index');
+    Route::post('/sync', [StreamerController::class, 'sync'])->name('sync')->middleware('auth');
+});
+
+// Multiplayer Routes
+Route::middleware('auth')->prefix('multiplayer')->name('multiplayer.')->group(function () {
+    Route::get('/lobby', [MultiplayerController::class, 'lobby'])->name('lobby');
+    Route::post('/create', [MultiplayerController::class, 'createRoom'])->name('create');
+    Route::get('/room/{code}', [MultiplayerController::class, 'room'])->name('room');
+    Route::post('/room/{code}/join', [MultiplayerController::class, 'joinRoom'])->name('join');
+    Route::post('/room/{code}/leave', [MultiplayerController::class, 'leaveRoom'])->name('leave');
+    Route::post('/room/{code}/start', [MultiplayerController::class, 'startGame'])->name('start');
+    Route::get('/room/{code}/play', [MultiplayerController::class, 'play'])->name('play');
 });
 
 // Events Routes
@@ -571,6 +642,9 @@ Route::prefix('tournaments')->name('tournaments.')->group(function () {
 
 // Sitemap Route
 Route::get('/sitemap.xml', [\App\Http\Controllers\SitemapController::class, 'index'])->name('sitemap');
+
+// Health Check Route
+Route::get('/health', [\App\Http\Controllers\HealthCheckController::class, 'index'])->name('health');
 
 // Activity Log Routes (Admin)
 Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {

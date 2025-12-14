@@ -8,55 +8,66 @@
         <p class="dark:text-dark-text-secondary text-lg">Play, predict, challenge yourself, and earn points!</p>
     </div>
 
-    <!-- Stats Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
-        <div class="dark:bg-dark-bg-secondary rounded-lg p-6 border dark:border-dark-border-primary">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="dark:text-dark-text-tertiary text-sm">Trivia Games</p>
-                    <p class="text-2xl font-bold dark:text-dark-text-bright">{{ $triviaGames->count() }}</p>
+    <!-- Featured Games -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+        <a href="{{ route('casual-games.millionaire.index') }}" class="dark:bg-dark-bg-secondary rounded-lg p-6 border dark:border-dark-border-primary hover:border-yellow-500 transition-colors group">
+            <div class="flex items-center justify-between mb-4">
+                <div class="w-16 h-16 bg-gradient-to-br from-yellow-500 to-orange-500 rounded-lg flex items-center justify-center text-3xl">
+                    💰
                 </div>
-                <div class="w-12 h-12 bg-blue-500/20 rounded-lg flex items-center justify-center">
-                    <span class="text-2xl">🧠</span>
-                </div>
+                <span class="px-3 py-1 text-xs font-semibold bg-yellow-500/20 text-yellow-400 rounded">NEW!</span>
             </div>
-        </div>
+            <h3 class="text-xl font-bold dark:text-dark-text-bright mb-2">Millionaire</h3>
+            <p class="text-sm dark:text-dark-text-secondary">Answer 15 questions and win big with lifelines!</p>
+        </a>
 
-        <div class="dark:bg-dark-bg-secondary rounded-lg p-6 border dark:border-dark-border-primary">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="dark:text-dark-text-tertiary text-sm">Predictions</p>
-                    <p class="text-2xl font-bold dark:text-dark-text-bright">{{ $predictions->count() }}</p>
+        <a href="{{ route('casual-games.geoguessr.index') }}" class="dark:bg-dark-bg-secondary rounded-lg p-6 border dark:border-dark-border-primary hover:border-green-500 transition-colors group">
+            <div class="flex items-center justify-between mb-4">
+                <div class="w-16 h-16 bg-gradient-to-br from-green-500 to-teal-500 rounded-lg flex items-center justify-center text-3xl">
+                    🗺️
                 </div>
-                <div class="w-12 h-12 bg-purple-500/20 rounded-lg flex items-center justify-center">
-                    <span class="text-2xl">🔮</span>
-                </div>
+                <span class="px-3 py-1 text-xs font-semibold bg-green-500/20 text-green-400 rounded">NEW!</span>
             </div>
-        </div>
+            <h3 class="text-xl font-bold dark:text-dark-text-bright mb-2">GeoGuessr</h3>
+            <p class="text-sm dark:text-dark-text-secondary">Test your geography skills and guess locations!</p>
+        </a>
 
-        <div class="dark:bg-dark-bg-secondary rounded-lg p-6 border dark:border-dark-border-primary">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="dark:text-dark-text-tertiary text-sm">Daily Challenges</p>
-                    <p class="text-2xl font-bold dark:text-dark-text-bright">{{ $dailyChallenges->count() }}</p>
-                </div>
-                <div class="w-12 h-12 bg-green-500/20 rounded-lg flex items-center justify-center">
-                    <span class="text-2xl">🎯</span>
+        <a href="{{ route('casual-games.trivia.index') }}" class="dark:bg-dark-bg-secondary rounded-lg p-6 border dark:border-dark-border-primary hover:border-blue-500 transition-colors group">
+            <div class="flex items-center justify-between mb-4">
+                <div class="w-16 h-16 bg-blue-500/20 rounded-lg flex items-center justify-center text-3xl">
+                    🧠
                 </div>
             </div>
-        </div>
+            <h3 class="text-xl font-bold dark:text-dark-text-bright mb-2">Trivia Games</h3>
+            <p class="text-sm dark:text-dark-text-secondary">Test your knowledge with fun trivia quizzes!</p>
+        </a>
 
-        <div class="dark:bg-dark-bg-secondary rounded-lg p-6 border dark:border-dark-border-primary">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="dark:text-dark-text-tertiary text-sm">Active Bets</p>
-                    <p class="text-2xl font-bold dark:text-dark-text-bright">{{ $activeBets?->count() ?? 0 }}</p>
-                </div>
-                <div class="w-12 h-12 bg-yellow-500/20 rounded-lg flex items-center justify-center">
-                    <span class="text-2xl">💰</span>
-                </div>
+        <a href="{{ route('casual-games.predictions.index') }}" class="dark:bg-dark-bg-secondary rounded-lg p-6 border dark:border-dark-border-primary hover:border-purple-500 transition-colors group">
+            <div class="w-16 h-16 bg-purple-500/20 rounded-lg flex items-center justify-center text-3xl mb-4">
+                🔮
             </div>
-        </div>
+            <h3 class="text-xl font-bold dark:text-dark-text-bright mb-2">Predictions</h3>
+            <p class="text-sm dark:text-dark-text-secondary">Make predictions and earn rewards!</p>
+        </a>
+
+        <a href="{{ route('casual-games.challenges.index') }}" class="dark:bg-dark-bg-secondary rounded-lg p-6 border dark:border-dark-border-primary hover:border-green-500 transition-colors group">
+            <div class="w-16 h-16 bg-green-500/20 rounded-lg flex items-center justify-center text-3xl mb-4">
+                🎯
+            </div>
+            <h3 class="text-xl font-bold dark:text-dark-text-bright mb-2">Daily Challenges</h3>
+            <p class="text-sm dark:text-dark-text-secondary">Complete challenges for bonus points!</p>
+        </a>
+
+        <a href="{{ route('multiplayer.lobby') }}" class="dark:bg-dark-bg-secondary rounded-lg p-6 border dark:border-dark-border-primary hover:border-pink-500 transition-colors group">
+            <div class="flex items-center justify-between mb-4">
+                <div class="w-16 h-16 bg-gradient-to-br from-pink-500 to-purple-500 rounded-lg flex items-center justify-center text-3xl">
+                    🎮
+                </div>
+                <span class="px-3 py-1 text-xs font-semibold bg-pink-500/20 text-pink-400 rounded">NEW!</span>
+            </div>
+            <h3 class="text-xl font-bold dark:text-dark-text-bright mb-2">Multiplayer</h3>
+            <p class="text-sm dark:text-dark-text-secondary">Play with friends in real-time!</p>
+        </a>
     </div>
 
     <!-- Trivia Games Section -->
