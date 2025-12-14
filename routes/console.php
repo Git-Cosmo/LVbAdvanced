@@ -54,3 +54,8 @@ Schedule::command('patch-notes:scrape')
     ->monitorName('patch-notes-scrape')
     ->graceTimeInMinutes(10)
     ->hourly();
+
+// Streamers sync every 5 minutes
+Schedule::command('streamers:sync')
+    ->withoutOverlapping()
+    ->everyFiveMinutes();
