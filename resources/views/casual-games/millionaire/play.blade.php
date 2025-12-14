@@ -39,8 +39,9 @@
                 <!-- Answer Options -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                     @foreach($question->options as $index => $option)
-                        <button onclick="selectAnswer({{ $index }})" 
+                        <button @click="selectAnswer({{ $index }})" 
                                 id="option-{{ $index }}"
+                                :class="selectedAnswer === {{ $index }} ? 'border-accent-blue bg-accent-blue/10' : ''"
                                 class="answer-option p-4 text-left border-2 dark:border-dark-border-primary rounded-lg hover:border-accent-blue transition-colors dark:text-dark-text-bright">
                             <span class="font-semibold mr-2">{{ chr(65 + $index) }}:</span>
                             <span>{{ $option }}</span>
@@ -50,9 +51,9 @@
 
                 <!-- Action Buttons -->
                 <div class="flex gap-4">
-                    <button onclick="submitAnswer()" 
+                    <button @click="submitAnswer()" 
                             id="submit-btn"
-                            disabled
+                            :disabled="selectedAnswer === null"
                             class="flex-1 px-6 py-3 bg-gradient-to-r from-yellow-500 to-orange-500 text-white rounded-lg hover:opacity-90 transition-opacity font-semibold disabled:opacity-50 disabled:cursor-not-allowed">
                         Final Answer
                     </button>
@@ -69,21 +70,21 @@
             <div class="dark:bg-dark-bg-secondary rounded-lg border dark:border-dark-border-primary p-6">
                 <h3 class="font-semibold dark:text-dark-text-bright mb-4">Lifelines</h3>
                 <div class="grid grid-cols-3 gap-4">
-                    <button onclick="useLifeline('fifty_fifty')" 
+                    <button @click="useLifeline('fifty_fifty')" 
                             id="lifeline-fifty-fifty"
                             {{ !$attempt->hasLifeline('fifty_fifty') ? 'disabled' : '' }}
                             class="p-4 text-center border-2 dark:border-dark-border-primary rounded-lg hover:border-accent-purple transition-colors disabled:opacity-30 disabled:cursor-not-allowed">
                         <div class="text-2xl mb-2">✂️</div>
                         <div class="text-sm dark:text-dark-text-secondary">50:50</div>
                     </button>
-                    <button onclick="useLifeline('phone_friend')" 
+                    <button @click="useLifeline('phone_friend')" 
                             id="lifeline-phone-friend"
                             {{ !$attempt->hasLifeline('phone_friend') ? 'disabled' : '' }}
                             class="p-4 text-center border-2 dark:border-dark-border-primary rounded-lg hover:border-accent-purple transition-colors disabled:opacity-30 disabled:cursor-not-allowed">
                         <div class="text-2xl mb-2">📞</div>
                         <div class="text-sm dark:text-dark-text-secondary">Phone Friend</div>
                     </button>
-                    <button onclick="useLifeline('ask_audience')" 
+                    <button @click="useLifeline('ask_audience')" 
                             id="lifeline-ask-audience"
                             {{ !$attempt->hasLifeline('ask_audience') ? 'disabled' : '' }}
                             class="p-4 text-center border-2 dark:border-dark-border-primary rounded-lg hover:border-accent-purple transition-colors disabled:opacity-30 disabled:cursor-not-allowed">
@@ -162,6 +163,7 @@ function millionaireGame() {
         
         selectAnswer(index) {
             this.selectedAnswer = index;
+            // UI updates now handled by Alpine's :class binding
         },
         
         submitAnswer() {
@@ -238,25 +240,6 @@ function millionaireGame() {
             });
         }
     }
-}
-
-// Update button handlers to use Alpine
-function selectAnswer(index) {
-    Alpine.$data(document.querySelector('[x-data]')).selectAnswer(index);
-    document.querySelectorAll('.answer-option').forEach(btn => {
-        btn.classList.remove('border-accent-blue', 'bg-accent-blue/10');
-    });
-    const selected = document.getElementById(`option-${index}`);
-    selected.classList.add('border-accent-blue', 'bg-accent-blue/10');
-    document.getElementById('submit-btn').disabled = false;
-}
-
-function submitAnswer() {
-    Alpine.$data(document.querySelector('[x-data]')).submitAnswer();
-}
-
-function useLifeline(type) {
-    Alpine.$data(document.querySelector('[x-data]')).useLifeline(type);
 }
 </script>
 @endsection
