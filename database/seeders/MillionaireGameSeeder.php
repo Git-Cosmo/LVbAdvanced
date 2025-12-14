@@ -19,6 +19,7 @@ class MillionaireGameSeeder extends Seeder
         // Create a default Millionaire game
         $game = MillionaireGame::create([
             'title' => 'Classic Millionaire Challenge',
+            'slug' => 'classic-millionaire-challenge',
             'description' => 'Answer 15 questions correctly to win the million! Use your lifelines wisely: 50:50, Phone a Friend, and Ask the Audience.',
             'time_limit' => 600, // 10 minutes
             'is_active' => true,
@@ -194,15 +195,20 @@ class MillionaireGameSeeder extends Seeder
         ];
 
         foreach ($questions as $index => $questionData) {
+            // Convert letter answer (a-d) to index (0-3)
+            $answerMap = ['a' => 0, 'b' => 1, 'c' => 2, 'd' => 3];
+            
             MillionaireQuestion::create([
                 'millionaire_game_id' => $game->id,
                 'difficulty_level' => $questionData['difficulty_level'],
                 'question' => $questionData['question'],
-                'option_a' => $questionData['option_a'],
-                'option_b' => $questionData['option_b'],
-                'option_c' => $questionData['option_c'],
-                'option_d' => $questionData['option_d'],
-                'correct_answer' => $questionData['correct_answer'],
+                'options' => [
+                    $questionData['option_a'],
+                    $questionData['option_b'],
+                    $questionData['option_c'],
+                    $questionData['option_d'],
+                ],
+                'correct_answer_index' => $answerMap[$questionData['correct_answer']],
                 'prize_amount' => $questionData['prize_amount'],
                 'order' => $index + 1,
             ]);

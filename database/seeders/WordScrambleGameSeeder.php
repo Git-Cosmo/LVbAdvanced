@@ -19,6 +19,7 @@ class WordScrambleGameSeeder extends Seeder
         // Create a default Word Scramble game
         $game = WordScrambleGame::create([
             'title' => 'Gaming Word Challenge',
+            'slug' => 'gaming-word-challenge',
             'description' => 'Unscramble popular gaming-related words! Test your knowledge of games, characters, streamers, and more. Solve quickly for bonus points!',
             'time_limit' => 300, // 5 minutes total
             'points_per_word' => 10,
