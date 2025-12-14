@@ -94,12 +94,14 @@ function submitGuess() {
     })
     .then(response => response.json())
     .then(data => {
-        alert(`Distance: ${data.distance}km\nScore: ${data.score}\nTotal: ${data.total_score}`);
-        if (data.rounds_completed >= {{ $game->rounds }}) {
-            window.location.href = '{{ route('casual-games.geoguessr.result', [$game, $attempt]) }}';
-        } else {
-            window.location.reload();
-        }
+        showToast(`Distance: ${data.distance}km | Score: ${data.score} | Total: ${data.total_score}`, 'success');
+        setTimeout(() => {
+            if (data.rounds_completed >= {{ $game->rounds }}) {
+                window.location.href = '{{ route('casual-games.geoguessr.result', [$game, $attempt]) }}';
+            } else {
+                window.location.reload();
+            }
+        }, 2000);
     });
 }
 </script>

@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Log;
 class KickApiService
 {
     private string $baseUrl = 'https://kick.com/api/v2';
+    private const OFFLINE_THRESHOLD_MINUTES = 10;
 
     public function getTopStreams(int $limit = 20): array
     {
@@ -77,10 +78,10 @@ class KickApiService
             }
         }
 
-        // Mark offline streamers
+        // Mark offline streamers - using same threshold as Twitch (10 minutes)
         Streamer::where('platform', 'kick')
             ->where('is_live', true)
-            ->where('last_checked_at', '<', now()->subMinutes(5))
+            ->where('last_checked_at', '<', now()->subMinutes(self::OFFLINE_THRESHOLD_MINUTES))
             ->update(['is_live' => false]);
 
         return $synced;

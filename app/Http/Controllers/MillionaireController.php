@@ -252,6 +252,8 @@ class MillionaireController extends Controller
         ];
     }
 
+    // Lifeline configuration constants
+    // TODO: Consider moving these to config/games.php for easier adjustment
     private const PHONE_FRIEND_WRONG_CHANCE = 20;
     private const PHONE_FRIEND_MIN_CONFIDENCE = 40;
     private const PHONE_FRIEND_MAX_CONFIDENCE = 60;

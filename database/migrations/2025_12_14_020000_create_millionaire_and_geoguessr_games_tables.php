@@ -34,7 +34,7 @@ return new class extends Migration
             $table->text('question');
             $table->json('options'); // 4 answer options
             $table->integer('correct_answer_index'); // 0-3
-            $table->integer('difficulty_level'); // Question level (1-15)
+            $table->integer('difficulty_level'); // Question level/progression (1-15), not difficulty rating
             $table->integer('prize_amount'); // Prize for this question
             $table->integer('order')->default(0);
             $table->timestamps();

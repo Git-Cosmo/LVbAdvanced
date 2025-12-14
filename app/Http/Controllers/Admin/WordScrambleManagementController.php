@@ -173,7 +173,7 @@ class WordScrambleManagementController extends Controller
             ['word' => 'SHROUD', 'hint' => 'FPS god streamer', 'category' => 'streamer', 'difficulty' => 1],
             ['word' => 'POKIMANE', 'hint' => 'Popular variety streamer', 'category' => 'streamer', 'difficulty' => 2],
             ['word' => 'LUDWIG', 'hint' => 'Chess and variety creator', 'category' => 'streamer', 'difficulty' => 2],
-            ['word' => 'XQCOW', 'hint' => 'High-energy variety streamer', 'category' => 'streamer', 'difficulty' => 2],
+            ['word' => 'xQcOW', 'hint' => 'High-energy variety streamer', 'category' => 'streamer', 'difficulty' => 2],
             
             // Esports Teams
             ['word' => 'FNATIC', 'hint' => 'European esports org', 'category' => 'esports_team', 'difficulty' => 2],

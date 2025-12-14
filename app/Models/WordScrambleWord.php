@@ -28,13 +28,28 @@ class WordScrambleWord extends Model
         $word = strtoupper($this->word);
         $chars = str_split($word);
         
+        // For very short words (2-3 chars), limited permutations exist
+        // Return original if word is too short to scramble meaningfully
+        if (strlen($word) < 3) {
+            return $word;
+        }
+        
         // Shuffle until it's different from original
         $scrambled = $chars;
         $attempts = 0;
+        $maxAttempts = 20;
+        
         do {
             shuffle($scrambled);
             $attempts++;
-        } while (implode('', $scrambled) === $word && $attempts < 10);
+        } while (implode('', $scrambled) === $word && $attempts < $maxAttempts);
+        
+        // If we couldn't find a different scramble after max attempts, swap first two characters
+        if (implode('', $scrambled) === $word && strlen($word) >= 2) {
+            $temp = $scrambled[0];
+            $scrambled[0] = $scrambled[1];
+            $scrambled[1] = $temp;
+        }
         
         return implode('', $scrambled);
     }

@@ -12,6 +12,7 @@ class TwitchApiService
     private string $clientId;
     private string $clientSecret;
     private string $baseUrl = 'https://api.twitch.tv/helix';
+    private const OFFLINE_THRESHOLD_MINUTES = 10;
 
     public function __construct()
     {
@@ -118,7 +119,7 @@ class TwitchApiService
         // Mark offline streamers (not seen in current sync)
         Streamer::where('platform', 'twitch')
             ->where('is_live', true)
-            ->where('last_checked_at', '<', now()->subMinutes(10))
+            ->where('last_checked_at', '<', now()->subMinutes(self::OFFLINE_THRESHOLD_MINUTES))
             ->update(['is_live' => false]);
 
         return $synced;

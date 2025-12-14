@@ -34,9 +34,16 @@ class GameRoom extends Model
 
         static::creating(function ($room) {
             if (empty($room->code)) {
-                // Generate unique code
+                // Generate unique code with maximum attempts to prevent infinite loop
+                $maxAttempts = 10;
+                $attempts = 0;
+                
                 do {
+                    if ($attempts >= $maxAttempts) {
+                        throw new \RuntimeException("Failed to generate unique game room code after {$maxAttempts} attempts.");
+                    }
                     $code = strtoupper(Str::random(6));
+                    $attempts++;
                 } while (self::where('code', $code)->exists());
                 
                 $room->code = $code;

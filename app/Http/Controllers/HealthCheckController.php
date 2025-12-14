@@ -73,7 +73,7 @@ class HealthCheckController extends Controller
             $service = app(KickApiService::class);
             $streams = $service->getTopStreams(1);
             
-            return !empty($streams) || is_array($streams)
+            return is_array($streams) && !empty($streams)
                 ? ['status' => 'ok', 'message' => 'Kick API accessible']
                 : ['status' => 'warning', 'message' => 'Kick API returned no data'];
         } catch (\Exception $e) {
