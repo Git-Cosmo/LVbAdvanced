@@ -50,7 +50,7 @@ In addition to all required features, FPSociety includes these advanced integrat
 - 📝 **Automated Patch Notes** - Multi-game patch notes scraper (CS2, GTA V, Fortnite, COD, Valorant, etc.)
 - 🎵 **Radio Streaming** - Icecast/AzuraCast integration with song requests and now playing
 - 🏆 **Tournaments System** - Complete tournament management with brackets, matches, check-ins, betting
-- 🎲 **Full-Featured Casual Games** - Millionaire (15 questions + lifelines), GeoGuessr (location guessing), Trivia, Predictions, Daily Challenges
+- 🎲 **Full-Featured Casual Games** - Millionaire (15 questions + lifelines), GeoGuessr (location guessing), Word Scramble (anagram puzzles), Trivia, Predictions, Daily Challenges
 - 🎮 **Multiplayer Gaming** - Real-time multiplayer rooms with Laravel Reverb integration
 - 📺 **Live Streamers Integration** - Top live streamers from Twitch & Kick with auto-sync
 - 🖥️ **Game Servers Dashboard** - Dynamic game server status with live player counts
@@ -402,11 +402,17 @@ For detailed Docker documentation, troubleshooting, and production deployment, s
     ICECAST_STREAM_URL=http://your-icecast-server.com:8000/stream
    ```
 
-4. **Run migrations**
+4. **Run migrations and seed the database**
    ```bash
    php artisan migrate
    php artisan db:seed
    ```
+   
+   **Note:** The seeder automatically populates all casual games with playable content:
+   - **Millionaire**: 15 gaming-themed questions with $100-$1M prize ladder
+   - **GeoGuessr**: 10 iconic world locations (Tokyo Tower, Eiffel Tower, etc.)
+   - **Word Scramble**: 55+ popular gaming words across 7 categories
+   - All games are immediately playable after seeding
 
 5. **Build assets**
    ```bash
@@ -465,6 +471,7 @@ For detailed Docker documentation, troubleshooting, and production deployment, s
       - Games Hub: http://localhost:8000/casual-games
       - Millionaire: http://localhost:8000/casual-games/millionaire
       - GeoGuessr: http://localhost:8000/casual-games/geoguessr
+      - Word Scramble: http://localhost:8000/casual-games/word-scramble
       - Trivia: http://localhost:8000/casual-games/trivia
       - Predictions: http://localhost:8000/casual-games/predictions
       - Daily Challenges: http://localhost:8000/casual-games/challenges
@@ -3138,6 +3145,36 @@ Test your geography knowledge by guessing locations from images.
 4. Click on the map to place your guess
 5. Earn points based on proximity to actual location
 
+#### 📝 Word Scramble/Anagram Game
+Unscramble popular gaming-related words in a fast-paced word puzzle game.
+
+**Features:**
+- **55+ pre-seeded popular gaming words** across 7 categories:
+  - 🎮 Games: Minecraft, Fortnite, Valorant, Overwatch, Apex, Warzone, League, DOTA, CS:GO, PUBG, Roblox, Terraria, and more
+  - 👤 Characters: Mario, Sonic, Pikachu, Kratos, Master Chief, Link, Tracer, Ezio
+  - 📺 Streamers: Ninja, Shroud, Pokimane, Ludwig, xQcOW
+  - 🏆 Esports Teams: Fnatic, Liquid, Cloud9, FaZe, Sentinels
+  - 💻 Platforms: Steam, Epic, Xbox, PlayStation, Discord, Twitch
+  - ⚔️ Weapons: Shotgun, Sniper, Rifle, Pistol, Grenade
+  - 🗺️ Maps: Dust, Mirage, Haven, Bind
+- **Smart scrambling algorithm** with edge case handling
+- **Hint system**: Reveals first/last letters + custom hints (configurable point penalty)
+- **Skip functionality**: Option to skip difficult words
+- **Timer-based scoring**: Faster solves earn up to 50% time bonus
+- **Category icons**: Visual labels for word types
+- **Real-time score calculation** and progress tracking
+- **Toast notifications** for feedback
+- **Admin panel** with one-click seed button to populate all gaming words
+- Leaderboard integration with statistics
+
+**How to Play:**
+1. Navigate to `/casual-games/word-scramble`
+2. Select a game and click "Start New Game"
+3. Unscramble the letters to form the correct word
+4. Use hints if stuck (costs points)
+5. Skip words you can't solve
+6. Complete all words before time runs out
+
 #### 🧠 Trivia Games
 Quick knowledge quizzes on various topics.
 
@@ -3172,7 +3209,7 @@ Play casual games with friends in real-time multiplayer rooms.
 
 **Features:**
 - Create or join game rooms with custom 6-character codes
-- Support for Millionaire, GeoGuessr, and Trivia games
+- Support for Millionaire, GeoGuessr, Word Scramble, and Trivia games
 - Host controls (start game, room settings)
 - Player status indicators (waiting, ready, playing)
 - Max player limits per room (configurable 2-20 players)
@@ -3317,6 +3354,25 @@ Comprehensive admin interface for managing all casual games.
 - View game statistics
 - Toggle game active status
 
+### Word Scramble Game Management
+
+**Routes:**
+- List all games: `/admin/casual-games/word-scramble`
+- Create new game: `/admin/casual-games/word-scramble/create`
+- Edit game: `/admin/casual-games/word-scramble/{id}/edit`
+
+**Features:**
+- Create/edit/delete Word Scramble games
+- Configure: title, time limits, base points per word, hint penalty
+- **One-click seed button**: Instantly populate with 55+ popular gaming words
+- Word database management:
+  - Add words with custom hints
+  - Set categories: game, character, streamer, esports_team, platform, weapon, map
+  - Configure difficulty rating (1-3)
+  - Category icons automatically displayed
+- View game statistics (completion rate, average score)
+- Toggle game active status
+
 ### Database Optimizations
 
 **Performance Improvements:**
@@ -3324,9 +3380,12 @@ Comprehensive admin interface for managing all casual games.
 - Database indexes on frequently queried fields:
   - `millionaire_games.is_active`
   - `geoguessr_games.is_active`
+  - `word_scramble_games.is_active`
   - `millionaire_attempts.status`
   - `geoguessr_attempts.status`
+  - `word_scramble_attempts.status`
   - Compound index on `millionaire_questions` (game_id + difficulty_level)
+  - Compound index on `word_scramble_words` (game_id + category)
 - Query caching for active games
 
 ## Technical Enhancements
