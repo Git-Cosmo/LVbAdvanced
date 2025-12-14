@@ -32,7 +32,7 @@
 | **Gamer Integrations** | ✅ 100% | Steam/Xbox/PSN Sync, Game Library, Recently Played, Player Stats, Clans/Guilds, Clan Forums, Event Calendar |
 | **File Sharing** | ✅ 100% | Mods, Patches, Config Files, Screenshots, Recordings, Download Counters, Versioning |
 | **News & Content** | ✅ 100% | CMS Pages, Blog/News Posting, RSS Imports, Game News Aggregation |
-| **API** | ⚠️ Partial | Webhooks (Reverb), OAuth Architecture Ready, Rate Limiting, Permissions - Comprehensive REST API endpoints pending |
+| **API** | ⚠️ Partial | Webhooks implemented, Rate Limiting active, Permissions system ready - Full REST API endpoints for forums/users/content pending development |
 | **System Architecture** | ✅ 100% | Queues, Redis Caching, S3/MinIO Support, CDN Ready, Multisite, Load-Balancing, Logging, Rate Limits |
 | **Security** | ✅ 100% | CSRF Protection, Rate Limiting, Password Hashing, Audit Logs, Session Management, Ban Rules |
 | **Themes/Styles** | ✅ 100% | Custom Themes, Dark Mode, Template Editor, Component Overrides |

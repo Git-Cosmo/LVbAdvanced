@@ -285,13 +285,13 @@ This audit checks the implementation status of all features across the platform 
 | Per-forum rules | ✅ Complete | Forum-level permissions |
 | Per-thread rules | ✅ Complete | Thread-level permission checks |
 | Attachment limits | ✅ Complete | Configurable attachment limits |
-| Moderator permissions | ✅ Complete | 35-38 permissions for moderators |
+| Moderator permissions | ✅ Complete | Moderator-specific permission sets (part of 52 total granular permissions) |
 
 **Verification:**
 - Package: Spatie Laravel Permission
 - Config: `config/permission.php`
-- Seeders: Permission and role seeders with 52 granular permissions
-- Roles: Administrator, Super Moderator, Moderator, VIP Member, Clan Leader, Tournament Organizer, Registered, Guest
+- Seeders: Permission and role seeders with 52 granular permissions total across all roles
+- Roles: Administrator (52 permissions), Super Moderator (38 permissions), Moderator (35 permissions), VIP Member (23 permissions), Clan Leader (22 permissions), Tournament Organizer (23 permissions), Registered (21 permissions), Guest (7 permissions)
 
 ---
 
