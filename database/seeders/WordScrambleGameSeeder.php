@@ -21,7 +21,10 @@ class WordScrambleGameSeeder extends Seeder
             'title' => 'Gaming Word Challenge',
             'slug' => 'gaming-word-challenge',
             'description' => 'Unscramble popular gaming-related words! Test your knowledge of games, characters, streamers, and more. Solve quickly for bonus points!',
-            'time_limit' => 300, // 5 minutes total
+            'category' => 'gaming',
+            'difficulty' => 'medium',
+            'time_per_word' => 30, // 30 seconds per word
+            'words_per_game' => 10, // 10 words per game session
             'points_per_word' => 10,
             'hint_penalty' => 5,
             'is_active' => true,
@@ -99,13 +102,14 @@ class WordScrambleGameSeeder extends Seeder
             ['word' => 'Bind', 'hint' => 'Valorant teleporter map', 'category' => 'map', 'difficulty' => 2],
         ];
 
-        foreach ($words as $wordData) {
+        foreach ($words as $index => $wordData) {
             WordScrambleWord::create([
                 'word_scramble_game_id' => $game->id,
                 'word' => $wordData['word'],
                 'hint' => $wordData['hint'],
                 'category' => $wordData['category'],
-                'difficulty' => $wordData['difficulty'],
+                'difficulty_level' => $wordData['difficulty'],
+                'order' => $index,
             ]);
         }
 
