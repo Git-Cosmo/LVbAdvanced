@@ -8,6 +8,7 @@ export default defineConfig({
             input: [
                 'resources/css/app.css',
                 'resources/css/forum.css',
+                'resources/css/casual-games.css',
                 'resources/js/app.js',
                 'resources/js/forum.js',
                 'resources/js/mentions.js'
