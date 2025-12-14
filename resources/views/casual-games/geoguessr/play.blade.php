@@ -63,6 +63,28 @@
 let guessLat = null;
 let guessLng = null;
 
+// Toast notification function
+function showToast(message, type = 'success') {
+    // Create toast element
+    const toast = document.createElement('div');
+    toast.className = 'fixed top-4 right-4 z-50 max-w-sm';
+    
+    const toastInner = document.createElement('div');
+    toastInner.className = `${type === 'success' ? 'bg-green-500' : type === 'error' ? 'bg-red-500' : 'bg-blue-500'} rounded-lg shadow-lg p-4 text-white`;
+    
+    const messageP = document.createElement('p');
+    messageP.textContent = message;
+    
+    toastInner.appendChild(messageP);
+    toast.appendChild(toastInner);
+    document.body.appendChild(toast);
+    
+    // Remove toast after 3 seconds
+    setTimeout(() => {
+        toast.remove();
+    }, 3000);
+}
+
 // Simplified map click handler (would use Google Maps or Leaflet in production)
 document.getElementById('map').addEventListener('click', function(e) {
     const rect = this.getBoundingClientRect();
