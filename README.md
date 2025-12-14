@@ -50,7 +50,9 @@ In addition to all required features, FPSociety includes these advanced integrat
 - 📝 **Automated Patch Notes** - Multi-game patch notes scraper (CS2, GTA V, Fortnite, COD, Valorant, etc.)
 - 🎵 **Radio Streaming** - Icecast/AzuraCast integration with song requests and now playing
 - 🏆 **Tournaments System** - Complete tournament management with brackets, matches, check-ins, betting
-- 🎲 **Casual Games** - Trivia, predictions, daily challenges
+- 🎲 **Full-Featured Casual Games** - Millionaire (15 questions + lifelines), GeoGuessr (location guessing), Trivia, Predictions, Daily Challenges
+- 🎮 **Multiplayer Gaming** - Real-time multiplayer rooms with Laravel Reverb integration
+- 📺 **Live Streamers Integration** - Top live streamers from Twitch & Kick with auto-sync
 - 🖥️ **Game Servers Dashboard** - Dynamic game server status with live player counts
 - 📡 **Real-time WebSockets** - Laravel Reverb for instant notifications and live updates
 - 🔍 **Schedule Monitoring** - Spatie Schedule Monitor for cron job tracking and alerts
@@ -459,6 +461,17 @@ For detailed Docker documentation, troubleshooting, and production deployment, s
     - **StreamerBans:**
       - Browse Streamers: http://localhost:8000/streamerbans
       - Streamer Details: http://localhost:8000/streamerbans/{username}
+    - **Casual Games:**
+      - Games Hub: http://localhost:8000/casual-games
+      - Millionaire: http://localhost:8000/casual-games/millionaire
+      - GeoGuessr: http://localhost:8000/casual-games/geoguessr
+      - Trivia: http://localhost:8000/casual-games/trivia
+      - Predictions: http://localhost:8000/casual-games/predictions
+      - Daily Challenges: http://localhost:8000/casual-games/challenges
+    - **Multiplayer:**
+      - Multiplayer Lobby: http://localhost:8000/multiplayer/lobby
+    - **Live Streamers:**
+      - Top Streamers: http://localhost:8000/streamers
     - **Static Pages:**
       - Terms of Service: http://localhost:8000/terms
       - Privacy Policy: http://localhost:8000/privacy
@@ -3077,6 +3090,163 @@ Edit `config/discord_channels.php`:
 ```
 
 Restart the bot and it will auto-create the new channel with configured permissions.
+
+## Casual Games Suite
+
+FPSociety includes a comprehensive suite of casual games designed to increase user engagement and provide entertainment between forum sessions.
+
+### Available Games
+
+#### 💰 Who Wants To Be A Millionaire
+A full-featured quiz game with 15 questions of increasing difficulty.
+
+**Features:**
+- 15 progressive questions with increasing prize money ($100 to $1,000,000)
+- 3 lifelines: 50:50, Phone a Friend, Ask the Audience
+- Safe havens at questions 5 ($1,000) and 10 ($32,000)
+- Walk away option to keep your winnings
+- Leaderboard integration with point rewards
+- Timed questions with configurable time limits
+- Beautiful UI with prize ladder display
+
+**How to Play:**
+1. Navigate to `/casual-games/millionaire`
+2. Select a game and click "Start New Game"
+3. Answer questions correctly to progress
+4. Use lifelines strategically when stuck
+5. Walk away anytime to secure your winnings
+
+#### 🗺️ GeoGuessr-Style Location Game
+Test your geography knowledge by guessing locations from images.
+
+**Features:**
+- Multiple rounds per game (typically 5 rounds)
+- Location images from around the world
+- Distance-based scoring system
+- Maximum points per round (typically 5,000)
+- Time limits per round
+- Round-by-round breakdown in results
+- Leaderboard integration
+
+**How to Play:**
+1. Navigate to `/casual-games/geoguessr`
+2. Select a game and start playing
+3. View a location image and guess where it is
+4. Click on the map to place your guess
+5. Earn points based on proximity to actual location
+
+#### 🧠 Trivia Games
+Quick knowledge quizzes on various topics.
+
+**Features:**
+- Multiple categories (gaming, sports, general knowledge)
+- Difficulty levels (easy, medium, hard)
+- Instant feedback on answers
+- Score tracking and leaderboards
+- Time limits per question
+
+#### 🔮 Predictions
+Make predictions on upcoming events and tournaments.
+
+**Features:**
+- Open/closed/resolved prediction states
+- Vote distribution display
+- Point rewards for correct predictions
+- Category-based organization
+
+#### 🎯 Daily Challenges
+Complete daily challenges for bonus points.
+
+**Features:**
+- New challenges every day
+- Various challenge types (posts, likes, views, achievements)
+- Point rewards upon completion
+- Badge rewards for special challenges
+
+### Multiplayer Gaming
+
+Play casual games with friends in real-time multiplayer rooms.
+
+**Features:**
+- Create or join game rooms with custom room codes
+- Support for Millionaire, GeoGuessr, and Trivia games
+- Host controls (start game, room settings)
+- Player status indicators (waiting, ready, playing)
+- Max player limits per room
+- Real-time updates via Laravel Reverb
+
+**How to Use:**
+1. Navigate to `/multiplayer/lobby`
+2. Create a new room or join an existing one
+3. Wait for players to join
+4. Host starts the game when ready
+5. Compete for the highest score
+
+**Note:** Full real-time multiplayer gameplay is currently in development. Room infrastructure is complete.
+
+### Leaderboard Integration
+
+All games integrate with the platform's gamification system:
+- **Points:** Earned from game scores are added to user profiles
+- **XP:** Game performance contributes to user experience points
+- **Achievements:** Special achievements for game milestones
+- **Seasonal Rankings:** Compete on seasonal leaderboards
+
+## Live Streamers Integration
+
+Watch top gaming streamers currently live on Twitch and Kick.
+
+### Features
+
+**Twitch Integration:**
+- Fetch top live streamers via Twitch API
+- Display viewer counts, stream titles, and game info
+- Streamer profile images and channel links
+- Auto-sync every 5 minutes
+
+**Kick Integration:**
+- Fetch top live streamers from Kick
+- Display viewer counts and stream information
+- Platform-specific styling and badges
+
+**User Interface:**
+- Grid layout with streamer cards
+- Platform filtering (All, Twitch, Kick)
+- Live badges with animated indicators
+- Direct links to streamer channels
+- Thumbnail previews when available
+
+### Setup
+
+1. **Get Twitch API credentials:**
+   - Visit [Twitch Developers Console](https://dev.twitch.tv/console)
+   - Create a new application
+   - Copy your Client ID and Client Secret
+
+2. **Add credentials to `.env`:**
+   ```env
+   TWITCH_CLIENT_ID=your_client_id_here
+   TWITCH_CLIENT_SECRET=your_client_secret_here
+   ```
+
+3. **Sync streamers:**
+   ```bash
+   php artisan streamers:sync
+   ```
+
+4. **Automatic syncing:**
+   The `streamers:sync` command runs every 5 minutes via the Laravel scheduler to keep the list updated.
+
+### Accessing Streamers
+
+**Frontend:**
+- Main listing: `/streamers`
+- Filter by platform using the platform tabs
+
+**Admin:**
+- Manual sync: Click "Sync Streamers Now" button (admin only)
+
+**Note:** Kick API integration is included but may require updates based on API availability.
 
 ### Future Enhancements
 
