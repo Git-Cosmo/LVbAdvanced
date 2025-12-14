@@ -32,6 +32,17 @@
             <p class="text-sm dark:text-dark-text-secondary">Test your geography skills and guess locations!</p>
         </a>
 
+        <a href="{{ route('casual-games.word-scramble.index') }}" class="dark:bg-dark-bg-secondary rounded-lg p-6 border dark:border-dark-border-primary hover:border-purple-500 transition-colors group">
+            <div class="flex items-center justify-between mb-4">
+                <div class="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center text-3xl">
+                    📝
+                </div>
+                <span class="px-3 py-1 text-xs font-semibold bg-purple-500/20 text-purple-400 rounded">NEW!</span>
+            </div>
+            <h3 class="text-xl font-bold dark:text-dark-text-bright mb-2">Word Scramble</h3>
+            <p class="text-sm dark:text-dark-text-secondary">Unscramble gaming words and test your knowledge!</p>
+        </a>
+
         <a href="{{ route('casual-games.trivia.index') }}" class="dark:bg-dark-bg-secondary rounded-lg p-6 border dark:border-dark-border-primary hover:border-blue-500 transition-colors group">
             <div class="flex items-center justify-between mb-4">
                 <div class="w-16 h-16 bg-blue-500/20 rounded-lg flex items-center justify-center text-3xl">

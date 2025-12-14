@@ -452,6 +452,19 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
             Route::delete('/{geoguessrGame}/locations/{location}', [\App\Http\Controllers\Admin\GeoguessrManagementController::class, 'deleteLocation'])->name('locations.delete');
         });
 
+        // Word Scramble Management
+        Route::prefix('word-scramble')->name('word-scramble.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\Admin\WordScrambleManagementController::class, 'index'])->name('index');
+            Route::get('/create', [\App\Http\Controllers\Admin\WordScrambleManagementController::class, 'create'])->name('create');
+            Route::post('/', [\App\Http\Controllers\Admin\WordScrambleManagementController::class, 'store'])->name('store');
+            Route::get('/{wordScrambleGame}/edit', [\App\Http\Controllers\Admin\WordScrambleManagementController::class, 'edit'])->name('edit');
+            Route::patch('/{wordScrambleGame}', [\App\Http\Controllers\Admin\WordScrambleManagementController::class, 'update'])->name('update');
+            Route::delete('/{wordScrambleGame}', [\App\Http\Controllers\Admin\WordScrambleManagementController::class, 'destroy'])->name('destroy');
+            Route::post('/{wordScrambleGame}/words', [\App\Http\Controllers\Admin\WordScrambleManagementController::class, 'addWord'])->name('words.add');
+            Route::delete('/{wordScrambleGame}/words/{word}', [\App\Http\Controllers\Admin\WordScrambleManagementController::class, 'deleteWord'])->name('words.delete');
+            Route::post('/{wordScrambleGame}/seed', [\App\Http\Controllers\Admin\WordScrambleManagementController::class, 'seedPopularWords'])->name('seed');
+        });
+
         // Predictions Management
         Route::prefix('predictions')->name('predictions.')->group(function () {
             Route::get('/', [\App\Http\Controllers\Admin\PredictionManagementController::class, 'index'])->name('index');
@@ -572,6 +585,18 @@ Route::prefix('casual-games')->name('casual-games.')->group(function () {
         Route::get('/{geoguessrGame}/play/{attempt}', [GeoguessrController::class, 'play'])->name('play')->middleware('auth');
         Route::post('/{geoguessrGame}/play/{attempt}/guess', [GeoguessrController::class, 'submitGuess'])->name('guess')->middleware('auth');
         Route::get('/{geoguessrGame}/result/{attempt}', [GeoguessrController::class, 'result'])->name('result')->middleware('auth');
+    });
+
+    // Word Scramble Routes
+    Route::prefix('word-scramble')->name('word-scramble.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\WordScrambleController::class, 'index'])->name('index');
+        Route::get('/{wordScrambleGame}', [\App\Http\Controllers\WordScrambleController::class, 'show'])->name('show');
+        Route::post('/{wordScrambleGame}/start', [\App\Http\Controllers\WordScrambleController::class, 'start'])->name('start')->middleware('auth');
+        Route::get('/{wordScrambleGame}/play/{attempt}', [\App\Http\Controllers\WordScrambleController::class, 'play'])->name('play')->middleware('auth');
+        Route::post('/{wordScrambleGame}/play/{attempt}/solve', [\App\Http\Controllers\WordScrambleController::class, 'solve'])->name('solve')->middleware('auth');
+        Route::post('/{wordScrambleGame}/play/{attempt}/skip', [\App\Http\Controllers\WordScrambleController::class, 'skip'])->name('skip')->middleware('auth');
+        Route::post('/{wordScrambleGame}/play/{attempt}/hint', [\App\Http\Controllers\WordScrambleController::class, 'hint'])->name('hint')->middleware('auth');
+        Route::get('/{wordScrambleGame}/result/{attempt}', [\App\Http\Controllers\WordScrambleController::class, 'result'])->name('result')->middleware('auth');
     });
 });
 
