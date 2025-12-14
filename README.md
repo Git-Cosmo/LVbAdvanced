@@ -50,7 +50,9 @@ In addition to all required features, FPSociety includes these advanced integrat
 - 📝 **Automated Patch Notes** - Multi-game patch notes scraper (CS2, GTA V, Fortnite, COD, Valorant, etc.)
 - 🎵 **Radio Streaming** - Icecast/AzuraCast integration with song requests and now playing
 - 🏆 **Tournaments System** - Complete tournament management with brackets, matches, check-ins, betting
-- 🎲 **Casual Games** - Trivia, predictions, daily challenges
+- 🎲 **Full-Featured Casual Games** - Millionaire (15 questions + lifelines), GeoGuessr (location guessing), Word Scramble (anagram puzzles), Trivia, Predictions, Daily Challenges
+- 🎮 **Multiplayer Gaming** - Real-time multiplayer rooms with Laravel Reverb integration
+- 📺 **Live Streamers Integration** - Top live streamers from Twitch & Kick with auto-sync
 - 🖥️ **Game Servers Dashboard** - Dynamic game server status with live player counts
 - 📡 **Real-time WebSockets** - Laravel Reverb for instant notifications and live updates
 - 🔍 **Schedule Monitoring** - Spatie Schedule Monitor for cron job tracking and alerts
@@ -400,11 +402,17 @@ For detailed Docker documentation, troubleshooting, and production deployment, s
     ICECAST_STREAM_URL=http://your-icecast-server.com:8000/stream
    ```
 
-4. **Run migrations**
+4. **Run migrations and seed the database**
    ```bash
    php artisan migrate
    php artisan db:seed
    ```
+   
+   **Note:** The seeder automatically populates all casual games with playable content:
+   - **Millionaire**: 15 gaming-themed questions with $100-$1M prize ladder
+   - **GeoGuessr**: 10 iconic world locations (Tokyo Tower, Eiffel Tower, etc.)
+   - **Word Scramble**: 55+ popular gaming words across 7 categories
+   - All games are immediately playable after seeding
 
 5. **Build assets**
    ```bash
@@ -459,6 +467,18 @@ For detailed Docker documentation, troubleshooting, and production deployment, s
     - **StreamerBans:**
       - Browse Streamers: http://localhost:8000/streamerbans
       - Streamer Details: http://localhost:8000/streamerbans/{username}
+    - **Casual Games:**
+      - Games Hub: http://localhost:8000/casual-games
+      - Millionaire: http://localhost:8000/casual-games/millionaire
+      - GeoGuessr: http://localhost:8000/casual-games/geoguessr
+      - Word Scramble: http://localhost:8000/casual-games/word-scramble
+      - Trivia: http://localhost:8000/casual-games/trivia
+      - Predictions: http://localhost:8000/casual-games/predictions
+      - Daily Challenges: http://localhost:8000/casual-games/challenges
+    - **Multiplayer:**
+      - Multiplayer Lobby: http://localhost:8000/multiplayer/lobby
+    - **Live Streamers:**
+      - Top Streamers: http://localhost:8000/streamers
     - **Static Pages:**
       - Terms of Service: http://localhost:8000/terms
       - Privacy Policy: http://localhost:8000/privacy
@@ -3077,6 +3097,319 @@ Edit `config/discord_channels.php`:
 ```
 
 Restart the bot and it will auto-create the new channel with configured permissions.
+
+## Casual Games Suite
+
+FPSociety includes a comprehensive suite of casual games designed to increase user engagement and provide entertainment between forum sessions.
+
+### Available Games
+
+#### 💰 Who Wants To Be A Millionaire
+A full-featured quiz game with 15 questions of increasing difficulty.
+
+**Features:**
+- 15 progressive questions with increasing prize money ($100 to $1,000,000)
+- 3 lifelines: 50:50, Phone a Friend, Ask the Audience
+- Safe havens at questions 5 ($1,000) and 10 ($32,000)
+- Walk away option to keep your winnings
+- **Real-time countdown timer** with visual alerts
+- **Toast notifications** for game events (correct/wrong answers)
+- Leaderboard integration with point rewards
+- Admin panel for creating/managing games and questions
+- Beautiful UI with prize ladder display
+
+**How to Play:**
+1. Navigate to `/casual-games/millionaire`
+2. Select a game and click "Start New Game"
+3. Answer questions correctly to progress
+4. Use lifelines strategically when stuck
+5. Walk away anytime to secure your winnings
+
+#### 🗺️ GeoGuessr-Style Location Game
+Test your geography knowledge by guessing locations from images.
+
+**Features:**
+- Multiple rounds per game (typically 5 rounds)
+- Location images from around the world
+- Distance-based scoring system using haversine formula
+- Maximum points per round (configurable, typically 5,000)
+- Time limits per round
+- Round-by-round breakdown in results
+- Admin panel for managing locations with coordinates
+- Leaderboard integration with statistics
+
+**How to Play:**
+1. Navigate to `/casual-games/geoguessr`
+2. Select a game and start playing
+3. View a location image and guess where it is
+4. Click on the map to place your guess
+5. Earn points based on proximity to actual location
+
+#### 📝 Word Scramble/Anagram Game
+Unscramble popular gaming-related words in a fast-paced word puzzle game.
+
+**Features:**
+- **55+ pre-seeded popular gaming words** across 7 categories:
+  - 🎮 Games: Minecraft, Fortnite, Valorant, Overwatch, Apex, Warzone, League, DOTA, CS:GO, PUBG, Roblox, Terraria, and more
+  - 👤 Characters: Mario, Sonic, Pikachu, Kratos, Master Chief, Link, Tracer, Ezio
+  - 📺 Streamers: Ninja, Shroud, Pokimane, Ludwig, xQcOW
+  - 🏆 Esports Teams: Fnatic, Liquid, Cloud9, FaZe, Sentinels
+  - 💻 Platforms: Steam, Epic, Xbox, PlayStation, Discord, Twitch
+  - ⚔️ Weapons: Shotgun, Sniper, Rifle, Pistol, Grenade
+  - 🗺️ Maps: Dust, Mirage, Haven, Bind
+- **Smart scrambling algorithm** with edge case handling
+- **Hint system**: Reveals first/last letters + custom hints (configurable point penalty)
+- **Skip functionality**: Option to skip difficult words
+- **Timer-based scoring**: Faster solves earn up to 50% time bonus
+- **Category icons**: Visual labels for word types
+- **Real-time score calculation** and progress tracking
+- **Toast notifications** for feedback
+- **Admin panel** with one-click seed button to populate all gaming words
+- Leaderboard integration with statistics
+
+**How to Play:**
+1. Navigate to `/casual-games/word-scramble`
+2. Select a game and click "Start New Game"
+3. Unscramble the letters to form the correct word
+4. Use hints if stuck (costs points)
+5. Skip words you can't solve
+6. Complete all words before time runs out
+
+#### 🧠 Trivia Games
+Quick knowledge quizzes on various topics.
+
+**Features:**
+- Multiple categories (gaming, sports, general knowledge)
+- Difficulty levels (easy, medium, hard)
+- Instant feedback on answers
+- Score tracking and leaderboards
+- Time limits per question
+
+#### 🔮 Predictions
+Make predictions on upcoming events and tournaments.
+
+**Features:**
+- Open/closed/resolved prediction states
+- Vote distribution display
+- Point rewards for correct predictions
+- Category-based organization
+
+#### 🎯 Daily Challenges
+Complete daily challenges for bonus points.
+
+**Features:**
+- New challenges every day
+- Various challenge types (posts, likes, views, achievements)
+- Point rewards upon completion
+- Badge rewards for special challenges
+
+### Multiplayer Gaming
+
+Play casual games with friends in real-time multiplayer rooms.
+
+**Features:**
+- Create or join game rooms with custom 6-character codes
+- Support for Millionaire, GeoGuessr, Word Scramble, and Trivia games
+- Host controls (start game, room settings)
+- Player status indicators (waiting, ready, playing)
+- Max player limits per room (configurable 2-20 players)
+- **Laravel Reverb WebSocket integration:**
+  - Real-time player join/leave notifications
+  - Live game start broadcasts
+  - Room status updates
+- Event-driven architecture with dedicated channels per room
+
+**How to Use:**
+1. Navigate to `/multiplayer/lobby`
+2. Create a new room or join an existing one with a room code
+3. Wait for players to join (real-time updates)
+4. Host starts the game when ready
+5. Compete for the highest score
+
+**WebSocket Events:**
+- `game-room.{code}` channel for room-specific events
+- `player.joined` - Player joins notification
+- `game.started` - Game start broadcast
+- `room.updated` - Room state changes
+
+### Leaderboard Integration
+
+All games integrate with the platform's gamification system:
+- **Points:** Earned from game scores are added to user profiles
+- **XP:** Game performance contributes to user experience points
+- **Achievements:** Special achievements for game milestones
+- **Seasonal Rankings:** Compete on seasonal leaderboards
+- **Game-Specific Leaderboards:**
+  - `/leaderboard/millionaire` - Top Millionaire prize winners
+  - `/leaderboard/geoguessr` - Top GeoGuessr scores
+  - Statistics: total games, completion rate, average scores
+- **Main Leaderboard** (`/leaderboard`) includes top 10 for each game type
+
+## Live Streamers Integration
+
+Watch top gaming streamers currently live on Twitch and Kick.
+
+### Features
+
+**Twitch Integration:**
+- OAuth client credentials flow with cached access tokens (1 hour)
+- Fetch top 20 live streamers via Twitch API
+- Display viewer counts, stream titles, and game info
+- Streamer profile images and channel links
+- **Retry logic:** 3 attempts with exponential backoff
+- **Response caching:** 5 minutes to reduce API calls
+- Auto-sync every 5 minutes via scheduler
+
+**Kick Integration:**
+- Public endpoint integration (no authentication required)
+- Fetch top live streamers from Kick
+- Display viewer counts and stream information
+- Platform-specific styling and badges
+- Error handling with graceful fallbacks
+
+**User Interface:**
+- Grid layout with streamer cards
+- Platform filtering (All, Twitch, Kick)
+- Live badges with animated indicators
+- Direct links to streamer channels
+- Thumbnail previews when available
+- Formatted viewer counts (e.g., "12.5K")
+
+**API Health & Monitoring:**
+- Health check endpoint: `/health`
+- Monitors Twitch and Kick API connectivity
+- JSON response with status for each service
+- Database and cache health checks included
+
+### Setup
+
+1. **Get Twitch API credentials:**
+   - Visit [Twitch Developers Console](https://dev.twitch.tv/console)
+   - Create a new application
+   - Copy your Client ID and Client Secret
+
+2. **Add credentials to `.env`:**
+   ```env
+   TWITCH_CLIENT_ID=your_client_id_here
+   TWITCH_CLIENT_SECRET=your_client_secret_here
+   ```
+
+3. **Sync streamers:**
+   ```bash
+   php artisan streamers:sync
+   ```
+
+4. **Automatic syncing:**
+   The `streamers:sync` command runs every 5 minutes via the Laravel scheduler to keep the list updated.
+
+### Accessing Streamers
+
+**Frontend:**
+- Main listing: `/streamers`
+- Filter by platform using the platform tabs
+
+**Admin:**
+- Manual sync: Click "Sync Streamers Now" button (admin only)
+
+**Note:** Kick API integration is included but may require updates based on API availability.
+
+## Admin Panel for Games Management
+
+Comprehensive admin interface for managing all casual games.
+
+### Millionaire Game Management
+
+**Routes:**
+- List all games: `/admin/casual-games/millionaire`
+- Create new game: `/admin/casual-games/millionaire/create`
+- Edit game: `/admin/casual-games/millionaire/{id}/edit`
+
+**Features:**
+- Create/edit/delete Millionaire games
+- Configure: title, description, category, difficulty, time limits
+- Question management:
+  - Add questions with 4 options
+  - Set correct answer and difficulty level (1-15)
+  - Configure prize amount per question
+  - Order questions by difficulty
+- View game statistics (total attempts, completion rate)
+- Toggle game active status
+
+### GeoGuessr Game Management
+
+**Routes:**
+- List all games: `/admin/casual-games/geoguessr`
+- Create new game: `/admin/casual-games/geoguessr/create`
+- Edit game: `/admin/casual-games/geoguessr/{id}/edit`
+
+**Features:**
+- Create/edit/delete GeoGuessr games
+- Configure: rounds, time per round, max points
+- Location management:
+  - Add locations with name and country
+  - Set latitude/longitude coordinates
+  - Upload image URLs
+  - Add optional hints
+  - Set difficulty rating (1-5)
+- View game statistics
+- Toggle game active status
+
+### Word Scramble Game Management
+
+**Routes:**
+- List all games: `/admin/casual-games/word-scramble`
+- Create new game: `/admin/casual-games/word-scramble/create`
+- Edit game: `/admin/casual-games/word-scramble/{id}/edit`
+
+**Features:**
+- Create/edit/delete Word Scramble games
+- Configure: title, time limits, base points per word, hint penalty
+- **One-click seed button**: Instantly populate with 55+ popular gaming words
+- Word database management:
+  - Add words with custom hints
+  - Set categories: game, character, streamer, esports_team, platform, weapon, map
+  - Configure difficulty rating (1-3)
+  - Category icons automatically displayed
+- View game statistics (completion rate, average score)
+- Toggle game active status
+
+### Database Optimizations
+
+**Performance Improvements:**
+- Integer `difficulty_level` (changed from enum strings)
+- Database indexes on frequently queried fields:
+  - `millionaire_games.is_active`
+  - `geoguessr_games.is_active`
+  - `word_scramble_games.is_active`
+  - `millionaire_attempts.status`
+  - `geoguessr_attempts.status`
+  - `word_scramble_attempts.status`
+  - Compound index on `millionaire_questions` (game_id + difficulty_level)
+  - Compound index on `word_scramble_words` (game_id + category)
+- Query caching for active games
+
+## Technical Enhancements
+
+### UI/UX Improvements
+- **Toast Notification System:** Replace browser alerts with elegant toast messages
+- **Real-time Countdown Timer:** Visual timer with color coding and pulse animation
+- **Loading States:** Show feedback during AJAX requests
+- **Responsive Design:** Mobile-friendly game interfaces
+
+### API & Service Layer
+- **Retry Logic:** Exponential backoff for failed API requests (3 retries, 100ms delay)
+- **Request Timeouts:** 10-second timeout prevents hanging requests
+- **Response Caching:** 5-minute cache for frequently accessed data
+- **Rate Limiting:** Built-in protection against API quota exhaustion
+- **Health Check Endpoint:** `/health` - Monitor all service dependencies
+
+### WebSocket Integration
+- **Laravel Reverb Events:**
+  - `GameRoomUpdated` - Broadcast room state changes
+  - `PlayerJoinedRoom` - Real-time player join notifications
+  - `GameStarted` - Synchronized game start
+- **Channel Architecture:** Dedicated channels per game room
+- **Broadcasting:** Automatic event broadcasting to connected clients
 
 ### Future Enhancements
 
