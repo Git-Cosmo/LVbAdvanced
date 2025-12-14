@@ -340,6 +340,7 @@
 }
 
 /* Ask Audience bar chart animation */
+/* Note: Animation delays are set for 4 answer options (A, B, C, D) */
 .audience-bar {
     transform-origin: bottom;
     animation: bar-grow 0.6s ease-out forwards;

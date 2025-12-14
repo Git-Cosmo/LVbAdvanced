@@ -2,7 +2,7 @@
 
 @section('content')
 @vite(['resources/css/casual-games.css'])
-<div x-data="millionaireGame()" class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<div x-data="millionaireGame({{ $attempt->current_question }})" class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <!-- Enhanced Toast Notification -->
     <div x-show="toast.show" 
          x-transition:enter="transition ease-out duration-300"
@@ -62,10 +62,7 @@
                     @foreach($question->options as $index => $option)
                         <button @click="selectAnswer({{ $index }})" 
                                 id="option-{{ $index }}"
-                                :class="{
-                                    'answer-selected border-accent-blue bg-accent-blue/10': selectedAnswer === {{ $index }},
-                                    'border-accent-blue bg-accent-blue/10': selectedAnswer === {{ $index }}
-                                }"
+                                :class="selectedAnswer === {{ $index }} ? 'answer-selected border-accent-blue bg-accent-blue/10' : ''"
                                 class="answer-option p-4 text-left border-2 dark:border-dark-border-primary rounded-lg hover:border-accent-blue transition-colors dark:text-dark-text-bright">
                             <span class="font-semibold mr-2">{{ chr(65 + $index) }}:</span>
                             <span>{{ $option }}</span>
@@ -170,7 +167,7 @@
 <script type="module">
 import confetti from 'canvas-confetti';
 
-window.millionaireGame = function() {
+window.millionaireGame = function(currentQuestion) {
     return {
         selectedAnswer: null,
         timeLeft: {{ $game->time_limit }},
@@ -178,6 +175,7 @@ window.millionaireGame = function() {
         phoneRinging: false,
         phoneFriendSuggestion: '',
         audienceVotes: null,
+        currentQuestion: currentQuestion,
         toast: {
             show: false,
             message: '',
@@ -253,8 +251,7 @@ window.millionaireGame = function() {
                     });
                     
                     // Add milestone flash if at safe haven
-                    const currentLevel = {{ $attempt->current_question }};
-                    if ([5, 10, 15].includes(currentLevel)) {
+                    if ([5, 10, 15].includes(this.currentQuestion)) {
                         const prizeElement = document.querySelector('.prize-current');
                         if (prizeElement) {
                             prizeElement.classList.add('prize-milestone-flash');
