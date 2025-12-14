@@ -163,7 +163,6 @@ function millionaireGame() {
         
         selectAnswer(index) {
             this.selectedAnswer = index;
-            // UI updates now handled by Alpine's :class binding
         },
         
         submitAnswer() {
